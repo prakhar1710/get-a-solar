@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -7,8 +6,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Project, Bid } from '@/types';
-import { ProjectCard } from '@/components/dashboard/ProjectCard';
-import { BidForm } from '@/components/forms/BidForm';
+import ProjectCard from '@/components/dashboard/ProjectCard';
+import BidForm from '@/components/forms/BidForm';
 import { RefreshCw, Search, FileText, Upload, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
