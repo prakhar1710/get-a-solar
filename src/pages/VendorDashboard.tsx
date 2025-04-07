@@ -70,7 +70,7 @@ const mockSubmittedBids: Bid[] = [
 ];
 
 // Additional mock project for the submitted bid
-const mockProjectForBid = {
+const mockProjectForBid: Project = {
   id: '3',
   customer_id: '1',
   title: '15 kW Commercial Installation',
