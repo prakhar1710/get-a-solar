@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
-            <h3 className="text-lg font-medium">सूर्य Bid-Sahayak</h3>
+            <h3 className="text-lg font-medium">Get A Solar</h3>
             <p className="text-sm text-muted-foreground">
               Connecting solar customers and vendors across India with transparent bidding.
             </p>
@@ -80,7 +80,7 @@ const Footer = () => {
         
         <div className="mt-8 border-t border-border pt-6">
           <p className="text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} सूर्य Bid-Sahayak. All rights reserved.
+            © {new Date().getFullYear()} Get A Solar. All rights reserved.
           </p>
         </div>
       </div>

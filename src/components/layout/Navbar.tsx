@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Sun className="h-6 w-6 text-sbs-orange" />
-          <Link to="/" className="text-xl font-bold text-foreground">सूर्य Bid-Sahayak</Link>
+          <Link to="/" className="text-xl font-bold text-foreground">Get A Solar</Link>
         </div>
         
         {/* Desktop navigation */}

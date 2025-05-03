@@ -42,7 +42,7 @@ const Index = () => {
                 Solar Bidding Platform for India
               </div>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                सूर्य <span className="text-sbs-orange">Bid-Sahayak</span>: Solar Made Simple
+                Get A <span className="text-sbs-orange">Solar</span>: Solar Made Simple
               </h1>
               <p className="text-xl text-muted-foreground">
                 Connect with trusted solar vendors, compare competitive bids, and find the perfect installation partner for your solar journey.
@@ -241,7 +241,7 @@ const Index = () => {
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">Join the Solar Revolution</h2>
             <p className="text-xl mb-8 text-muted-foreground">
-              Create your account today and start your solar journey with सूर्य Bid-Sahayak.
+              Create your account today and start your solar journey with Get A Solar.
             </p>
             <Button 
               className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg"

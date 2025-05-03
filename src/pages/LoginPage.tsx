@@ -35,7 +35,7 @@ const LoginPage = () => {
     <MainLayout>
       <div className="container py-8 flex justify-center">
         <div className="w-full max-w-md">
-          <h1 className="text-3xl font-bold text-center mb-8">Welcome to <span className="text-sbs-purple">सूर्य Bid-Sahayak</span></h1>
+          <h1 className="text-3xl font-bold text-center mb-8">Welcome to <span className="text-sbs-purple">Get A Solar</span></h1>
           
           <Card>
             <CardHeader className="space-y-1">
