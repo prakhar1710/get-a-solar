@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import VendorDashboard from "./pages/VendorDashboard";
 import LoginPage from "./pages/LoginPage";
+import BlogPage from "./pages/BlogPage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/customer" element={<CustomerDashboard />} />
           <Route path="/vendor" element={<VendorDashboard />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/blog" element={<BlogPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
