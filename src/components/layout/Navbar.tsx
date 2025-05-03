@@ -13,7 +13,6 @@ const Navbar = () => {
     { name: 'Customer Dashboard', path: '/customer' },
     { name: 'Vendor Dashboard', path: '/vendor' },
     { name: 'Blog', path: '/blog' },
-    { name: 'Login', path: '/login' }
   ];
 
   return (
@@ -37,7 +36,11 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white">Connect Supabase</Button>
+          <Link to="/login">
+            <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all">
+              Login
+            </Button>
+          </Link>
         </nav>
         
         {/* Mobile navigation */}
@@ -64,7 +67,11 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white w-full">Connect Supabase</Button>
+            <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white w-full font-semibold shadow-md hover:shadow-lg transition-all">
+                Login
+              </Button>
+            </Link>
           </nav>
         </div>
       )}
