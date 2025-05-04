@@ -10,12 +10,16 @@ interface AvailableProjectsProps {
   projects: Project[];
   submittedBids: Bid[];
   onProjectSelect: (project: Project) => void;
+  isLoading?: boolean;
+  onRefresh?: () => void;
 }
 
 const AvailableProjects: React.FC<AvailableProjectsProps> = ({
   projects,
   submittedBids,
   onProjectSelect,
+  isLoading = false,
+  onRefresh,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -43,13 +47,23 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="ghost" size="icon" title="Refresh projects">
-          <RefreshCw className="h-4 w-4" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          title="Refresh projects"
+          onClick={onRefresh}
+          disabled={isLoading}
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
       
       <div className="dashboard-section">
-        {filteredProjects.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p>Loading projects...</p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
               No projects match your search criteria

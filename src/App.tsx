@@ -10,25 +10,37 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import VendorDashboard from "./pages/VendorDashboard";
 import LoginPage from "./pages/LoginPage";
 import BlogPage from "./pages/BlogPage";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/customer" element={<CustomerDashboard />} />
-          <Route path="/vendor" element={<VendorDashboard />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/customer" element={
+              <ProtectedRoute userType="customer">
+                <CustomerDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/vendor" element={
+              <ProtectedRoute userType="vendor">
+                <VendorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

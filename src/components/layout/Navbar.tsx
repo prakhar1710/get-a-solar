@@ -1,17 +1,27 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Sun, Menu, X } from 'lucide-react';
+import { Sun, Menu, X, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, signOut } = useAuth();
   
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Customer Dashboard', path: '/customer' },
-    { name: 'Vendor Dashboard', path: '/vendor' },
+    ...(user && profile?.user_type === 'customer' ? [{ name: 'Customer Dashboard', path: '/customer' }] : []),
+    ...(user && profile?.user_type === 'vendor' ? [{ name: 'Vendor Dashboard', path: '/vendor' }] : []),
     { name: 'Blog', path: '/blog' },
   ];
 
@@ -36,11 +46,36 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Link to="/login">
-            <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all">
-              Login
-            </Button>
-          </Link>
+          
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <User className="h-4 w-4" />
+                  {profile?.full_name?.split(' ')[0] || 'Account'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <span className="text-sm font-semibold">{profile?.user_type === 'customer' ? 'Customer' : 'Vendor'}</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className="flex gap-2 cursor-pointer" 
+                  onClick={signOut}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white font-semibold px-6 shadow-md hover:shadow-lg transition-all">
+                Login
+              </Button>
+            </Link>
+          )}
         </nav>
         
         {/* Mobile navigation */}
@@ -67,11 +102,25 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white w-full font-semibold shadow-md hover:shadow-lg transition-all">
-                Login
+            {user ? (
+              <Button 
+                variant="outline" 
+                className="justify-start gap-2"
+                onClick={() => {
+                  signOut();
+                  setIsMenuOpen(false);
+                }}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
               </Button>
-            </Link>
+            ) : (
+              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white w-full font-semibold shadow-md hover:shadow-lg transition-all">
+                  Login
+                </Button>
+              </Link>
+            )}
           </nav>
         </div>
       )}

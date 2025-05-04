@@ -9,7 +9,137 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bids: {
+        Row: {
+          amc_included: boolean
+          created_at: string
+          equipment_tier: string
+          id: string
+          price_per_watt: number
+          project_id: string
+          timeline_days: number
+          vendor_id: string
+        }
+        Insert: {
+          amc_included?: boolean
+          created_at?: string
+          equipment_tier: string
+          id?: string
+          price_per_watt: number
+          project_id: string
+          timeline_days: number
+          vendor_id: string
+        }
+        Update: {
+          amc_included?: boolean
+          created_at?: string
+          equipment_tier?: string
+          id?: string
+          price_per_watt?: number
+          project_id?: string
+          timeline_days?: number
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          electricity_bill: number | null
+          full_name: string | null
+          id: string
+          phone_number: string | null
+          pincode: string | null
+          updated_at: string
+          user_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          electricity_bill?: number | null
+          full_name?: string | null
+          id: string
+          phone_number?: string | null
+          pincode?: string | null
+          updated_at?: string
+          user_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          electricity_bill?: number | null
+          full_name?: string | null
+          id?: string
+          phone_number?: string | null
+          pincode?: string | null
+          updated_at?: string
+          user_type?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          budget: number
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          location: string
+          state: string
+          status: string
+          subsidy_applied: boolean | null
+          system_size: number
+          title: string
+        }
+        Insert: {
+          budget: number
+          created_at?: string
+          customer_id: string
+          description: string
+          id?: string
+          location: string
+          state: string
+          status?: string
+          subsidy_applied?: boolean | null
+          system_size: number
+          title: string
+        }
+        Update: {
+          budget?: number
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          location?: string
+          state?: string
+          status?: string
+          subsidy_applied?: boolean | null
+          system_size?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ProjectForm from '@/components/forms/ProjectForm';
 import ProjectCard from '@/components/dashboard/ProjectCard';
@@ -10,152 +10,156 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Project, Bid } from '@/types';
 import BidCard from '@/components/dashboard/BidCard';
 import { rankBids } from '@/utils/bidRanking';
-import { Plus, RefreshCw, FilterX, SlidersHorizontal } from 'lucide-react';
-
-// Mock data for projects
-const mockProjects: Project[] = [
-  {
-    id: '1',
-    customer_id: '1',
-    title: '10 kW Rooftop Solar Installation',
-    location: 'Indiranagar',
-    system_size: 10,
-    budget: 450000,
-    description: 'Looking for a reliable vendor to install a 10 kW rooftop solar system for my home. The roof is relatively new and has good sun exposure throughout the day.',
-    state: 'Karnataka',
-    subsidy_applied: true,
-    created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString(),
-    status: 'open'
-  },
-  {
-    id: '2',
-    customer_id: '1',
-    title: '5 kW Solar System for Small Office',
-    location: 'Koramangala',
-    system_size: 5,
-    budget: 225000,
-    description: 'Need a solar system for my small office space. Roof area approximately 500 sq ft. Looking for efficient panels with good warranty.',
-    state: 'Karnataka',
-    subsidy_applied: false,
-    created_at: new Date(Date.now() - 3600000 * 24 * 5).toISOString(),
-    status: 'open'
-  },
-  {
-    id: '3',
-    customer_id: '1',
-    title: '15 kW Commercial Installation',
-    location: 'Whitefield',
-    system_size: 15,
-    budget: 675000,
-    description: 'Commercial property requiring 15kW installation. Roof is flat concrete with clear sun exposure. Multiple quotes welcome.',
-    state: 'Karnataka',
-    subsidy_applied: true,
-    created_at: new Date(Date.now() - 3600000 * 24 * 10).toISOString(),
-    status: 'closed'
-  }
-];
-
-// Mock data for bids on project 1
-const mockBids: Bid[] = [
-  {
-    id: '1',
-    project_id: '1',
-    vendor_id: '1',
-    price_per_watt: 48,
-    equipment_tier: 'tier1',
-    timeline_days: 30,
-    amc_included: true,
-    created_at: new Date(Date.now() - 3600000 * 36).toISOString(),
-    vendor_name: 'SolarTech Solutions',
-    vendor_rating: 4.8
-  },
-  {
-    id: '2',
-    project_id: '1',
-    vendor_id: '2',
-    price_per_watt: 45,
-    equipment_tier: 'tier3',
-    timeline_days: 21,
-    amc_included: false,
-    created_at: new Date(Date.now() - 3600000 * 18).toISOString(),
-    vendor_name: 'EcoSolar India',
-    vendor_rating: 3.5
-  },
-  {
-    id: '3',
-    project_id: '1',
-    vendor_id: '3',
-    price_per_watt: 50,
-    equipment_tier: 'tier1',
-    timeline_days: 25,
-    amc_included: true,
-    created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
-    vendor_name: 'Premium Solar',
-    vendor_rating: 4.9
-  },
-  {
-    id: '4',
-    project_id: '1',
-    vendor_id: '4',
-    price_per_watt: 44,
-    equipment_tier: 'tier2',
-    timeline_days: 35,
-    amc_included: false,
-    created_at: new Date(Date.now() - 3600000 * 10).toISOString(),
-    vendor_name: 'SunRise Energy',
-    vendor_rating: 3.8
-  }
-];
+import { Plus, RefreshCw, SlidersHorizontal } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const CustomerDashboard: React.FC = () => {
   const { toast } = useToast();
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const { user } = useAuth();
+  const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
   const [projectBids, setProjectBids] = useState<Bid[]>([]);
   const [rankedBids, setRankedBids] = useState<Bid[]>([]);
   const [showBidsDialog, setShowBidsDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleProjectSubmit = (data: any) => {
-    const newProject: Project = {
-      id: (projects.length + 1).toString(),
-      customer_id: '1',
-      title: data.title,
-      location: data.location,
-      system_size: data.system_size,
-      budget: data.budget,
-      description: data.description,
-      state: data.state,
-      subsidy_applied: data.subsidy_applied,
-      created_at: new Date().toISOString(),
-      status: 'open'
-    };
-
-    setProjects([...projects, newProject]);
-    setShowNewProjectForm(false);
+  // Fetch customer projects
+  useEffect(() => {
+    if (!user) return;
     
-    toast({
-      title: "Project created successfully",
-      description: "Your solar project is now visible to vendors for bidding.",
-    });
+    const fetchProjects = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .eq('customer_id', user.id)
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        setProjects(data || []);
+      } catch (error: any) {
+        console.error('Error fetching projects:', error);
+        toast({
+          title: "Error fetching projects",
+          description: error.message || "Failed to load your projects.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProjects();
+  }, [user, toast]);
+
+  const handleProjectSubmit = async (data: any) => {
+    if (!user) return;
+    
+    try {
+      const newProject = {
+        customer_id: user.id,
+        title: data.title,
+        location: data.location,
+        system_size: data.system_size,
+        budget: data.budget,
+        description: data.description,
+        state: data.state,
+        subsidy_applied: data.subsidy_applied,
+        status: 'open'
+      };
+      
+      const { error, data: createdProject } = await supabase
+        .from('projects')
+        .insert([newProject])
+        .select();
+        
+      if (error) throw error;
+      
+      setProjects([createdProject[0], ...projects]);
+      setShowNewProjectForm(false);
+      
+      toast({
+        title: "Project created successfully",
+        description: "Your solar project is now visible to vendors for bidding.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error creating project",
+        description: error.message || "Failed to create your project. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleViewDetails = (project: Project) => {
+  const handleViewDetails = async (project: Project) => {
     setSelectedProject(project);
-    // In a real app, you'd fetch bids for the selected project
-    if (project.id === '1') {
-      const bids = mockBids;
-      setProjectBids(bids);
+    
+    try {
+      // Fetch bids for the selected project
+      const { data: bidsData, error: bidsError } = await supabase
+        .from('bids')
+        .select(`
+          *,
+          profiles:vendor_id (
+            full_name
+          )
+        `)
+        .eq('project_id', project.id);
+        
+      if (bidsError) throw bidsError;
+      
+      const bidsWithVendorInfo = bidsData?.map(bid => ({
+        ...bid,
+        vendor_name: bid.profiles?.full_name || 'Anonymous Vendor',
+        vendor_rating: 4.5, // Mock rating for now
+      })) || [];
+      
+      setProjectBids(bidsWithVendorInfo);
       
       // Rank the bids using our algorithm
-      const ranked = rankBids(bids, project);
+      const ranked = rankBids(bidsWithVendorInfo, project);
       setRankedBids(ranked);
-    } else {
-      setProjectBids([]);
-      setRankedBids([]);
+      
+      setShowBidsDialog(true);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching bids",
+        description: error.message || "Failed to fetch bids for this project.",
+        variant: "destructive",
+      });
     }
+  };
+
+  const refreshProjects = async () => {
+    if (!user) return;
     
-    setShowBidsDialog(true);
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('customer_id', user.id)
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      setProjects(data || []);
+      
+      toast({
+        title: "Projects refreshed",
+        description: "Your projects list has been updated.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error refreshing projects",
+        description: error.message || "Failed to refresh your projects.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -189,14 +193,24 @@ const CustomerDashboard: React.FC = () => {
                 <Button variant="outline" size="sm" className="flex items-center gap-1">
                   <SlidersHorizontal className="h-4 w-4" /> Filter
                 </Button>
-                <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                  <RefreshCw className="h-4 w-4" /> Refresh
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex items-center gap-1"
+                  onClick={refreshProjects}
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} /> Refresh
                 </Button>
               </div>
             </div>
             
             <TabsContent value="active">
-              {projects.filter(p => p.status !== 'closed').length === 0 ? (
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <p>Loading projects...</p>
+                </div>
+              ) : projects.filter(p => p.status !== 'closed').length === 0 ? (
                 <div className="text-center py-12">
                   <h3 className="text-xl font-medium mb-2">No active projects</h3>
                   <p className="text-muted-foreground mb-4">
@@ -223,7 +237,11 @@ const CustomerDashboard: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="closed">
-              {projects.filter(p => p.status === 'closed').length === 0 ? (
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <p>Loading projects...</p>
+                </div>
+              ) : projects.filter(p => p.status === 'closed').length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">
                     No closed projects yet
@@ -243,15 +261,34 @@ const CustomerDashboard: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="all">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {projects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onViewDetails={handleViewDetails}
-                  />
-                ))}
-              </div>
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <p>Loading projects...</p>
+                </div>
+              ) : projects.length === 0 ? (
+                <div className="text-center py-12">
+                  <h3 className="text-xl font-medium mb-2">No projects yet</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Create your first project to start receiving bids from verified solar vendors
+                  </p>
+                  <Button 
+                    onClick={() => setShowNewProjectForm(true)}
+                    className="bg-sbs-purple hover:bg-sbs-purple-dark text-white"
+                  >
+                    Create New Project
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {projects.map((project) => (
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      onViewDetails={handleViewDetails}
+                    />
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
