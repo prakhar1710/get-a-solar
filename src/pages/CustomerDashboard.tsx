@@ -51,7 +51,7 @@ const CustomerDashboard: React.FC = () => {
           .order('created_at', { ascending: false });
           
         if (error) throw error;
-        setProjects((data as Project[]) || []);
+        setProjects(data as Project[] || []);
       } catch (error: any) {
         console.error('Error fetching projects:', error);
         toast({
@@ -81,6 +81,7 @@ const CustomerDashboard: React.FC = () => {
     if (!profile) {
       try {
         await refreshProfile();
+        // Only proceed if profile is now available after refresh
         if (!profile) {
           toast({
             title: "Profile Required",
@@ -94,30 +95,6 @@ const CustomerDashboard: React.FC = () => {
         toast({
           title: "Profile error",
           description: "There was an issue with your user profile. Please try logging out and back in.",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-    
-    // Ensure user type is set to customer
-    if (profile && profile.user_type !== 'customer') {
-      // Update profile to set user type as customer if not already set
-      try {
-        const { error } = await supabase
-          .from('profiles')
-          .update({ user_type: 'customer' })
-          .eq('id', user.id);
-          
-        if (error) throw error;
-        
-        // Refresh the profile to get updated data
-        await refreshProfile();
-      } catch (error: any) {
-        console.error("Failed to update profile type:", error);
-        toast({
-          title: "Profile Update Error",
-          description: "Failed to update your profile type. Please try again.",
           variant: "destructive",
         });
         return;
@@ -151,13 +128,15 @@ const CustomerDashboard: React.FC = () => {
       
       console.log("Project created successfully:", createdProject);
       
-      setProjects([createdProject[0] as Project, ...projects]);
-      setShowNewProjectForm(false);
-      
-      toast({
-        title: "Project created successfully",
-        description: "Your solar project is now visible to vendors for bidding.",
-      });
+      if (createdProject && createdProject.length > 0) {
+        setProjects(prevProjects => [createdProject[0] as Project, ...prevProjects]);
+        setShowNewProjectForm(false);
+        
+        toast({
+          title: "Project created successfully",
+          description: "Your solar project is now visible to vendors for bidding.",
+        });
+      }
     } catch (error: any) {
       console.error("Full error details:", error);
       toast({
@@ -220,7 +199,7 @@ const CustomerDashboard: React.FC = () => {
         .order('created_at', { ascending: false });
         
       if (error) throw error;
-      setProjects((data as Project[]) || []);
+      setProjects(data as Project[] || []);
       
       toast({
         title: "Projects refreshed",

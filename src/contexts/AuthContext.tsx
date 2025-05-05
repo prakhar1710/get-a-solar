@@ -48,7 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('No profile found, attempting to create one');
       
       // If no profile exists, create one with minimal data
-      // First, enable RLS bypass for the current session
       const { data: newProfile, error: insertError } = await supabase
         .from('profiles')
         .insert([{ 
@@ -114,15 +113,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(currentSession);
             setUser(currentSession?.user ?? null);
             
-            // Handle profile on login/token-refreshed events
+            // Use setTimeout to prevent potential infinite loops when handling profile updates
             if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-              const profileData = await fetchProfile(currentSession.user.id);
-              setProfile(profileData);
+              setTimeout(async () => {
+                const profileData = await fetchProfile(currentSession.user.id);
+                setProfile(profileData);
+              }, 0);
             } else if (event === 'SIGNED_OUT') {
               setProfile(null);
             }
-            
-            setIsLoading(false);
           }
         );
         
