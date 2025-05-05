@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Set up the auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 .from('profiles')
                 .select('*')
                 .eq('id', currentSession.user.id)
-                .single();
+                .maybeSingle(); // Use maybeSingle instead of single
                 
-              if (error) throw error;
+              if (error && error.code !== 'PGRST116') throw error;
               setProfile(data);
             } catch (error) {
               console.error('Error fetching user profile:', error);
@@ -63,9 +63,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .from('profiles')
           .select('*')
           .eq('id', currentSession.user.id)
-          .single()
+          .maybeSingle() // Use maybeSingle instead of single
           .then(({ data, error }) => {
-            if (error) {
+            if (error && error.code !== 'PGRST116') {
               console.error('Error fetching user profile:', error);
               return;
             }

@@ -35,7 +35,7 @@ const VendorDashboard: React.FC = () => {
           .order('created_at', { ascending: false });
           
         if (error) throw error;
-        setAvailableProjects(data || []);
+        setAvailableProjects((data as Project[]) || []);
       } catch (error: any) {
         console.error('Error fetching projects:', error);
         toast({
@@ -64,7 +64,10 @@ const VendorDashboard: React.FC = () => {
           .order('created_at', { ascending: false });
           
         if (error) throw error;
-        setSubmittedBids(data || []);
+        setSubmittedBids((data?.map(bid => ({
+          ...bid,
+          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
+        })) as Bid[]) || []);
       } catch (error: any) {
         console.error('Error fetching bids:', error);
         toast({
@@ -98,7 +101,12 @@ const VendorDashboard: React.FC = () => {
         
       if (error) throw error;
       
-      setSubmittedBids([createdBid[0], ...submittedBids]);
+      const typedBid = {
+        ...createdBid[0],
+        equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
+      } as Bid;
+      
+      setSubmittedBids([typedBid, ...submittedBids]);
       setShowBidForm(false);
       
       toast({
@@ -133,7 +141,7 @@ const VendorDashboard: React.FC = () => {
         .order('created_at', { ascending: false });
         
       if (error) throw error;
-      setAvailableProjects(data || []);
+      setAvailableProjects((data as Project[]) || []);
       
       toast({
         title: "Projects refreshed",

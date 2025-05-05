@@ -16,14 +16,16 @@ const bidSchema = z.object({
   amc_included: z.boolean().default(false),
 });
 
+type BidFormValues = z.infer<typeof bidSchema>;
+
 interface BidFormProps {
-  onSubmit: (data: z.infer<typeof bidSchema>) => void;
-  initialData?: z.infer<typeof bidSchema>;
+  onSubmit: (data: BidFormValues) => void;
+  initialData?: BidFormValues;
   projectSize?: number;
 }
 
 const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5 }) => {
-  const form = useForm<z.infer<typeof bidSchema>>({
+  const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
     defaultValues: initialData || {
       price_per_watt: 45,

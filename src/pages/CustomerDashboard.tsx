@@ -39,7 +39,7 @@ const CustomerDashboard: React.FC = () => {
           .order('created_at', { ascending: false });
           
         if (error) throw error;
-        setProjects(data || []);
+        setProjects((data as Project[]) || []);
       } catch (error: any) {
         console.error('Error fetching projects:', error);
         toast({
@@ -68,7 +68,7 @@ const CustomerDashboard: React.FC = () => {
         description: data.description,
         state: data.state,
         subsidy_applied: data.subsidy_applied,
-        status: 'open'
+        status: 'open' as const
       };
       
       const { error, data: createdProject } = await supabase
@@ -78,7 +78,7 @@ const CustomerDashboard: React.FC = () => {
         
       if (error) throw error;
       
-      setProjects([createdProject[0], ...projects]);
+      setProjects([createdProject[0] as Project, ...projects]);
       setShowNewProjectForm(false);
       
       toast({
@@ -115,12 +115,13 @@ const CustomerDashboard: React.FC = () => {
         ...bid,
         vendor_name: bid.profiles?.full_name || 'Anonymous Vendor',
         vendor_rating: 4.5, // Mock rating for now
+        equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
       })) || [];
       
-      setProjectBids(bidsWithVendorInfo);
+      setProjectBids(bidsWithVendorInfo as Bid[]);
       
       // Rank the bids using our algorithm
-      const ranked = rankBids(bidsWithVendorInfo, project);
+      const ranked = rankBids(bidsWithVendorInfo as Bid[], project);
       setRankedBids(ranked);
       
       setShowBidsDialog(true);
@@ -145,7 +146,7 @@ const CustomerDashboard: React.FC = () => {
         .order('created_at', { ascending: false });
         
       if (error) throw error;
-      setProjects(data || []);
+      setProjects((data as Project[]) || []);
       
       toast({
         title: "Projects refreshed",

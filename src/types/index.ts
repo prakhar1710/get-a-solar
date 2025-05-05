@@ -34,6 +34,7 @@ export interface Bid {
   score?: number;
   vendor_name?: string;
   vendor_rating?: number;
+  profiles?: any;
 }
 
 export interface Vendor {
