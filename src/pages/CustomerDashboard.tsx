@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -15,6 +15,7 @@ const CustomerDashboard: React.FC = () => {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
+  const profileRefreshed = useRef(false);
   
   // Custom hook to manage project data and actions
   const {
@@ -30,7 +31,8 @@ const CustomerDashboard: React.FC = () => {
 
   // Check profile status only once when component mounts
   useEffect(() => {
-    if (user && !profile) {
+    if (user && !profile && !profileRefreshed.current) {
+      profileRefreshed.current = true;
       refreshProfile();
     }
   }, [user, profile, refreshProfile]);

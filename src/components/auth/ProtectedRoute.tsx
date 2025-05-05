@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -12,29 +12,37 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) => {
   const { user, profile, isLoading } = useAuth();
   const { toast } = useToast();
+  const initialCheckDone = useRef(false);
 
   useEffect(() => {
-    // Check if user exists but doesn't have the correct user type
-    if (user && profile && userType && profile.user_type !== userType) {
+    // Only show toast messages after initial authentication check is complete
+    if (!isLoading && user && profile && userType && profile.user_type !== userType && initialCheckDone.current) {
       toast({
         title: "Access Denied",
         description: `This page is only accessible to ${userType}s.`,
         variant: "destructive",
       });
     }
-  }, [user, profile, userType, toast]);
+    
+    // Mark initial check as done after first render
+    if (!isLoading) {
+      initialCheckDone.current = true;
+    }
+  }, [user, profile, userType, toast, isLoading]);
 
   if (isLoading) {
-    // Could add a loading spinner here
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   if (!user) {
-    toast({
-      title: "Authentication Required",
-      description: "Please log in to access this page",
-      variant: "destructive",
-    });
+    // Only show toast if this isn't the initial page load
+    if (initialCheckDone.current) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access this page",
+        variant: "destructive",
+      });
+    }
     return <Navigate to="/login" />;
   }
 

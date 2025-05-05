@@ -13,11 +13,14 @@ export function useSupabaseAuth() {
   const { toast } = useToast();
   const isInitialLoad = useRef(true);
   const profileFetchInProgress = useRef(false);
+  const authInitialized = useRef(false);
 
   // Function to fetch user profile with better error handling
   const fetchProfile = useCallback(async (userId: string) => {
+    if (profileFetchInProgress.current) return null;
+    
     try {
-      // First try to fetch the existing profile
+      profileFetchInProgress.current = true;
       console.log(`Fetching profile for user: ${userId}`);
       
       const { data, error } = await supabase
@@ -54,11 +57,14 @@ export function useSupabaseAuth() {
         
       if (insertError) {
         console.error('Error creating profile:', insertError);
-        toast({
-          title: "Profile Creation Error",
-          description: "Unable to create your profile. Please try logging out and back in.",
-          variant: "destructive",
-        });
+        // Only show toast if this is not the initial load
+        if (!isInitialLoad.current) {
+          toast({
+            title: "Profile Creation Error",
+            description: "Unable to create your profile. Please try logging out and back in.",
+            variant: "destructive",
+          });
+        }
         return null;
       }
       
@@ -66,35 +72,42 @@ export function useSupabaseAuth() {
       return newProfile as Profile;
     } catch (error: any) {
       console.error('Error in profile management:', error);
-      toast({
-        title: "Profile Error",
-        description: error.message || "An error occurred with your profile.",
-        variant: "destructive",
-      });
+      // Only show toast if this is not the initial load
+      if (!isInitialLoad.current) {
+        toast({
+          title: "Profile Error",
+          description: error.message || "An error occurred with your profile.",
+          variant: "destructive",
+        });
+      }
       return null;
+    } finally {
+      profileFetchInProgress.current = false;
     }
-  }, [toast]);
+  }, [toast, isInitialLoad]);
 
   // Function to refresh profile data - using useCallback to ensure consistent reference
   const refreshProfile = useCallback(async () => {
     if (!user || profileFetchInProgress.current) return;
     
     try {
-      profileFetchInProgress.current = true;
       const profileData = await fetchProfile(user.id);
       if (profileData) {
         setProfile(profileData);
       }
     } catch (error) {
       console.error('Error refreshing profile:', error);
-    } finally {
-      profileFetchInProgress.current = false;
     }
   }, [user, fetchProfile]);
 
   const signOut = useCallback(async () => {
     try {
       await supabase.auth.signOut();
+      // Reset all auth-related state
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      
       toast({
         title: "Signed out",
         description: "You have been successfully signed out.",
@@ -109,31 +122,17 @@ export function useSupabaseAuth() {
   }, [toast]);
 
   useEffect(() => {
+    if (authInitialized.current) return;
+    
     let authStateSubscription: { unsubscribe: () => void } | null = null;
     
     // Initialize auth state
     const initializeAuth = async () => {
       try {
         setIsLoading(true);
+        authInitialized.current = true;
         
-        // First check for existing session
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        // Update session and user states
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        // If we have a user, fetch their profile - but use setTimeout to defer this
-        if (currentSession?.user && !profileFetchInProgress.current) {
-          profileFetchInProgress.current = true;
-          const profileData = await fetchProfile(currentSession.user.id);
-          if (profileData) {
-            setProfile(profileData);
-          }
-          profileFetchInProgress.current = false;
-        }
-        
-        // Set up the auth state listener
+        // First set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, currentSession) => {
             console.log('Auth state changed:', event);
@@ -143,14 +142,15 @@ export function useSupabaseAuth() {
             setUser(currentSession?.user ?? null);
             
             if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-              if (!profileFetchInProgress.current) {
-                profileFetchInProgress.current = true;
-                const profileData = await fetchProfile(currentSession.user.id);
-                if (profileData) {
-                  setProfile(profileData);
+              // Use setTimeout to avoid potential deadlock with Supabase auth state changes
+              setTimeout(async () => {
+                if (!profileFetchInProgress.current) {
+                  const profileData = await fetchProfile(currentSession.user.id);
+                  if (profileData) {
+                    setProfile(profileData);
+                  }
                 }
-                profileFetchInProgress.current = false;
-              }
+              }, 0);
             } else if (event === 'SIGNED_OUT') {
               setProfile(null);
             }
@@ -159,6 +159,20 @@ export function useSupabaseAuth() {
         
         authStateSubscription = subscription;
         
+        // Then check for existing session
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        // Update session and user states
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        // If we have a user, fetch their profile
+        if (currentSession?.user) {
+          const profileData = await fetchProfile(currentSession.user.id);
+          if (profileData) {
+            setProfile(profileData);
+          }
+        }
       } catch (error) {
         console.error('Auth initialization error:', error);
       } finally {
