@@ -104,7 +104,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Initialize auth state
     const initializeAuth = async () => {
       try {
-        // Set up the auth state listener first
+        setIsLoading(true);
+        
+        // First check for existing session
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        // If we have a user, fetch their profile
+        if (currentSession?.user) {
+          // Use setTimeout to avoid potential infinite loops
+          setTimeout(async () => {
+            const profileData = await fetchProfile(currentSession.user.id);
+            setProfile(profileData);
+          }, 0);
+        }
+        
+        // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, currentSession) => {
             console.log('Auth state changed:', event);
@@ -126,17 +142,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
         
         authStateSubscription = subscription;
-        
-        // Then check for existing session
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        // If we have a user, fetch their profile
-        if (currentSession?.user) {
-          const profileData = await fetchProfile(currentSession.user.id);
-          setProfile(profileData);
-        }
         
         setIsLoading(false);
       } catch (error) {
@@ -171,15 +176,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Create a memoized value to prevent unnecessary re-renders
+  const authContextValue = React.useMemo(() => ({
+    session, 
+    user, 
+    profile, 
+    isLoading, 
+    signOut, 
+    refreshProfile
+  }), [session, user, profile, isLoading]);
+
   return (
-    <AuthContext.Provider value={{ 
-      session, 
-      user, 
-      profile, 
-      isLoading, 
-      signOut, 
-      refreshProfile 
-    }}>
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );
