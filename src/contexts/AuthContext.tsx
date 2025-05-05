@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: any | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,29 +22,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  // Function to fetch user profile
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+        
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      if (!data) {
+        console.log('No profile found, creating one');
+        // Create profile if it doesn't exist
+        const { data: newProfile, error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: userId }])
+          .select()
+          .single();
+          
+        if (profileError) throw profileError;
+        return newProfile;
+      }
+      
+      return data;
+    } catch (error: any) {
+      console.error('Error fetching/creating user profile:', error);
+      return null;
+    }
+  };
+
+  // Function to refresh profile data
+  const refreshProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const profileData = await fetchProfile(user.id);
+      setProfile(profileData);
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
+    }
+  };
+
   useEffect(() => {
     // Set up the auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         // If we have a user, fetch their profile
         if (currentSession?.user) {
-          setTimeout(async () => {
-            try {
-              const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', currentSession.user.id)
-                .maybeSingle(); // Use maybeSingle instead of single
-                
-              if (error && error.code !== 'PGRST116') throw error;
-              setProfile(data);
-            } catch (error) {
-              console.error('Error fetching user profile:', error);
-            }
-          }, 0);
+          const profileData = await fetchProfile(currentSession.user.id);
+          setProfile(profileData);
         } else {
           setProfile(null);
         }
@@ -53,24 +85,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       // If we have a user, fetch their profile
       if (currentSession?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentSession.user.id)
-          .maybeSingle() // Use maybeSingle instead of single
-          .then(({ data, error }) => {
-            if (error && error.code !== 'PGRST116') {
-              console.error('Error fetching user profile:', error);
-              return;
-            }
-            setProfile(data);
-          });
+        const profileData = await fetchProfile(currentSession.user.id);
+        setProfile(profileData);
       }
       
       setIsLoading(false);
@@ -98,7 +120,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut }}>
+    <AuthContext.Provider value={{ 
+      session, 
+      user, 
+      profile, 
+      isLoading, 
+      signOut, 
+      refreshProfile 
+    }}>
       {children}
     </AuthContext.Provider>
   );

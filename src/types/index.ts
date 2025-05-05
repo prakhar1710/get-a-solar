@@ -8,6 +8,17 @@ export interface User {
   created_at: string;
 }
 
+export interface Profile {
+  id: string;
+  full_name: string | null;
+  phone_number: string | null;
+  pincode: string | null;
+  user_type: 'customer' | 'vendor' | null;
+  electricity_bill: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Project {
   id: string;
   customer_id: string;

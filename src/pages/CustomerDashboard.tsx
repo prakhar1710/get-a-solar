@@ -16,7 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const CustomerDashboard: React.FC = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
@@ -55,10 +55,41 @@ const CustomerDashboard: React.FC = () => {
     fetchProjects();
   }, [user, toast]);
 
+  // Check if profile exists, create if it doesn't
+  useEffect(() => {
+    if (user && !profile) {
+      refreshProfile();
+    }
+  }, [user, profile, refreshProfile]);
+
   const handleProjectSubmit = async (data: any) => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "You must be logged in to create a project.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Ensure profile exists first
+    if (!profile) {
+      try {
+        await refreshProfile();
+      } catch (error: any) {
+        console.error("Failed to create/fetch profile:", error);
+        toast({
+          title: "Profile error",
+          description: "There was an issue with your user profile. Please try logging out and back in.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
     
     try {
+      console.log("Creating project with customer_id:", user.id);
+      
       const newProject = {
         customer_id: user.id,
         title: data.title,
@@ -76,7 +107,12 @@ const CustomerDashboard: React.FC = () => {
         .insert([newProject])
         .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error("Project creation error:", error);
+        throw error;
+      }
+      
+      console.log("Project created successfully:", createdProject);
       
       setProjects([createdProject[0] as Project, ...projects]);
       setShowNewProjectForm(false);
@@ -86,6 +122,7 @@ const CustomerDashboard: React.FC = () => {
         description: "Your solar project is now visible to vendors for bidding.",
       });
     } catch (error: any) {
+      console.error("Full error details:", error);
       toast({
         title: "Error creating project",
         description: error.message || "Failed to create your project. Please try again.",
