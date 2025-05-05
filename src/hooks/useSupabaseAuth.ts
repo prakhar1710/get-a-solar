@@ -12,6 +12,7 @@ export function useSupabaseAuth() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const isInitialLoad = useRef(true);
+  const profileFetchInProgress = useRef(false);
 
   // Function to fetch user profile with better error handling
   const fetchProfile = useCallback(async (userId: string) => {
@@ -76,15 +77,18 @@ export function useSupabaseAuth() {
 
   // Function to refresh profile data - using useCallback to ensure consistent reference
   const refreshProfile = useCallback(async () => {
-    if (!user) return;
+    if (!user || profileFetchInProgress.current) return;
     
     try {
+      profileFetchInProgress.current = true;
       const profileData = await fetchProfile(user.id);
       if (profileData) {
         setProfile(profileData);
       }
     } catch (error) {
       console.error('Error refreshing profile:', error);
+    } finally {
+      profileFetchInProgress.current = false;
     }
   }, [user, fetchProfile]);
 
@@ -120,33 +124,33 @@ export function useSupabaseAuth() {
         setUser(currentSession?.user ?? null);
         
         // If we have a user, fetch their profile - but use setTimeout to defer this
-        if (currentSession?.user) {
-          // Use setTimeout to avoid potential infinite loops by deferring profile fetch
-          setTimeout(async () => {
-            const profileData = await fetchProfile(currentSession.user.id);
-            if (profileData) {
-              setProfile(profileData);
-            }
-          }, 0);
+        if (currentSession?.user && !profileFetchInProgress.current) {
+          profileFetchInProgress.current = true;
+          const profileData = await fetchProfile(currentSession.user.id);
+          if (profileData) {
+            setProfile(profileData);
+          }
+          profileFetchInProgress.current = false;
         }
         
         // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          (event, currentSession) => {
+          async (event, currentSession) => {
             console.log('Auth state changed:', event);
             
             // Update session and user states
             setSession(currentSession);
             setUser(currentSession?.user ?? null);
             
-            // Use setTimeout to prevent potential infinite loops when handling profile updates
             if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-              setTimeout(async () => {
+              if (!profileFetchInProgress.current) {
+                profileFetchInProgress.current = true;
                 const profileData = await fetchProfile(currentSession.user.id);
                 if (profileData) {
                   setProfile(profileData);
                 }
-              }, 0);
+                profileFetchInProgress.current = false;
+              }
             } else if (event === 'SIGNED_OUT') {
               setProfile(null);
             }

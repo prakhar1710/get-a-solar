@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -15,7 +15,6 @@ const CustomerDashboard: React.FC = () => {
   const { toast } = useToast();
   const { user, profile, refreshProfile } = useAuth();
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
-  const [profileChecked, setProfileChecked] = useState(false);
   
   // Custom hook to manage project data and actions
   const {
@@ -29,16 +28,12 @@ const CustomerDashboard: React.FC = () => {
     refreshProjects
   } = useCustomerProjects(user?.id);
 
-  // Check profile status
-  React.useEffect(() => {
-    // Only check profile if user exists, we don't have a profile, and we haven't checked yet
-    if (user && !profile && !profileChecked) {
-      // Mark as checked before starting the async operation
-      setProfileChecked(true);
-      // Then do the refresh
+  // Check profile status only once when component mounts
+  useEffect(() => {
+    if (user && !profile) {
       refreshProfile();
     }
-  }, [user, profile, refreshProfile, profileChecked]);
+  }, [user, profile, refreshProfile]);
 
   const handleProjectSubmit = async (data: any) => {
     if (!user) {
