@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -22,9 +22,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const isInitialLoad = useRef(true);
 
   // Function to fetch user profile with better error handling
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       // First try to fetch the existing profile
       console.log(`Fetching profile for user: ${userId}`);
@@ -82,10 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       return null;
     }
-  };
+  }, [toast]);
 
-  // Function to refresh profile data
-  const refreshProfile = async () => {
+  // Function to refresh profile data - using useCallback to ensure consistent reference
+  const refreshProfile = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -96,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error refreshing profile:', error);
     }
-  };
+  }, [user, fetchProfile]);
 
   useEffect(() => {
     let authStateSubscription: { unsubscribe: () => void } | null = null;
@@ -108,21 +109,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // First check for existing session
         const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        // Update session and user states
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
-        // If we have a user, fetch their profile
+        // If we have a user, fetch their profile - but use setTimeout to defer this
         if (currentSession?.user) {
-          // Use setTimeout to avoid potential infinite loops
+          // Use setTimeout to avoid potential infinite loops by deferring profile fetch
           setTimeout(async () => {
             const profileData = await fetchProfile(currentSession.user.id);
-            setProfile(profileData);
+            if (profileData) {
+              setProfile(profileData);
+            }
           }, 0);
         }
         
         // Set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, currentSession) => {
+          (event, currentSession) => {
             console.log('Auth state changed:', event);
             
             // Update session and user states
@@ -133,7 +138,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
               setTimeout(async () => {
                 const profileData = await fetchProfile(currentSession.user.id);
-                setProfile(profileData);
+                if (profileData) {
+                  setProfile(profileData);
+                }
               }, 0);
             } else if (event === 'SIGNED_OUT') {
               setProfile(null);
@@ -143,10 +150,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         authStateSubscription = subscription;
         
-        setIsLoading(false);
       } catch (error) {
         console.error('Auth initialization error:', error);
+      } finally {
         setIsLoading(false);
+        isInitialLoad.current = false;
       }
     };
     
@@ -158,9 +166,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authStateSubscription.unsubscribe();
       }
     };
-  }, []);
+  }, [fetchProfile]);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       await supabase.auth.signOut();
       toast({
@@ -174,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
   // Create a memoized value to prevent unnecessary re-renders
   const authContextValue = React.useMemo(() => ({
@@ -184,7 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading, 
     signOut, 
     refreshProfile
-  }), [session, user, profile, isLoading]);
+  }), [session, user, profile, isLoading, signOut, refreshProfile]);
 
   return (
     <AuthContext.Provider value={authContextValue}>

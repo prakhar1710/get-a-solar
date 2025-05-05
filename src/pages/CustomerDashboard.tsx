@@ -24,20 +24,21 @@ const CustomerDashboard: React.FC = () => {
   const [rankedBids, setRankedBids] = useState<Bid[]>([]);
   const [showBidsDialog, setShowBidsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  // Using a ref to track profile check to avoid infinite re-renders
   const [profileChecked, setProfileChecked] = useState(false);
 
-  // Check profile status on mount
+  // Check profile status on mount, using proper dependencies
   useEffect(() => {
+    // Only check profile if user exists, we don't have a profile, and we haven't checked yet
     if (user && !profile && !profileChecked) {
-      refreshProfile().then(() => {
-        setProfileChecked(true);
-      });
-    } else if (profile) {
+      // Mark as checked before starting the async operation
       setProfileChecked(true);
+      // Then do the refresh
+      refreshProfile();
     }
   }, [user, profile, refreshProfile, profileChecked]);
 
-  // Fetch customer projects
+  // Fetch customer projects - separated from profile check
   useEffect(() => {
     if (!user) return;
     
