@@ -13,10 +13,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
   const { user, profile, isLoading } = useAuth();
   const { toast } = useToast();
   const initialCheckDone = useRef(false);
+  const toastShown = useRef(false);
 
   useEffect(() => {
     // Only show toast messages after initial authentication check is complete
-    if (!isLoading && user && profile && userType && profile.user_type !== userType && initialCheckDone.current) {
+    // and only if we haven't shown this toast before
+    if (!isLoading && 
+        user && 
+        profile && 
+        userType && 
+        profile.user_type !== userType && 
+        initialCheckDone.current && 
+        !toastShown.current) {
+      
+      toastShown.current = true;
       toast({
         title: "Access Denied",
         description: `This page is only accessible to ${userType}s.`,
@@ -25,7 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     }
     
     // Mark initial check as done after first render
-    if (!isLoading) {
+    if (!isLoading && !initialCheckDone.current) {
       initialCheckDone.current = true;
     }
   }, [user, profile, userType, toast, isLoading]);
@@ -35,8 +45,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
   }
 
   if (!user) {
-    // Only show toast if this isn't the initial page load
-    if (initialCheckDone.current) {
+    // Only show toast if this isn't the initial page load and we haven't shown this toast before
+    if (initialCheckDone.current && !toastShown.current) {
+      toastShown.current = true;
       toast({
         title: "Authentication Required",
         description: "Please log in to access this page",

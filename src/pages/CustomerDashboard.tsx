@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,12 @@ const CustomerDashboard: React.FC = () => {
 
   // Check profile status only once when component mounts
   useEffect(() => {
+    // Only attempt to refresh profile if:
+    // 1. We have a user
+    // 2. We don't have a profile yet
+    // 3. We haven't already tried to refresh the profile
     if (user && !profile && !profileRefreshed.current) {
+      console.log("CustomerDashboard: Refreshing profile");
       profileRefreshed.current = true;
       refreshProfile();
     }
@@ -50,7 +54,12 @@ const CustomerDashboard: React.FC = () => {
     // Ensure profile exists
     if (!profile) {
       try {
-        await refreshProfile();
+        // Only attempt to refresh profile if we haven't tried before
+        if (!profileRefreshed.current) {
+          profileRefreshed.current = true;
+          await refreshProfile();
+        }
+        
         // Only proceed if profile is now available after refresh
         if (!profile) {
           toast({

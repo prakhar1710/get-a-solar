@@ -14,6 +14,7 @@ export function useSupabaseAuth() {
   const isInitialLoad = useRef(true);
   const profileFetchInProgress = useRef(false);
   const authInitialized = useRef(false);
+  const authStateSubscription = useRef<{ unsubscribe: () => void } | null>(null);
 
   // Function to fetch user profile with better error handling
   const fetchProfile = useCallback(async (userId: string) => {
@@ -84,7 +85,7 @@ export function useSupabaseAuth() {
     } finally {
       profileFetchInProgress.current = false;
     }
-  }, [toast, isInitialLoad]);
+  }, [toast]);
 
   // Function to refresh profile data - using useCallback to ensure consistent reference
   const refreshProfile = useCallback(async () => {
@@ -124,8 +125,6 @@ export function useSupabaseAuth() {
   useEffect(() => {
     if (authInitialized.current) return;
     
-    let authStateSubscription: { unsubscribe: () => void } | null = null;
-    
     // Initialize auth state
     const initializeAuth = async () => {
       try {
@@ -134,7 +133,7 @@ export function useSupabaseAuth() {
         
         // First set up the auth state listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, currentSession) => {
+          (event, currentSession) => {
             console.log('Auth state changed:', event);
             
             // Update session and user states
@@ -157,7 +156,7 @@ export function useSupabaseAuth() {
           }
         );
         
-        authStateSubscription = subscription;
+        authStateSubscription.current = subscription;
         
         // Then check for existing session
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -185,8 +184,8 @@ export function useSupabaseAuth() {
     
     // Cleanup
     return () => {
-      if (authStateSubscription) {
-        authStateSubscription.unsubscribe();
+      if (authStateSubscription.current) {
+        authStateSubscription.current.unsubscribe();
       }
     };
   }, [fetchProfile]);
