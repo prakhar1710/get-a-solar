@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Project, Bid } from '@/types';
+import { Project, Bid, Profile } from '@/types';
 import BidCard from '@/components/dashboard/BidCard';
 import { rankBids } from '@/utils/bidRanking';
 import { Plus, RefreshCw, SlidersHorizontal } from 'lucide-react';
@@ -24,6 +24,18 @@ const CustomerDashboard: React.FC = () => {
   const [rankedBids, setRankedBids] = useState<Bid[]>([]);
   const [showBidsDialog, setShowBidsDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileChecked, setProfileChecked] = useState(false);
+
+  // Check profile status on mount
+  useEffect(() => {
+    if (user && !profile && !profileChecked) {
+      refreshProfile().then(() => {
+        setProfileChecked(true);
+      });
+    } else if (profile) {
+      setProfileChecked(true);
+    }
+  }, [user, profile, refreshProfile, profileChecked]);
 
   // Fetch customer projects
   useEffect(() => {
@@ -55,13 +67,6 @@ const CustomerDashboard: React.FC = () => {
     fetchProjects();
   }, [user, toast]);
 
-  // Check if profile exists, create if it doesn't
-  useEffect(() => {
-    if (user && !profile) {
-      refreshProfile();
-    }
-  }, [user, profile, refreshProfile]);
-
   const handleProjectSubmit = async (data: any) => {
     if (!user) {
       toast({
@@ -72,15 +77,47 @@ const CustomerDashboard: React.FC = () => {
       return;
     }
     
-    // Ensure profile exists first
+    // Ensure profile exists
     if (!profile) {
       try {
         await refreshProfile();
+        if (!profile) {
+          toast({
+            title: "Profile Required",
+            description: "Please complete your profile before creating a project.",
+            variant: "destructive",
+          });
+          return;
+        }
       } catch (error: any) {
         console.error("Failed to create/fetch profile:", error);
         toast({
           title: "Profile error",
           description: "There was an issue with your user profile. Please try logging out and back in.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
+    // Ensure user type is set to customer
+    if (profile && profile.user_type !== 'customer') {
+      // Update profile to set user type as customer if not already set
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ user_type: 'customer' })
+          .eq('id', user.id);
+          
+        if (error) throw error;
+        
+        // Refresh the profile to get updated data
+        await refreshProfile();
+      } catch (error: any) {
+        console.error("Failed to update profile type:", error);
+        toast({
+          title: "Profile Update Error",
+          description: "Failed to update your profile type. Please try again.",
           variant: "destructive",
         });
         return;

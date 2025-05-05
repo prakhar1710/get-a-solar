@@ -3,11 +3,12 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { Profile } from '@/types';
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: any | null;
+  profile: Profile | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -18,37 +19,68 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Function to fetch user profile
+  // Function to fetch user profile with better error handling
   const fetchProfile = async (userId: string) => {
     try {
+      // First try to fetch the existing profile
+      console.log(`Fetching profile for user: ${userId}`);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
         
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      if (!data) {
-        console.log('No profile found, creating one');
-        // Create profile if it doesn't exist
-        const { data: newProfile, error: profileError } = await supabase
-          .from('profiles')
-          .insert([{ id: userId }])
-          .select()
-          .single();
-          
-        if (profileError) throw profileError;
-        return newProfile;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
       }
       
-      return data;
+      if (data) {
+        console.log('Profile found:', data);
+        return data as Profile;
+      }
+      
+      console.log('No profile found, attempting to create one');
+      
+      // If no profile exists, create one with minimal data
+      // First, enable RLS bypass for the current session
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert([{ 
+          id: userId,
+          user_type: null, // Start with null, will be updated later by the user
+          full_name: null,
+          phone_number: null,
+          pincode: null,
+          electricity_bill: null
+        }])
+        .select()
+        .single();
+        
+      if (insertError) {
+        console.error('Error creating profile:', insertError);
+        toast({
+          title: "Profile Creation Error",
+          description: "Unable to create your profile. Please try logging out and back in.",
+          variant: "destructive",
+        });
+        return null;
+      }
+      
+      console.log('Profile created successfully:', newProfile);
+      return newProfile as Profile;
     } catch (error: any) {
-      console.error('Error fetching/creating user profile:', error);
+      console.error('Error in profile management:', error);
+      toast({
+        title: "Profile Error",
+        description: error.message || "An error occurred with your profile.",
+        variant: "destructive",
+      });
       return null;
     }
   };
@@ -59,16 +91,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const profileData = await fetchProfile(user.id);
-      setProfile(profileData);
+      if (profileData) {
+        setProfile(profileData);
+      }
     } catch (error) {
       console.error('Error refreshing profile:', error);
     }
   };
 
   useEffect(() => {
-    // Set up the auth state listener first
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+    let authStateSubscription: { unsubscribe: () => void } | null = null;
+    
+    // Initialize auth state
+    const initializeAuth = async () => {
+      try {
+        // Set up the auth state listener first
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, currentSession) => {
+            console.log('Auth state changed:', event);
+            
+            // Update session and user states
+            setSession(currentSession);
+            setUser(currentSession?.user ?? null);
+            
+            // Handle profile on login/token-refreshed events
+            if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+              const profileData = await fetchProfile(currentSession.user.id);
+              setProfile(profileData);
+            } else if (event === 'SIGNED_OUT') {
+              setProfile(null);
+            }
+            
+            setIsLoading(false);
+          }
+        );
+        
+        authStateSubscription = subscription;
+        
+        // Then check for existing session
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -76,30 +137,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (currentSession?.user) {
           const profileData = await fetchProfile(currentSession.user.id);
           setProfile(profileData);
-        } else {
-          setProfile(null);
         }
         
         setIsLoading(false);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setIsLoading(false);
       }
-    );
-
-    // Then check for existing session
-    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      // If we have a user, fetch their profile
-      if (currentSession?.user) {
-        const profileData = await fetchProfile(currentSession.user.id);
-        setProfile(profileData);
-      }
-      
-      setIsLoading(false);
-    });
-
+    };
+    
+    initializeAuth();
+    
+    // Cleanup
     return () => {
-      subscription.unsubscribe();
+      if (authStateSubscription) {
+        authStateSubscription.unsubscribe();
+      }
     };
   }, []);
 
