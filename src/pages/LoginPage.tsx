@@ -100,14 +100,21 @@ const LoginPage = () => {
       
       // Update the profile with additional information
       if (authData?.user) {
-        const { error: profileError } = await supabase.from('profiles').update({
-          phone_number: phoneNumber,
-          pincode: pincode,
-          user_type: userType,
-          electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
-        }).eq('id', authData.user.id);
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: authData.user.id,
+            full_name: fullName,
+            phone_number: phoneNumber,
+            pincode: pincode,
+            user_type: userType,
+            electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
+          });
         
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("Error updating profile:", profileError);
+          throw profileError;
+        }
       }
       
       toast({
@@ -118,6 +125,7 @@ const LoginPage = () => {
       // Switch to login tab
       document.querySelector('[data-value="login"]')?.dispatchEvent(new MouseEvent('click'));
     } catch (error: any) {
+      console.error("Signup error:", error);
       toast({
         title: "Sign up failed",
         description: error.message || "An error occurred during sign up. Please try again.",

@@ -91,13 +91,18 @@ export function useSupabaseAuth() {
   const refreshProfile = useCallback(async () => {
     if (!user || profileFetchInProgress.current) return;
     
+    console.log("Refreshing profile for user:", user.id);
+    
     try {
       const profileData = await fetchProfile(user.id);
       if (profileData) {
         setProfile(profileData);
+        return profileData;
       }
+      return null;
     } catch (error) {
       console.error('Error refreshing profile:', error);
+      return null;
     }
   }, [user, fetchProfile]);
 
