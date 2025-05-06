@@ -82,9 +82,19 @@ const VendorDashboard: React.FC = () => {
   }, [user, toast]);
 
   const handleBidSubmit = async (data: any) => {
-    if (!user || !selectedProject) return;
+    if (!user || !selectedProject) {
+      toast({
+        title: "Error",
+        description: "User or project data missing. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
+      console.log("Submitting bid with vendor_id:", user.id);
+      console.log("Bid data:", data);
+      
       const newBid = {
         project_id: selectedProject.id,
         vendor_id: user.id,
@@ -99,21 +109,29 @@ const VendorDashboard: React.FC = () => {
         .insert([newBid])
         .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error("Bid submission error:", error);
+        throw error;
+      }
       
-      const typedBid = {
-        ...createdBid[0],
-        equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
-      } as Bid;
+      console.log("Bid submitted successfully:", createdBid);
       
-      setSubmittedBids([typedBid, ...submittedBids]);
-      setShowBidForm(false);
-      
-      toast({
-        title: "Bid submitted successfully",
-        description: "Your bid has been sent to the customer for review.",
-      });
+      if (createdBid && createdBid.length > 0) {
+        const typedBid = {
+          ...createdBid[0],
+          equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
+        } as Bid;
+        
+        setSubmittedBids([typedBid, ...submittedBids]);
+        setShowBidForm(false);
+        
+        toast({
+          title: "Bid submitted successfully",
+          description: "Your bid has been sent to the customer for review.",
+        });
+      }
     } catch (error: any) {
+      console.error("Full error details:", error);
       toast({
         title: "Error submitting bid",
         description: error.message || "Failed to submit your bid. Please try again.",
