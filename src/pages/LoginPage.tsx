@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,33 +47,16 @@ const LoginPage = () => {
       });
       
       // Redirect based on user type
-      const { data: profileData, error: profileError } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('user_type')
         .eq('id', (await supabase.auth.getUser()).data.user?.id)
-        .maybeSingle();
+        .single();
       
-      if (profileError) {
-        console.error("Error fetching profile after login:", profileError);
-        throw profileError;
-      }
-      
-      if (profileData?.user_type === 'vendor') {
+      if (data?.user_type === 'vendor') {
         navigate('/vendor');
-      } else if (profileData?.user_type === 'customer') {
-        navigate('/customer');
       } else {
-        // If user_type is null or undefined, let's set a default
-        const userId = (await supabase.auth.getUser()).data.user?.id;
-        if (userId) {
-          await supabase
-            .from('profiles')
-            .update({ user_type: 'customer' })
-            .eq('id', userId);
-          navigate('/customer');
-        } else {
-          navigate('/');
-        }
+        navigate('/customer');
       }
     } catch (error: any) {
       toast({
@@ -116,53 +100,24 @@ const LoginPage = () => {
       
       // Update the profile with additional information
       if (authData?.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: authData.user.id,
-            full_name: fullName,
-            phone_number: phoneNumber,
-            pincode: pincode,
-            user_type: userType,
-            electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
-          }, { onConflict: 'id' });
+        const { error: profileError } = await supabase.from('profiles').update({
+          phone_number: phoneNumber,
+          pincode: pincode,
+          user_type: userType,
+          electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
+        }).eq('id', authData.user.id);
         
-        if (profileError) {
-          console.error("Error updating profile:", profileError);
-          throw profileError;
-        }
-        
-        // Wait a moment to ensure profile is updated
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Log in the user automatically
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: signupEmail,
-          password: signupPassword,
-        });
-        
-        if (signInError) {
-          toast({
-            title: "Account created but couldn't log in automatically",
-            description: "Please log in with your new account.",
-          });
-          return;
-        }
-        
-        toast({
-          title: "Account created successfully",
-          description: "Welcome to Get A Solar!",
-        });
-        
-        // Redirect based on user type
-        if (userType === 'vendor') {
-          navigate('/vendor');
-        } else {
-          navigate('/customer');
-        }
+        if (profileError) throw profileError;
       }
+      
+      toast({
+        title: "Account created successfully",
+        description: "Welcome to Get A Solar! You can now log in to your account.",
+      });
+      
+      // Switch to login tab
+      document.querySelector('[data-value="login"]')?.dispatchEvent(new MouseEvent('click'));
     } catch (error: any) {
-      console.error("Signup error:", error);
       toast({
         title: "Sign up failed",
         description: error.message || "An error occurred during sign up. Please try again.",
