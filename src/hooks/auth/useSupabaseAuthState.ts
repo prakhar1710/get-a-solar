@@ -24,9 +24,24 @@ export function useSupabaseAuthState() {
       setIsLoading(true);
       authInitialized.current = true;
       
-      // First set up the auth state listener
+      // First check for existing session
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      
+      // Update session and user states
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      
+      // If we have a user, fetch their profile
+      if (currentSession?.user) {
+        const profileData = await fetchProfile(currentSession.user.id);
+        if (profileData) {
+          setProfile(profileData);
+        }
+      }
+      
+      // Then set up the auth state listener
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, currentSession) => {
+        async (event, currentSession) => {
           console.log('Auth state changed:', event);
           
           // Update session and user states
@@ -48,21 +63,6 @@ export function useSupabaseAuthState() {
       );
       
       authStateSubscription.current = subscription;
-      
-      // Then check for existing session
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      
-      // Update session and user states
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      // If we have a user, fetch their profile
-      if (currentSession?.user) {
-        const profileData = await fetchProfile(currentSession.user.id);
-        if (profileData) {
-          setProfile(profileData);
-        }
-      }
     } catch (error) {
       console.error('Auth initialization error:', error);
     } finally {
