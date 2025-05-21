@@ -29,35 +29,17 @@ const LoginPage = () => {
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
   const [electricityBill, setElectricityBill] = useState('');
 
-  // Add test credentials to make logging in easier during development
-  const fillTestCustomerCredentials = () => {
-    setLoginEmail('customer@example.com');
-    setLoginPassword('password123');
-  };
-
-  const fillTestVendorCredentials = () => {
-    setLoginEmail('vendor@example.com');
-    setLoginPassword('password123');
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      console.log('Attempting login with:', { email: loginEmail });
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password: loginPassword,
       });
       
-      if (error) {
-        console.error('Login error:', error);
-        throw error;
-      }
-      
-      console.log('Login successful:', data);
+      if (error) throw error;
       
       toast({
         title: "Login successful",
@@ -65,38 +47,18 @@ const LoginPage = () => {
       });
       
       // Redirect based on user type
-      const { data: profileData, error: profileError } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('user_type')
         .eq('id', (await supabase.auth.getUser()).data.user?.id)
-        .maybeSingle();
+        .single();
       
-      if (profileError) {
-        console.error("Error fetching profile after login:", profileError);
-        throw profileError;
-      }
-      
-      console.log('Profile data:', profileData);
-      
-      if (profileData?.user_type === 'vendor') {
+      if (data?.user_type === 'vendor') {
         navigate('/vendor');
-      } else if (profileData?.user_type === 'customer') {
-        navigate('/customer');
       } else {
-        // If user_type is null or undefined, let's set a default
-        const userId = (await supabase.auth.getUser()).data.user?.id;
-        if (userId) {
-          await supabase
-            .from('profiles')
-            .update({ user_type: 'customer' })
-            .eq('id', userId);
-          navigate('/customer');
-        } else {
-          navigate('/');
-        }
+        navigate('/customer');
       }
     } catch (error: any) {
-      console.error('Login error details:', error);
       toast({
         title: "Login failed",
         description: error.message || "Please check your credentials and try again.",
@@ -123,8 +85,6 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      console.log('Attempting signup with:', { email: signupEmail });
-      
       // Create the user account
       const { error: signUpError, data: authData } = await supabase.auth.signUp({
         email: signupEmail,
@@ -138,8 +98,6 @@ const LoginPage = () => {
       
       if (signUpError) throw signUpError;
       
-      console.log('Signup successful:', authData);
-      
       // Update the profile with additional information
       if (authData?.user) {
         const { error: profileError } = await supabase
@@ -151,42 +109,21 @@ const LoginPage = () => {
             pincode: pincode,
             user_type: userType,
             electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
-          }, { onConflict: 'id' });
+          });
         
         if (profileError) {
           console.error("Error updating profile:", profileError);
           throw profileError;
         }
-        
-        // Wait a moment to ensure profile is updated
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Log in the user automatically
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: signupEmail,
-          password: signupPassword,
-        });
-        
-        if (signInError) {
-          toast({
-            title: "Account created but couldn't log in automatically",
-            description: "Please log in with your new account.",
-          });
-          return;
-        }
-        
-        toast({
-          title: "Account created successfully",
-          description: "Welcome to Get A Solar!",
-        });
-        
-        // Redirect based on user type
-        if (userType === 'vendor') {
-          navigate('/vendor');
-        } else {
-          navigate('/customer');
-        }
       }
+      
+      toast({
+        title: "Account created successfully",
+        description: "Welcome to Get A Solar! You can now log in to your account.",
+      });
+      
+      // Switch to login tab
+      document.querySelector('[data-value="login"]')?.dispatchEvent(new MouseEvent('click'));
     } catch (error: any) {
       console.error("Signup error:", error);
       toast({
@@ -254,31 +191,6 @@ const LoginPage = () => {
                     >
                       {isLoading ? 'Signing in...' : 'Login'}
                     </Button>
-                    
-                    {/* Dev tools for easy login */}
-                    <div className="pt-4 border-t mt-4">
-                      <p className="text-sm text-gray-500 mb-2">Development testing accounts:</p>
-                      <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="sm" 
-                          className="text-xs flex-1"
-                          onClick={fillTestCustomerCredentials}
-                        >
-                          Test Customer
-                        </Button>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="sm" 
-                          className="text-xs flex-1"
-                          onClick={fillTestVendorCredentials}
-                        >
-                          Test Vendor
-                        </Button>
-                      </div>
-                    </div>
                   </form>
                 </TabsContent>
                 
