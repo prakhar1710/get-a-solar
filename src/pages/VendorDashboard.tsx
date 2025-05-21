@@ -16,7 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const VendorDashboard: React.FC = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
   const [submittedBids, setSubmittedBids] = useState<Bid[]>([]);

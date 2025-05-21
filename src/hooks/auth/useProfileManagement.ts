@@ -42,7 +42,7 @@ export function useProfileManagement() {
         .from('profiles')
         .insert([{ 
           id: userId,
-          user_type: null, // Start with null, will be updated later by the user
+          user_type: 'vendor', // Default to vendor for testing
           full_name: null,
           phone_number: null,
           pincode: null,
