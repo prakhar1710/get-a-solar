@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,17 +29,35 @@ const LoginPage = () => {
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
   const [electricityBill, setElectricityBill] = useState('');
 
+  // Add test credentials to make logging in easier during development
+  const fillTestCustomerCredentials = () => {
+    setLoginEmail('customer@example.com');
+    setLoginPassword('password123');
+  };
+
+  const fillTestVendorCredentials = () => {
+    setLoginEmail('vendor@example.com');
+    setLoginPassword('password123');
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting login with:', { email: loginEmail });
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password: loginPassword,
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+      
+      console.log('Login successful:', data);
       
       toast({
         title: "Login successful",
@@ -56,6 +75,8 @@ const LoginPage = () => {
         console.error("Error fetching profile after login:", profileError);
         throw profileError;
       }
+      
+      console.log('Profile data:', profileData);
       
       if (profileData?.user_type === 'vendor') {
         navigate('/vendor');
@@ -75,6 +96,7 @@ const LoginPage = () => {
         }
       }
     } catch (error: any) {
+      console.error('Login error details:', error);
       toast({
         title: "Login failed",
         description: error.message || "Please check your credentials and try again.",
@@ -101,6 +123,8 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
+      console.log('Attempting signup with:', { email: signupEmail });
+      
       // Create the user account
       const { error: signUpError, data: authData } = await supabase.auth.signUp({
         email: signupEmail,
@@ -113,6 +137,8 @@ const LoginPage = () => {
       });
       
       if (signUpError) throw signUpError;
+      
+      console.log('Signup successful:', authData);
       
       // Update the profile with additional information
       if (authData?.user) {
@@ -228,6 +254,31 @@ const LoginPage = () => {
                     >
                       {isLoading ? 'Signing in...' : 'Login'}
                     </Button>
+                    
+                    {/* Dev tools for easy login */}
+                    <div className="pt-4 border-t mt-4">
+                      <p className="text-sm text-gray-500 mb-2">Development testing accounts:</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-xs flex-1"
+                          onClick={fillTestCustomerCredentials}
+                        >
+                          Test Customer
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-xs flex-1"
+                          onClick={fillTestVendorCredentials}
+                        >
+                          Test Vendor
+                        </Button>
+                      </div>
+                    </div>
                   </form>
                 </TabsContent>
                 
