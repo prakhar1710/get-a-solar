@@ -2,56 +2,124 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
-import { Sun, Zap, Users, BadgeIndianRupee, Star } from 'lucide-react';
+import { Sun, Zap, Users, BadgeIndianRupee, Star, ArrowRight, Shield } from 'lucide-react';
+
 const Index = () => {
   const navigate = useNavigate();
-  const features = [{
-    icon: <Zap className="h-6 w-6 text-sbs-orange" />,
-    title: "Solar Project Listings",
-    description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
-  }, {
-    icon: <Users className="h-6 w-6 text-sbs-orange" />,
-    title: "Verified Vendors",
-    description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
-  }, {
-    icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
-    title: "State Subsidy Integration",
-    description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
-  }, {
-    icon: <Star className="h-6 w-6 text-sbs-orange" />,
-    title: "Intelligent Bid Ranking",
-    description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
-  }];
-  return <MainLayout>
-      {/* Hero Section with Full Cover Image */}
+
+  const features = [
+    {
+      icon: <Zap className="h-6 w-6 text-sbs-orange" />,
+      title: "Solar Project Listings",
+      description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
+    },
+    {
+      icon: <Users className="h-6 w-6 text-sbs-orange" />,
+      title: "Verified Vendors",
+      description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
+    },
+    {
+      icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
+      title: "State Subsidy Integration",
+      description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
+    },
+    {
+      icon: <Star className="h-6 w-6 text-sbs-orange" />,
+      title: "Intelligent Bid Ranking",
+      description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
+    }
+  ];
+
+  return (
+    <MainLayout>
+      {/* Enhanced Hero Section */}
       <section className="relative h-screen overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
-      }}>
-          {/* Overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/40"></div>
+        {/* Background Image with better positioning */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-700"
+          style={{
+            backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
+          }}
+        >
+          {/* Enhanced gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
         </div>
         
-        {/* Content */}
-        <div className="relative z-10 container h-full flex items-center px-0">
-          <div className="max-w-2xl space-y-6">
-            <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-2">
-              Solar Bidding Platform for India
+        {/* Content with better positioning */}
+        <div className="relative z-10 container h-full flex items-center justify-start px-4 md:px-8">
+          <div className="max-w-3xl space-y-8">
+            {/* Enhanced badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sbs-orange/20 backdrop-blur-md border border-sbs-orange/30 text-white text-sm font-medium mb-4">
+              <Shield className="h-4 w-4 text-sbs-orange" />
+              India's Trusted Solar Bidding Platform
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
-              Get A <span className="text-sbs-orange">Solar</span>: Solar Made Simple
+            
+            {/* Enhanced main heading */}
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
+              Power Your Future with
+              <span className="block text-sbs-orange mt-2">Solar Energy</span>
             </h1>
-            <p className="text-xl text-white/90 max-w-xl">
-              Connect with trusted solar vendors, compare competitive bids, and find the perfect installation partner for your solar journey.
+            
+            {/* Enhanced description */}
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
+              Connect with India's most trusted solar vendors. Get competitive bids, 
+              compare prices, and find the perfect installation partner for your solar journey.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg shadow-lg" onClick={() => navigate('/customer')}>
-                Post a Solar Project
+            
+            {/* Enhanced stats row */}
+            <div className="flex flex-wrap gap-6 text-white/80 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
+                <span>1200+ Projects Completed</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
+                <span>450+ Verified Vendors</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
+                <span>₹2.5Cr+ Savings Generated</span>
+              </div>
+            </div>
+            
+            {/* Enhanced action buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Button 
+                className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                onClick={() => navigate('/customer')}
+              >
+                Get Solar Quotes Now
+                <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm text-orange-500">
-                Submit a Bid
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/vendor')} 
+                className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm text-white hover:text-white transition-all duration-200"
+              >
+                Join as Vendor
               </Button>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className="flex items-center gap-6 pt-4 text-white/70 text-sm">
+              <div className="flex items-center gap-2">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span>4.9/5 Customer Rating</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-green-400" />
+                <span>GSTIN Verified Vendors</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm">Scroll to explore</span>
+            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white/60 rounded-full mt-2"></div>
             </div>
           </div>
         </div>
@@ -197,6 +265,8 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </MainLayout>;
+    </MainLayout>
+  );
 };
+
 export default Index;
