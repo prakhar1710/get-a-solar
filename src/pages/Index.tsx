@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -33,62 +32,48 @@ const Index = () => {
 
   return (
     <MainLayout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-sbs-purple/10 to-sbs-orange/10">
-        <div className="container px-4 py-20 md:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="inline-block px-3 py-1 rounded-full bg-sbs-purple/10 text-sbs-purple text-sm font-medium mb-2">
-                Solar Bidding Platform for India
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                Get A <span className="text-sbs-orange">Solar</span>: Solar Made Simple
-              </h1>
-              <p className="text-xl text-muted-foreground">
-                Connect with trusted solar vendors, compare competitive bids, and find the perfect installation partner for your solar journey.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg"
-                  onClick={() => navigate('/customer')}
-                >
-                  Post a Solar Project
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-sbs-orange text-sbs-orange hover:bg-sbs-orange hover:text-white px-8 py-6 text-lg"
-                  onClick={() => navigate('/vendor')}
-                >
-                  Submit a Bid
-                </Button>
-              </div>
+      {/* Hero Section with Full Cover Image */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
+          }}
+        >
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 container px-4 h-full flex items-center">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-2">
+              Solar Bidding Platform for India
             </div>
-            <div className="relative">
-              <div className="rounded-xl overflow-hidden shadow-xl">
-                <img 
-                  src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" 
-                  alt="Solar panels on Indian rooftop" 
-                  className="w-full h-auto object-cover rounded-xl"
-                />
-              </div>
-              <div className="absolute -top-4 -left-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 flex items-center gap-3 border border-sbs-orange/20">
-                <Sun className="h-10 w-10 text-sbs-orange animate-pulse-slow" />
-                <div>
-                  <div className="text-sm font-semibold">Clean Energy</div>
-                  <div className="text-xs text-muted-foreground">Sustainable Future</div>
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 flex items-center gap-3 border border-sbs-orange/20">
-                <BadgeIndianRupee className="h-10 w-10 text-sbs-purple animate-pulse-slow" />
-                <div>
-                  <div className="text-sm font-semibold">Save Money</div>
-                  <div className="text-xs text-muted-foreground">With State Subsidies</div>
-                </div>
-              </div>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">
+              Get A <span className="text-sbs-orange">Solar</span>: Solar Made Simple
+            </h1>
+            <p className="text-xl text-white/90 max-w-xl">
+              Connect with trusted solar vendors, compare competitive bids, and find the perfect installation partner for your solar journey.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg shadow-lg"
+                onClick={() => navigate('/customer')}
+              >
+                Post a Solar Project
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-white text-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm"
+                onClick={() => navigate('/vendor')}
+              >
+                Submit a Bid
+              </Button>
             </div>
           </div>
         </div>
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
       </section>
 
       {/* Features Section */}
