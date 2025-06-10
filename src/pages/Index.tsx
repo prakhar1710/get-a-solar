@@ -3,44 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
 import { Sun, Zap, Users, BadgeIndianRupee, Star, ArrowRight, Shield } from 'lucide-react';
-
 const Index = () => {
   const navigate = useNavigate();
-
-  const features = [
-    {
-      icon: <Zap className="h-6 w-6 text-sbs-orange" />,
-      title: "Solar Project Listings",
-      description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
-    },
-    {
-      icon: <Users className="h-6 w-6 text-sbs-orange" />,
-      title: "Verified Vendors",
-      description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
-    },
-    {
-      icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
-      title: "State Subsidy Integration",
-      description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
-    },
-    {
-      icon: <Star className="h-6 w-6 text-sbs-orange" />,
-      title: "Intelligent Bid Ranking",
-      description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
-    }
-  ];
-
-  return (
-    <MainLayout>
+  const features = [{
+    icon: <Zap className="h-6 w-6 text-sbs-orange" />,
+    title: "Solar Project Listings",
+    description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
+  }, {
+    icon: <Users className="h-6 w-6 text-sbs-orange" />,
+    title: "Verified Vendors",
+    description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
+  }, {
+    icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
+    title: "State Subsidy Integration",
+    description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
+  }, {
+    icon: <Star className="h-6 w-6 text-sbs-orange" />,
+    title: "Intelligent Bid Ranking",
+    description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
+  }];
+  return <MainLayout>
       {/* Enhanced Hero Section */}
       <section className="relative h-screen overflow-hidden">
         {/* Background Image with better positioning */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-700"
-          style={{
-            backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
-          }}
-        >
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-700" style={{
+        backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
+      }}>
           {/* Enhanced gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
         </div>
@@ -84,18 +72,11 @@ const Index = () => {
             
             {/* Enhanced action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button 
-                className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
-                onClick={() => navigate('/customer')}
-              >
+              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2" onClick={() => navigate('/customer')}>
                 Get Solar Quotes Now
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/vendor')} 
-                className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm text-white hover:text-white transition-all duration-200"
-              >
+              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-200 text-slate-50">
                 Join as Vendor
               </Button>
             </div>
@@ -265,8 +246,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </MainLayout>
-  );
+    </MainLayout>;
 };
-
 export default Index;
