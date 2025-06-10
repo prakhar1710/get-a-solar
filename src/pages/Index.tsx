@@ -3,44 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
 import { Sun, Zap, Users, BadgeIndianRupee, Star } from 'lucide-react';
-
 const Index = () => {
   const navigate = useNavigate();
-
-  const features = [
-    {
-      icon: <Zap className="h-6 w-6 text-sbs-orange" />,
-      title: "Solar Project Listings",
-      description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
-    },
-    {
-      icon: <Users className="h-6 w-6 text-sbs-orange" />,
-      title: "Verified Vendors",
-      description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
-    },
-    {
-      icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
-      title: "State Subsidy Integration",
-      description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
-    },
-    {
-      icon: <Star className="h-6 w-6 text-sbs-orange" />,
-      title: "Intelligent Bid Ranking",
-      description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
-    }
-  ];
-
-  return (
-    <MainLayout>
+  const features = [{
+    icon: <Zap className="h-6 w-6 text-sbs-orange" />,
+    title: "Solar Project Listings",
+    description: "Post your solar installation requirements with detailed specifications and receive competitive bids from verified vendors."
+  }, {
+    icon: <Users className="h-6 w-6 text-sbs-orange" />,
+    title: "Verified Vendors",
+    description: "All vendors are verified with GSTIN, ALMM/BIS certifications to ensure quality and reliability."
+  }, {
+    icon: <BadgeIndianRupee className="h-6 w-6 text-sbs-orange" />,
+    title: "State Subsidy Integration",
+    description: "Automatically calculate applicable subsidies for solar installations based on your state's policies."
+  }, {
+    icon: <Star className="h-6 w-6 text-sbs-orange" />,
+    title: "Intelligent Bid Ranking",
+    description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
+  }];
+  return <MainLayout>
       {/* Hero Section with Full Cover Image */}
       <section className="relative h-screen overflow-hidden">
         {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
-          }}
-        >
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
+      }}>
           {/* Overlay for better text readability */}
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
@@ -58,17 +46,10 @@ const Index = () => {
               Connect with trusted solar vendors, compare competitive bids, and find the perfect installation partner for your solar journey.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg shadow-lg"
-                onClick={() => navigate('/customer')}
-              >
+              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg shadow-lg" onClick={() => navigate('/customer')}>
                 Post a Solar Project
               </Button>
-              <Button 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm"
-                onClick={() => navigate('/vendor')}
-              >
+              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm" onClick={() => navigate('/vendor')}>
                 Submit a Bid
               </Button>
             </div>
@@ -87,15 +68,13 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="solar-card">
+            {features.map((feature, index) => <div key={index} className="solar-card">
                 <div className="mb-4 p-3 inline-flex items-center justify-center rounded-lg bg-sbs-purple-light/40">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -108,18 +87,10 @@ const Index = () => {
             Join our platform to find the best solar solutions for your needs or offer your solar installation services.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              variant="secondary" 
-              className="bg-white text-sbs-purple hover:bg-gray-100 px-8 py-6 text-lg"
-              onClick={() => navigate('/customer')}
-            >
+            <Button variant="secondary" className="bg-white text-sbs-purple hover:bg-gray-100 px-8 py-6 text-lg" onClick={() => navigate('/customer')}>
               I Need Solar Installation
             </Button>
-            <Button 
-              variant="outline" 
-              className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg"
-              onClick={() => navigate('/vendor')}
-            >
+            <Button variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg" onClick={() => navigate('/vendor')}>
               I'm a Solar Vendor
             </Button>
           </div>
@@ -164,9 +135,7 @@ const Index = () => {
             <div className="solar-card">
               <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400" />
-                  ))}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400" />)}
                 </div>
               </div>
               <p className="mb-4">
@@ -182,9 +151,7 @@ const Index = () => {
             <div className="solar-card">
               <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400" />
-                  ))}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400" />)}
                 </div>
               </div>
               <p className="mb-4">
@@ -200,9 +167,7 @@ const Index = () => {
             <div className="solar-card">
               <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400">
-                  {[...Array(4)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400" />
-                  ))}
+                  {[...Array(4)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400" />)}
                   <Star className="h-4 w-4" />
                 </div>
               </div>
@@ -228,17 +193,10 @@ const Index = () => {
             <p className="text-xl mb-8 text-muted-foreground">
               Create your account today and start your solar journey with Get A Solar.
             </p>
-            <Button 
-              className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg"
-              onClick={() => navigate('/login')}
-            >
-              Connect Supabase to Get Started
-            </Button>
+            <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg" onClick={() => navigate('/login')}>Get Started </Button>
           </div>
         </div>
       </section>
-    </MainLayout>
-  );
+    </MainLayout>;
 };
-
 export default Index;
