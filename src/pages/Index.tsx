@@ -90,7 +90,7 @@ const Index = () => {
             <Button variant="secondary" className="bg-white text-sbs-purple hover:bg-gray-100 px-8 py-6 text-lg" onClick={() => navigate('/customer')}>
               I Need Solar Installation
             </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg" onClick={() => navigate('/vendor')}>
+            <Button variant="outline" onClick={() => navigate('/vendor')} className="border-white hover:bg-white/10 px-8 py-6 text-lg text-slate-50">
               I'm a Solar Vendor
             </Button>
           </div>
