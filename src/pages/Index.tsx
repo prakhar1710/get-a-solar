@@ -34,7 +34,7 @@ const Index = () => {
         </div>
         
         {/* Content */}
-        <div className="relative z-10 container px-4 h-full flex items-center">
+        <div className="relative z-10 container h-full flex items-center px-0">
           <div className="max-w-2xl space-y-6">
             <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-2">
               Solar Bidding Platform for India
@@ -49,7 +49,7 @@ const Index = () => {
               <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg shadow-lg" onClick={() => navigate('/customer')}>
                 Post a Solar Project
               </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm" onClick={() => navigate('/vendor')}>
+              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-white hover:bg-white hover:text-sbs-purple px-8 py-6 text-lg backdrop-blur-sm text-orange-500">
                 Submit a Bid
               </Button>
             </div>
@@ -186,8 +186,8 @@ const Index = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4 text-center">
+      <section className="py-16 md:py-24 bg-slate-50">
+        <div className="container px-4 text-center bg-white/0">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">Join the Solar Revolution</h2>
             <p className="text-xl mb-8 text-muted-foreground">
