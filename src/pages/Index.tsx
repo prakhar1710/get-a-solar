@@ -72,7 +72,7 @@ const Index = () => {
             
             {/* Enhanced action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2" onClick={() => navigate('/customer')}>
+              <Button onClick={() => navigate('/customer')} className="bg-sbs-purple hover:bg-sbs-purple-dark px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 text-[#e1782c] bg-slate-50">
                 Get Solar Quotes Now
                 <ArrowRight className="h-5 w-5" />
               </Button>
