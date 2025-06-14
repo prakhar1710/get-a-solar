@@ -142,26 +142,41 @@ const LoginPage = () => {
         } else {
           console.log('Profile updated successfully');
         }
-      }
-      
-      toast({
-        title: "Account created successfully",
-        description: "Please check your email to verify your account before logging in.",
-      });
-      
-      // Clear form and switch to login tab
-      setSignupEmail('');
-      setSignupPassword('');
-      setFullName('');
-      setPhoneNumber('');
-      setPincode('');
-      setElectricityBill('');
-      setUserType('customer');
-      
-      // Switch to login tab
-      const loginTab = document.querySelector('[data-value="login"]') as HTMLElement;
-      if (loginTab) {
-        loginTab.click();
+
+        // Check if email confirmation is required
+        if (authData.user && !authData.session) {
+          toast({
+            title: "Account created successfully",
+            description: "Please check your email to verify your account before logging in.",
+          });
+          
+          // Clear form and switch to login tab
+          setSignupEmail('');
+          setSignupPassword('');
+          setFullName('');
+          setPhoneNumber('');
+          setPincode('');
+          setElectricityBill('');
+          setUserType('customer');
+          
+          // Switch to login tab
+          const loginTab = document.querySelector('[data-value="login"]') as HTMLElement;
+          if (loginTab) {
+            loginTab.click();
+          }
+        } else {
+          // User is automatically logged in, redirect to appropriate dashboard
+          toast({
+            title: "Account created and logged in",
+            description: "Welcome to Get A Solar!",
+          });
+          
+          if (userType === 'vendor') {
+            navigate('/vendor');
+          } else {
+            navigate('/customer');
+          }
+        }
       }
     } catch (error: any) {
       console.error("Signup error:", error);
