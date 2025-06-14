@@ -82,24 +82,42 @@ const LoginPage = () => {
       return;
     }
     
+    // Validate phone number
+    if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
+      toast({
+        title: "Invalid phone number",
+        description: "Please enter a valid 10-digit phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
-      // Create the user account
+      // Create the user account with metadata
       const { error: signUpError, data: authData } = await supabase.auth.signUp({
         email: signupEmail,
         password: signupPassword,
         options: {
           data: {
             full_name: fullName,
+            phone_number: phoneNumber,
+            pincode: pincode,
+            user_type: userType,
+            electricity_bill: userType === 'customer' ? electricityBill : null,
           },
+          emailRedirectTo: `${window.location.origin}/login`
         },
       });
       
       if (signUpError) throw signUpError;
       
-      // Update the profile with additional information
+      // If user was created successfully, update the profile with additional information
       if (authData?.user) {
+        console.log('User created, updating profile:', authData.user.id);
+        
+        // Update the profile with additional information
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
@@ -109,21 +127,42 @@ const LoginPage = () => {
             pincode: pincode,
             user_type: userType,
             electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
+            updated_at: new Date().toISOString(),
+          }, {
+            onConflict: 'id'
           });
         
         if (profileError) {
           console.error("Error updating profile:", profileError);
-          throw profileError;
+          toast({
+            title: "Profile update failed",
+            description: "Account created but profile update failed. Please try logging in.",
+            variant: "destructive",
+          });
+        } else {
+          console.log('Profile updated successfully');
         }
       }
       
       toast({
         title: "Account created successfully",
-        description: "Welcome to Get A Solar! You can now log in to your account.",
+        description: "Please check your email to verify your account before logging in.",
       });
       
+      // Clear form and switch to login tab
+      setSignupEmail('');
+      setSignupPassword('');
+      setFullName('');
+      setPhoneNumber('');
+      setPincode('');
+      setElectricityBill('');
+      setUserType('customer');
+      
       // Switch to login tab
-      document.querySelector('[data-value="login"]')?.dispatchEvent(new MouseEvent('click'));
+      const loginTab = document.querySelector('[data-value="login"]') as HTMLElement;
+      if (loginTab) {
+        loginTab.click();
+      }
     } catch (error: any) {
       console.error("Signup error:", error);
       toast({
@@ -223,9 +262,11 @@ const LoginPage = () => {
                       <Input 
                         id="signup-password" 
                         type="password"
+                        placeholder="Minimum 6 characters"
                         value={signupPassword}
                         onChange={(e) => setSignupPassword(e.target.value)}
                         required
+                        minLength={6}
                       />
                     </div>
                     <div className="space-y-2">
@@ -235,8 +276,9 @@ const LoginPage = () => {
                         type="tel" 
                         placeholder="10-digit phone number"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
                         required
+                        maxLength={10}
                       />
                     </div>
                     <div className="space-y-2">
@@ -246,7 +288,7 @@ const LoginPage = () => {
                         type="text" 
                         placeholder="6-digit PIN code"
                         value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         maxLength={6}
                         required
                       />
@@ -282,6 +324,7 @@ const LoginPage = () => {
                           value={electricityBill}
                           onChange={(e) => setElectricityBill(e.target.value)}
                           required={userType === 'customer'}
+                          min="0"
                         />
                       </div>
                     )}
