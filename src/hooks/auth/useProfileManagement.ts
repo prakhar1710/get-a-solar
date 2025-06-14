@@ -83,8 +83,14 @@ export function useProfileManagement() {
   }, [toast]);
 
   // Function to refresh profile data
-  const refreshProfile = useCallback(async (user: User | null) => {
-    if (!user || profileFetchInProgress.current) return null;
+  const refreshProfile = useCallback(async (user: User | null = null) => {
+    if (profileFetchInProgress.current) return null;
+    
+    // If no user provided, we can't fetch profile
+    if (!user) {
+      console.log("No user provided for profile refresh");
+      return null;
+    }
     
     console.log("Refreshing profile for user:", user.id);
     

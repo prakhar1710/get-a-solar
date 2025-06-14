@@ -10,10 +10,20 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) => {
-  const { user, profile, isLoading } = useAuth();
+  const { user, profile, isLoading, refreshProfile } = useAuth();
   const { toast } = useToast();
   const initialCheckDone = useRef(false);
   const toastShown = useRef(false);
+  const profileRefreshAttempted = useRef(false);
+
+  useEffect(() => {
+    // If we have a user but no profile data, try to refresh it once
+    if (user && !profile && !isLoading && !profileRefreshAttempted.current) {
+      profileRefreshAttempted.current = true;
+      console.log('User exists but no profile found, attempting to refresh...');
+      refreshProfile();
+    }
+  }, [user, profile, isLoading, refreshProfile]);
 
   useEffect(() => {
     // Only show toast messages after initial authentication check is complete
@@ -57,9 +67,28 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     return <Navigate to="/login" />;
   }
 
-  // If no profile exists yet or user_type is null, allow access but show loading
-  if (!profile || profile.user_type === null) {
-    return <div className="flex justify-center items-center h-screen">Setting up your profile...</div>;
+  // If no profile exists yet, show a different loading message and try to refresh
+  if (!profile) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-4">
+        <div>Loading your profile...</div>
+        <div className="text-sm text-muted-foreground">
+          If this takes too long, try refreshing the page
+        </div>
+      </div>
+    );
+  }
+
+  // If user_type is null, allow access but show a setup message
+  if (profile.user_type === null) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-4">
+        <div>Setting up your profile...</div>
+        <div className="text-sm text-muted-foreground">
+          Please refresh the page if this doesn't complete automatically
+        </div>
+      </div>
+    );
   }
 
   // If user type is specified and we have profile data, check if user has the correct role

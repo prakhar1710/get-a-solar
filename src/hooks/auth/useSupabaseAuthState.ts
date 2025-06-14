@@ -6,7 +6,7 @@ import { useSessionManagement } from './useSessionManagement';
 
 export function useSupabaseAuthState() {
   const {
-    profile, setProfile, fetchProfile, refreshProfile, completeInitialLoad
+    profile, setProfile, fetchProfile, refreshProfile: originalRefreshProfile, completeInitialLoad
   } = useProfileManagement();
   
   const {
@@ -90,11 +90,15 @@ export function useSupabaseAuthState() {
     };
   }, [initializeAuth]);
 
-  // Wrap refreshProfile to handle user check
+  // Wrap refreshProfile to handle user check and use current user
   const handleRefreshProfile = useCallback(async () => {
-    if (!user) return null;
-    return await refreshProfile(user);
-  }, [user, refreshProfile]);
+    console.log('Refresh profile called with user:', user?.id);
+    if (!user) {
+      console.log('No user available for profile refresh');
+      return null;
+    }
+    return await originalRefreshProfile(user);
+  }, [user, originalRefreshProfile]);
 
   return {
     session,
