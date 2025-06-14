@@ -117,20 +117,28 @@ const LoginPage = () => {
       if (authData?.user) {
         console.log('User created, updating profile:', authData.user.id);
         
-        // Update the profile with additional information
-        const { error: profileError } = await supabase
+        // Wait a moment for the trigger to create the initial profile
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update the profile with all the signup data
+        const profileData = {
+          id: authData.user.id,
+          full_name: fullName,
+          phone_number: phoneNumber,
+          pincode: pincode,
+          user_type: userType,
+          electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
+          updated_at: new Date().toISOString(),
+        };
+        
+        console.log('Updating profile with data:', profileData);
+        
+        const { error: profileError, data: updatedProfile } = await supabase
           .from('profiles')
-          .upsert({
-            id: authData.user.id,
-            full_name: fullName,
-            phone_number: phoneNumber,
-            pincode: pincode,
-            user_type: userType,
-            electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
-            updated_at: new Date().toISOString(),
-          }, {
+          .upsert(profileData, {
             onConflict: 'id'
-          });
+          })
+          .select();
         
         if (profileError) {
           console.error("Error updating profile:", profileError);
@@ -140,7 +148,7 @@ const LoginPage = () => {
             variant: "destructive",
           });
         } else {
-          console.log('Profile updated successfully');
+          console.log('Profile updated successfully:', updatedProfile);
         }
 
         // Check if email confirmation is required
@@ -171,11 +179,14 @@ const LoginPage = () => {
             description: "Welcome to Get A Solar!",
           });
           
-          if (userType === 'vendor') {
-            navigate('/vendor');
-          } else {
-            navigate('/customer');
-          }
+          // Add a small delay to ensure profile is updated before navigation
+          setTimeout(() => {
+            if (userType === 'vendor') {
+              navigate('/vendor');
+            } else {
+              navigate('/customer');
+            }
+          }, 500);
         }
       }
     } catch (error: any) {

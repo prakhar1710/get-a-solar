@@ -57,6 +57,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     return <Navigate to="/login" />;
   }
 
+  // If no profile exists yet or user_type is null, allow access but show loading
+  if (!profile || profile.user_type === null) {
+    return <div className="flex justify-center items-center h-screen">Setting up your profile...</div>;
+  }
+
   // If user type is specified and we have profile data, check if user has the correct role
   if (userType && profile && profile.user_type !== userType) {
     // Redirect to the appropriate dashboard based on actual user type
