@@ -168,6 +168,7 @@ const CustomerDashboard: React.FC = () => {
         onClose={() => setShowBidsDialog(false)}
         project={selectedProject}
         bids={projectBids}
+        onBidAccepted={refreshProjects}
       />
     </MainLayout>
   );

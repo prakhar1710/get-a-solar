@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -51,23 +50,30 @@ const VendorDashboard: React.FC = () => {
     fetchProjects();
   }, [toast]);
   
-  // Fetch vendor's submitted bids
+  // Fetch vendor's submitted bids and their related projects
   useEffect(() => {
     if (!user) return;
     
-    const fetchBids = async () => {
+    const fetchBidsAndProjects = async () => {
       try {
-        const { data, error } = await supabase
+        // Fetch bids with project information
+        const { data: bidsData, error: bidsError } = await supabase
           .from('bids')
-          .select('*')
+          .select(`
+            *,
+            project:projects (*)
+          `)
           .eq('vendor_id', user.id)
           .order('created_at', { ascending: false });
           
-        if (error) throw error;
-        setSubmittedBids((data?.map(bid => ({
+        if (bidsError) throw bidsError;
+        
+        const bidsWithProjects = bidsData?.map(bid => ({
           ...bid,
           equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
-        })) as Bid[]) || []);
+        })) || [];
+        
+        setSubmittedBids(bidsWithProjects as Bid[]);
       } catch (error: any) {
         console.error('Error fetching bids:', error);
         toast({
@@ -78,7 +84,7 @@ const VendorDashboard: React.FC = () => {
       }
     };
     
-    fetchBids();
+    fetchBidsAndProjects();
   }, [user, toast]);
 
   const handleBidSubmit = async (data: any) => {
