@@ -48,13 +48,14 @@ export const useCustomerProjects = (userId: string | undefined) => {
     setSelectedProject(project);
     
     try {
-      // Fetch bids for the selected project
+      // Fetch bids for the selected project with vendor profile information
       const { data: bidsData, error: bidsError } = await supabase
         .from('bids')
         .select(`
           *,
-          profiles:vendor_id (
-            full_name
+          vendor_profile:profiles!bids_vendor_id_fkey (
+            full_name,
+            phone_number
           )
         `)
         .eq('project_id', project.id);
@@ -63,7 +64,7 @@ export const useCustomerProjects = (userId: string | undefined) => {
       
       const bidsWithVendorInfo = bidsData?.map(bid => ({
         ...bid,
-        vendor_name: bid.profiles?.full_name || 'Anonymous Vendor',
+        vendor_name: bid.vendor_profile?.full_name || 'Unknown Vendor',
         vendor_rating: 4.5, // Mock rating for now
         equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
       })) || [];
@@ -76,6 +77,7 @@ export const useCustomerProjects = (userId: string | undefined) => {
       
       setShowBidsDialog(true);
     } catch (error: any) {
+      console.error('Error fetching bids:', error);
       toast({
         title: "Error fetching bids",
         description: error.message || "Failed to fetch bids for this project.",
