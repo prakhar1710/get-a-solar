@@ -92,6 +92,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          accepted_bid_id: string | null
           budget: number
           created_at: string
           customer_id: string
@@ -105,6 +106,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          accepted_bid_id?: string | null
           budget: number
           created_at?: string
           customer_id: string
@@ -118,6 +120,7 @@ export type Database = {
           title: string
         }
         Update: {
+          accepted_bid_id?: string | null
           budget?: number
           created_at?: string
           customer_id?: string
@@ -131,6 +134,13 @@ export type Database = {
           title?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_accepted_bid_id_fkey"
+            columns: ["accepted_bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_customer_id_fkey"
             columns: ["customer_id"]

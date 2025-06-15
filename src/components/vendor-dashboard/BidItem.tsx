@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +13,7 @@ const BidItem: React.FC<BidItemProps> = ({ bid, project }) => {
   const getBidStatus = () => {
     if (project.status === 'awarded') {
       // Check if this bid was accepted
-      if ((project as any).accepted_bid_id === bid.id) {
+      if (project.accepted_bid_id === bid.id) {
         return {
           label: 'Accepted',
           variant: 'default' as const,
