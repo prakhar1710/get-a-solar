@@ -1,203 +1,45 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Project, Bid } from '@/types';
-import BidForm from '@/components/forms/BidForm';
-import { Upload } from 'lucide-react';
+import { Project } from '@/types';
 import VerificationStatusCard from '@/components/vendor-dashboard/VerificationStatusCard';
 import AvailableProjects from '@/components/vendor-dashboard/AvailableProjects';
 import MyBids from '@/components/vendor-dashboard/MyBids';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import VendorDashboardHeader from '@/components/vendor-dashboard/VendorDashboardHeader';
+import BidSubmissionDialog from '@/components/vendor-dashboard/BidSubmissionDialog';
+import { useVendorDashboard } from '@/hooks/useVendorDashboard';
 
 const VendorDashboard: React.FC = () => {
-  const { toast } = useToast();
-  const { user } = useAuth();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
-  const [submittedBids, setSubmittedBids] = useState<Bid[]>([]);
-  const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch all available projects
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setIsLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('status', 'open')
-          .order('created_at', { ascending: false });
-          
-        if (error) throw error;
-        setAvailableProjects((data as Project[]) || []);
-      } catch (error: any) {
-        console.error('Error fetching projects:', error);
-        toast({
-          title: "Error fetching projects",
-          description: error.message || "Failed to load available projects.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchProjects();
-  }, [toast]);
-  
-  // Fetch vendor's submitted bids and their related projects
-  useEffect(() => {
-    if (!user) return;
-    
-    const fetchBidsAndProjects = async () => {
-      try {
-        // Fetch bids with project information
-        const { data: bidsData, error: bidsError } = await supabase
-          .from('bids')
-          .select(`
-            *,
-            project:projects (*)
-          `)
-          .eq('vendor_id', user.id)
-          .order('created_at', { ascending: false });
-          
-        if (bidsError) throw bidsError;
-        
-        const bidsWithProjects = bidsData?.map(bid => ({
-          ...bid,
-          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
-        })) || [];
-        
-        setSubmittedBids(bidsWithProjects as Bid[]);
-      } catch (error: any) {
-        console.error('Error fetching bids:', error);
-        toast({
-          title: "Error fetching bids",
-          description: error.message || "Failed to load your bids.",
-          variant: "destructive",
-        });
-      }
-    };
-    
-    fetchBidsAndProjects();
-  }, [user, toast]);
-
-  const handleBidSubmit = async (data: any) => {
-    if (!user || !selectedProject) {
-      toast({
-        title: "Error",
-        description: "User or project data missing. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      console.log("Submitting bid with vendor_id:", user.id);
-      console.log("Bid data:", data);
-      
-      const newBid = {
-        project_id: selectedProject.id,
-        vendor_id: user.id,
-        price_per_watt: data.price_per_watt,
-        equipment_tier: data.equipment_tier,
-        timeline_days: data.timeline_days,
-        amc_included: data.amc_included
-      };
-      
-      const { error, data: createdBid } = await supabase
-        .from('bids')
-        .insert([newBid])
-        .select();
-        
-      if (error) {
-        console.error("Bid submission error:", error);
-        throw error;
-      }
-      
-      console.log("Bid submitted successfully:", createdBid);
-      
-      if (createdBid && createdBid.length > 0) {
-        const typedBid = {
-          ...createdBid[0],
-          equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
-        } as Bid;
-        
-        setSubmittedBids([typedBid, ...submittedBids]);
-        setShowBidForm(false);
-        
-        toast({
-          title: "Bid submitted successfully",
-          description: "Your bid has been sent to the customer for review.",
-        });
-      }
-    } catch (error: any) {
-      console.error("Full error details:", error);
-      toast({
-        title: "Error submitting bid",
-        description: error.message || "Failed to submit your bid. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const {
+    submittedBids,
+    availableProjects,
+    isLoading,
+    handleBidSubmit,
+    refreshProjects
+  } = useVendorDashboard();
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     setShowBidForm(true);
   };
 
-  const handleViewAvailableProjects = () => {
+  const handleViewAvailableProjects = () => {  
     document.querySelector('[data-value="available"]')?.dispatchEvent(new MouseEvent('click'));
   };
-  
-  const refreshProjects = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      setAvailableProjects((data as Project[]) || []);
-      
-      toast({
-        title: "Projects refreshed",
-        description: "Available projects have been updated.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error refreshing projects",
-        description: error.message || "Failed to refresh available projects.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+
+  const handleBidSubmitWrapper = async (data: any) => {
+    if (!selectedProject) return false;
+    return await handleBidSubmit(data, selectedProject);
   };
 
   return (
     <MainLayout>
       <div className="container py-8">
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-6 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
-            <p className="text-muted-foreground mt-2">
-              Browse available solar projects and submit competitive bids
-            </p>
-          </div>
-          <Button 
-            className="bg-sbs-orange hover:bg-sbs-orange/90 text-white flex items-center gap-2"
-          >
-            <Upload className="h-4 w-4" /> Upload Certifications
-          </Button>
-        </div>
+        <VendorDashboardHeader />
 
         {/* Verification Status Card */}
         <VerificationStatusCard />
@@ -230,20 +72,12 @@ const VendorDashboard: React.FC = () => {
       </div>
       
       {/* Bid Submission Dialog */}
-      <Dialog open={showBidForm} onOpenChange={setShowBidForm}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Submit Bid</DialogTitle>
-            <DialogDescription>
-              {selectedProject?.title} - {selectedProject?.system_size} kW System
-            </DialogDescription>
-          </DialogHeader>
-          <BidForm 
-            onSubmit={handleBidSubmit} 
-            projectSize={selectedProject?.system_size}
-          />
-        </DialogContent>
-      </Dialog>
+      <BidSubmissionDialog
+        open={showBidForm}
+        onOpenChange={setShowBidForm}
+        selectedProject={selectedProject}
+        onSubmit={handleBidSubmitWrapper}
+      />
     </MainLayout>
   );
 };
