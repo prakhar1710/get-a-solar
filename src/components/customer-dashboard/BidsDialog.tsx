@@ -28,6 +28,8 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
     if (!project || bids.length === 0) return;
     
     try {
+      console.log('Accepting bid:', bid.id, 'for project:', project.id);
+      
       // Update project status to 'awarded' and store the accepted bid ID
       const { error: projectError } = await supabase
         .from('projects')
@@ -37,7 +39,12 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
         })
         .eq('id', project.id);
         
-      if (projectError) throw projectError;
+      if (projectError) {
+        console.error('Error updating project:', projectError);
+        throw projectError;
+      }
+      
+      console.log('Project status updated successfully to awarded');
       
       toast({
         title: "Bid accepted successfully",
