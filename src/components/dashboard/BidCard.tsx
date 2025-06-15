@@ -1,16 +1,20 @@
 
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Star, Check, X, IndianRupee, Clock } from 'lucide-react';
+import { Star, Check, X, IndianRupee, Clock, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Bid } from '@/types';
+import { Button } from '@/components/ui/button';
 
 interface BidCardProps {
   bid: Bid;
   isHighestScore?: boolean;
+  onAcceptBid?: (bid: Bid) => void;
+  projectStatus?: 'open' | 'closed' | 'awarded';
+  acceptedBidId?: string | null;
 }
 
-const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false }) => {
+const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false, onAcceptBid, projectStatus, acceptedBidId }) => {
   const getEquipmentTierLabel = (tier: string) => {
     switch(tier) {
       case 'tier1': return 'Tier 1 (Premium)';
@@ -26,11 +30,18 @@ const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false }) => {
     'tier3': 'bg-amber-100 text-amber-800 border-amber-300',
   };
 
+  const isAcceptedBid = projectStatus === 'awarded' && acceptedBidId === bid.id;
+
   return (
-    <Card className={`overflow-hidden border ${isHighestScore ? 'border-sbs-purple' : 'border-border/40'} shadow-sm hover:shadow transition-shadow duration-300`}>
-      {isHighestScore && (
+    <Card className={`overflow-hidden border ${isHighestScore && !isAcceptedBid ? 'border-sbs-purple' : 'border-border/40'} ${isAcceptedBid ? 'border-green-500 ring-2 ring-green-300' : ''} shadow-sm hover:shadow transition-shadow duration-300`}>
+      {isHighestScore && !isAcceptedBid && (
         <div className="bg-sbs-purple text-white text-xs text-center py-1 font-medium">
           Highest Ranked Bid
+        </div>
+      )}
+      {isAcceptedBid && (
+        <div className="bg-green-600 text-white text-xs text-center py-1 font-medium">
+          Accepted Bid
         </div>
       )}
       <CardHeader className="pb-2">
@@ -83,11 +94,27 @@ const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false }) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="pt-2 justify-end">
+      <CardFooter className="pt-2 flex justify-between items-center">
         {bid.score !== undefined && (
           <div className="text-xs px-2 py-1 rounded-full bg-sbs-purple/10 text-sbs-purple">
             Score: {bid.score.toFixed(1)}
           </div>
+        )}
+        
+        {projectStatus === 'open' && onAcceptBid && (
+          <Button 
+            size="sm" 
+            className="bg-sbs-orange hover:bg-sbs-orange/90 text-white"
+            onClick={() => onAcceptBid(bid)}
+          >
+            Accept Bid
+          </Button>
+        )}
+        {isAcceptedBid && (
+           <Badge className="flex items-center gap-1 bg-green-100 text-green-800 border-green-300">
+             <CheckCircle className="h-4 w-4" />
+             Accepted
+           </Badge>
         )}
       </CardFooter>
     </Card>

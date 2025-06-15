@@ -24,10 +24,8 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
 }) => {
   const { toast } = useToast();
   
-  const handleAcceptTopBid = async () => {
+  const handleAcceptBid = async (bid: Bid) => {
     if (!project || bids.length === 0) return;
-    
-    const topBid = bids[0]; // First bid is the highest scored one
     
     try {
       // Update project status to 'awarded' and store the accepted bid ID
@@ -35,7 +33,7 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
         .from('projects')
         .update({ 
           status: 'awarded',
-          accepted_bid_id: topBid.id
+          accepted_bid_id: bid.id
         })
         .eq('id', project.id);
         
@@ -43,7 +41,7 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
       
       toast({
         title: "Bid accepted successfully",
-        description: `You have accepted the bid from ${topBid.vendor_name || 'the vendor'}.`,
+        description: `You have accepted the bid from ${bid.vendor_name || 'the vendor'}.`,
       });
       
       // Close dialog and refresh data
@@ -83,6 +81,9 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
                     key={bid.id} 
                     bid={bid} 
                     isHighestScore={index === 0}
+                    onAcceptBid={handleAcceptBid}
+                    projectStatus={project.status}
+                    acceptedBidId={project.accepted_bid_id}
                   />
                 ))}
               </div>
@@ -91,22 +92,6 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
               <Button variant="outline" onClick={onClose}>
                 Close
               </Button>
-              {project.status === 'open' && (
-                <Button 
-                  className="bg-sbs-orange hover:bg-sbs-orange/90 text-white"
-                  onClick={handleAcceptTopBid}
-                >
-                  Accept Top Bid
-                </Button>
-              )}
-              {project.status === 'awarded' && (
-                <Button 
-                  className="bg-green-600 hover:bg-green-700 text-white" 
-                  disabled
-                >
-                  Bid Accepted
-                </Button>
-              )}
             </DialogFooter>
           </>
         ) : (

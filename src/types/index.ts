@@ -31,6 +31,7 @@ export interface Project {
   subsidy_applied: boolean;
   created_at: string;
   status: 'open' | 'closed' | 'awarded';
+  accepted_bid_id?: string | null;
 }
 
 export interface Bid {
