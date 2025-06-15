@@ -4,12 +4,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, FolderOpen } from 'lucide-react';
 import ProjectTabs from './ProjectTabs';
 import SolarCalculator from './SolarCalculator';
-import { Project, Bid } from '@/types';
+import { Project } from '@/types';
 
 interface CustomerDashboardTabsProps {
   projects: Project[];
   isLoading: boolean;
-  onViewDetails: (project: Project, bids: Bid[]) => void;
+  onViewDetails: (project: Project) => void;
   refreshProjects: () => void;
   onNewProject: () => void;
 }
