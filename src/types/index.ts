@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -47,6 +46,7 @@ export interface Bid {
   vendor_name?: string;
   vendor_rating?: number;
   profiles?: any;
+  project?: Project;
 }
 
 export interface Vendor {

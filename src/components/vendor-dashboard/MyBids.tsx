@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,8 +15,8 @@ const MyBids: React.FC<MyBidsProps> = ({ bids, projects, onViewAvailableProjects
   // Helper function to find project by ID or get from bid data
   const getProjectForBid = (bid: Bid) => {
     // If bid has project data embedded, use it
-    if ((bid as any).project) {
-      return (bid as any).project;
+    if (bid.project) {
+      return bid.project;
     }
     // Otherwise find from projects array
     return projects.find(p => p.id === bid.project_id);

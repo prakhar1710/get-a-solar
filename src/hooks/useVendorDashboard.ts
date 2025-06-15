@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Project, Bid } from '@/types';
@@ -52,19 +51,26 @@ export const useVendorDashboard = () => {
           .from('bids')
           .select(`
             *,
-            project:projects (*)
+            project:projects!bids_project_id_fkey (*)
           `)
           .eq('vendor_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (bidsError) throw bidsError;
+        if (bidsError) {
+          console.error('Error fetching bids:', bidsError);
+          throw bidsError;
+        }
 
-        const bidsWithProjects = bidsData?.map(bid => ({
-          ...bid,
-          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
-        })) || [];
+        const bidsWithProjects: Bid[] = bidsData?.map((bid: any) => ({
+            ...bid,
+            project: bid.project ? {
+              ...bid.project,
+              status: bid.project.status as 'open' | 'closed' | 'awarded'
+            } : undefined,
+            equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
+          })) || [];
 
-        setSubmittedBids(bidsWithProjects as Bid[]);
+        setSubmittedBids(bidsWithProjects);
 
         // Collect unique projects from these bids
         const uniqueProjectsMap: { [id: string]: Project } = {};
