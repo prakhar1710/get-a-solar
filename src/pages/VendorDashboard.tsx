@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,6 +16,7 @@ const VendorDashboard: React.FC = () => {
   const {
     submittedBids,
     availableProjects,
+    bidProjects,
     isLoading,
     handleBidSubmit,
     refreshProjects
@@ -64,7 +64,7 @@ const VendorDashboard: React.FC = () => {
           <TabsContent value="mybids">
             <MyBids 
               bids={submittedBids}
-              projects={availableProjects}
+              projects={bidProjects} {/* Use ALL related projects */}
               onViewAvailableProjects={handleViewAvailableProjects}
             />
           </TabsContent>

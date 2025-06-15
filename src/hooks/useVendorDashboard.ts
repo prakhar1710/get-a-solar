@@ -10,8 +10,9 @@ export const useVendorDashboard = () => {
   const { user } = useAuth();
   const [submittedBids, setSubmittedBids] = useState<Bid[]>([]);
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
+  const [bidProjects, setBidProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Fetch all available projects
   useEffect(() => {
     const fetchProjects = async () => {
@@ -22,7 +23,7 @@ export const useVendorDashboard = () => {
           .select('*')
           .eq('status', 'open')
           .order('created_at', { ascending: false });
-          
+
         if (error) throw error;
         setAvailableProjects((data as Project[]) || []);
       } catch (error: any) {
@@ -36,17 +37,17 @@ export const useVendorDashboard = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchProjects();
   }, [toast]);
-  
+
   // Fetch vendor's submitted bids and their related projects
   useEffect(() => {
     if (!user) return;
-    
+
     const fetchBidsAndProjects = async () => {
       try {
-        // Fetch bids with project information
+        // Fetch vendor's bids + project info for each bid
         const { data: bidsData, error: bidsError } = await supabase
           .from('bids')
           .select(`
@@ -55,15 +56,24 @@ export const useVendorDashboard = () => {
           `)
           .eq('vendor_id', user.id)
           .order('created_at', { ascending: false });
-          
+
         if (bidsError) throw bidsError;
-        
+
         const bidsWithProjects = bidsData?.map(bid => ({
           ...bid,
           equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
         })) || [];
-        
+
         setSubmittedBids(bidsWithProjects as Bid[]);
+
+        // Collect unique projects from these bids
+        const uniqueProjectsMap: { [id: string]: Project } = {};
+        for (const bid of bidsWithProjects) {
+          if (bid.project && bid.project.id) {
+            uniqueProjectsMap[bid.project.id] = bid.project;
+          }
+        }
+        setBidProjects(Object.values(uniqueProjectsMap));
       } catch (error: any) {
         console.error('Error fetching bids:', error);
         toast({
@@ -73,7 +83,7 @@ export const useVendorDashboard = () => {
         });
       }
     };
-    
+
     fetchBidsAndProjects();
   }, [user, toast]);
 
@@ -86,11 +96,10 @@ export const useVendorDashboard = () => {
       });
       return false;
     }
-    
     try {
       console.log("Submitting bid with vendor_id:", user.id);
       console.log("Bid data:", data);
-      
+
       const newBid = {
         project_id: selectedProject.id,
         vendor_id: user.id,
@@ -99,32 +108,32 @@ export const useVendorDashboard = () => {
         timeline_days: data.timeline_days,
         amc_included: data.amc_included
       };
-      
+
       const { error, data: createdBid } = await supabase
         .from('bids')
         .insert([newBid])
         .select();
-        
+
       if (error) {
         console.error("Bid submission error:", error);
         throw error;
       }
-      
+
       console.log("Bid submitted successfully:", createdBid);
-      
+
       if (createdBid && createdBid.length > 0) {
         const typedBid = {
           ...createdBid[0],
           equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
         } as Bid;
-        
+
         setSubmittedBids([typedBid, ...submittedBids]);
-        
+
         toast({
           title: "Bid submitted successfully",
           description: "Your bid has been sent to the customer for review.",
         });
-        
+
         return true;
       }
     } catch (error: any) {
@@ -135,10 +144,10 @@ export const useVendorDashboard = () => {
         variant: "destructive",
       });
     }
-    
+
     return false;
   };
-  
+
   const refreshProjects = async () => {
     setIsLoading(true);
     try {
@@ -147,10 +156,10 @@ export const useVendorDashboard = () => {
         .select('*')
         .eq('status', 'open')
         .order('created_at', { ascending: false });
-        
+
       if (error) throw error;
       setAvailableProjects((data as Project[]) || []);
-      
+
       toast({
         title: "Projects refreshed",
         description: "Available projects have been updated.",
@@ -169,6 +178,7 @@ export const useVendorDashboard = () => {
   return {
     submittedBids,
     availableProjects,
+    bidProjects, // <-- all projects corresponding to your bids (open, closed, awarded, etc.)
     isLoading,
     handleBidSubmit,
     refreshProjects
