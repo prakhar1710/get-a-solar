@@ -80,8 +80,8 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
             <ProjectCardItem
               key={project.id}
               project={project}
-              onBidClick={() => onProjectSelect(project)}
-              hasSubmittedBid={hasSubmittedBid(project.id)}
+              onSelectProject={() => onProjectSelect(project)}
+              hasBidOnProject={hasSubmittedBid(project.id)}
             />
           ))}
         </div>
