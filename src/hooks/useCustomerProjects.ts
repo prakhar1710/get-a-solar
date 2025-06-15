@@ -1,99 +1,101 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Project, Bid } from '@/types';
-import { rankBids } from '@/utils/bidRanking';
+import { supabase } from '@/integrations/supabase/client';
 
-export const useCustomerProjects = (userId: string | undefined) => {
+export const useCustomerProjects = (customerId?: string) => {
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projectBids, setProjectBids] = useState<Bid[]>([]);
-  const [rankedBids, setRankedBids] = useState<Bid[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showBidsDialog, setShowBidsDialog] = useState(false);
 
-  // Fetch customer projects
   const fetchProjects = useCallback(async () => {
-    if (!userId) {
+    if (!customerId) {
       setIsLoading(false);
       return;
     }
-    
-    setIsLoading(true);
+
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from('projects')
         .select('*')
-        .eq('customer_id', userId)
+        .eq('customer_id', customerId)
         .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      setProjects(data as Project[] || []);
+
+      if (error) {
+        console.error('Error fetching projects:', error);
+        throw error;
+      }
+
+      setProjects((data as Project[]) || []);
     } catch (error: any) {
-      console.error('Error fetching projects:', error);
+      console.error('Error in fetchProjects:', error);
       toast({
-        title: "Error fetching projects",
-        description: error.message || "Failed to load your projects.",
+        title: "Error loading projects",
+        description: error.message || "Failed to load your projects. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [userId, toast]);
+  }, [customerId, toast]);
 
-  // Handle viewing project details and bids
-  const handleViewDetails = useCallback(async (project: Project) => {
-    setSelectedProject(project);
-    
+  const fetchProjectBids = useCallback(async (projectId: string) => {
     try {
-      // Fetch bids for the selected project with vendor profile information
-      const { data: bidsData, error: bidsError } = await supabase
+      console.log('Fetching bids for project:', projectId);
+      
+      const { data: bidsData, error } = await supabase
         .from('bids')
         .select(`
           *,
-          vendor_profile:profiles!bids_vendor_id_fkey (
-            full_name,
-            phone_number
-          )
+          vendor_profile:profiles!bids_vendor_id_fkey (*)
         `)
-        .eq('project_id', project.id);
-        
-      if (bidsError) throw bidsError;
-      
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching bids:', error);
+        throw error;
+      }
+
       console.log('Fetched bids data:', bidsData);
-      
-      const bidsWithVendorInfo = bidsData?.map(bid => {
-        const vendorName = bid.vendor_profile?.full_name || 'Vendor';
-        console.log('Processing bid:', bid.id, 'Vendor name:', vendorName);
+
+      const processedBids: Bid[] = bidsData?.map((bid: any) => {
+        console.log('Processing bid:', bid.id, 'Vendor name:', bid.vendor_profile?.full_name || 'Vendor');
         
         return {
           ...bid,
-          vendor_name: vendorName,
-          vendor_rating: 4.5, // Mock rating for now
-          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
+          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3',
+          vendor_profile: bid.vendor_profile
         };
       }) || [];
-      
-      setProjectBids(bidsWithVendorInfo as Bid[]);
-      
-      // Rank the bids using our algorithm
-      const ranked = rankBids(bidsWithVendorInfo as Bid[], project);
-      setRankedBids(ranked);
-      
-      setShowBidsDialog(true);
+
+      setProjectBids(processedBids);
     } catch (error: any) {
-      console.error('Error fetching bids:', error);
+      console.error('Error fetching project bids:', error);
       toast({
-        title: "Error fetching bids",
-        description: error.message || "Failed to fetch bids for this project.",
+        title: "Error loading bids",
+        description: error.message || "Failed to load project bids.",
         variant: "destructive",
       });
+      setProjectBids([]);
     }
   }, [toast]);
 
-  // Initial load of projects
+  const handleViewDetails = useCallback(async (project: Project) => {
+    setSelectedProject(project);
+    await fetchProjectBids(project.id);
+    setShowBidsDialog(true);
+  }, [fetchProjectBids]);
+
+  const refreshProjects = useCallback(async () => {
+    await fetchProjects();
+  }, [fetchProjects]);
+
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
@@ -102,10 +104,10 @@ export const useCustomerProjects = (userId: string | undefined) => {
     projects,
     isLoading,
     selectedProject,
-    projectBids: rankedBids,
+    projectBids,
     showBidsDialog,
     setShowBidsDialog,
     handleViewDetails,
-    refreshProjects: fetchProjects
+    refreshProjects
   };
 };

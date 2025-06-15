@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
-import { Search, RefreshCw } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import React from 'react';
+import { RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Project, Bid } from '@/types';
 import ProjectCardItem from './ProjectCardItem';
@@ -10,78 +9,83 @@ interface AvailableProjectsProps {
   projects: Project[];
   submittedBids: Bid[];
   onProjectSelect: (project: Project) => void;
-  isLoading?: boolean;
-  onRefresh?: () => void;
+  isLoading: boolean;
+  onRefresh: () => void;
 }
 
 const AvailableProjects: React.FC<AvailableProjectsProps> = ({
   projects,
   submittedBids,
   onProjectSelect,
-  isLoading = false,
-  onRefresh,
+  isLoading,
+  onRefresh
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // Filter projects based on search term
-  const filteredProjects = projects.filter(project => 
-    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.state.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Check if vendor has already bid on a project
-  const hasBidOnProject = (projectId: string) => {
+  const hasSubmittedBid = (projectId: string) => {
     return submittedBids.some(bid => bid.project_id === projectId);
   };
 
+  if (isLoading) {
+    return (
+      <div className="dashboard-section">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sbs-orange mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading available projects...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search projects by title, location..." 
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="dashboard-section">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-semibold">Available Projects</h2>
+          <p className="text-muted-foreground text-sm">
+            {projects.length} project{projects.length !== 1 ? 's' : ''} available for bidding
+          </p>
         </div>
         <Button 
-          variant="ghost" 
-          size="icon" 
-          title="Refresh projects"
           onClick={onRefresh}
+          variant="outline" 
+          size="sm"
           disabled={isLoading}
+          className="flex items-center gap-2"
         >
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh
         </Button>
       </div>
-      
-      <div className="dashboard-section">
-        {isLoading ? (
-          <div className="text-center py-12">
-            <p>Loading projects...</p>
-          </div>
-        ) : filteredProjects.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              No projects match your search criteria
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <ProjectCardItem
-                key={project.id}
-                project={project}
-                hasBidOnProject={hasBidOnProject(project.id)}
-                onSelectProject={onProjectSelect}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+
+      {projects.length === 0 ? (
+        <div className="text-center py-12">
+          <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-2" />
+          <h3 className="text-lg font-medium mb-2">No projects available</h3>
+          <p className="text-muted-foreground mb-4">
+            There are currently no open projects for bidding.
+          </p>
+          <Button 
+            onClick={onRefresh}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Check for new projects
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {projects.map((project) => (
+            <ProjectCardItem
+              key={project.id}
+              project={project}
+              onBidClick={() => onProjectSelect(project)}
+              hasSubmittedBid={hasSubmittedBid(project.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

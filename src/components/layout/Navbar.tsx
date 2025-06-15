@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sun, Menu, X, LogOut, User } from 'lucide-react';
@@ -12,12 +12,20 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
 
-  const navLinks = [
+  // Memoize navigation links to prevent unnecessary re-calculations
+  const navLinks = useMemo(() => [
     { name: 'Home', path: '/' },
     ...(user && profile?.user_type === 'customer' ? [{ name: 'Customer Dashboard', path: '/customer' }] : []),
     ...(user && profile?.user_type === 'vendor' ? [{ name: 'Vendor Dashboard', path: '/vendor' }] : []),
     { name: 'Blog', path: '/blog' }
-  ];
+  ], [user, profile]);
+
+  const handleSignOut = async () => {
+    setIsMenuOpen(false);
+    await signOut();
+  };
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
@@ -67,7 +75,7 @@ const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   className="flex gap-2 cursor-pointer hover:bg-destructive/10 hover:text-destructive" 
-                  onClick={signOut}
+                  onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4" />
                   Logout
@@ -90,6 +98,7 @@ const Navbar = () => {
             size="icon" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="hover:bg-sbs-orange/10"
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -109,7 +118,7 @@ const Navbar = () => {
                     ? 'text-sbs-orange bg-sbs-orange/10' 
                     : 'text-foreground/70 hover:text-foreground hover:bg-muted'
                 }`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 {link.name}
               </Link>
@@ -119,16 +128,13 @@ const Navbar = () => {
               <Button 
                 variant="outline" 
                 className="justify-start gap-2 mt-4 border-destructive/20 text-destructive hover:bg-destructive/10" 
-                onClick={() => {
-                  signOut();
-                  setIsMenuOpen(false);
-                }}
+                onClick={handleSignOut}
               >
                 <LogOut className="h-4 w-4" />
                 Logout
               </Button>
             ) : (
-              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+              <Link to="/login" onClick={closeMenu}>
                 <Button className="bg-gradient-to-r from-sbs-purple to-sbs-purple-dark text-white w-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-4">
                   Get Started
                 </Button>
