@@ -62,12 +62,19 @@ export const useCustomerProjects = (userId: string | undefined) => {
         
       if (bidsError) throw bidsError;
       
-      const bidsWithVendorInfo = bidsData?.map(bid => ({
-        ...bid,
-        vendor_name: bid.vendor_profile?.full_name || 'Unknown Vendor',
-        vendor_rating: 4.5, // Mock rating for now
-        equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
-      })) || [];
+      console.log('Fetched bids data:', bidsData);
+      
+      const bidsWithVendorInfo = bidsData?.map(bid => {
+        const vendorName = bid.vendor_profile?.full_name || 'Vendor';
+        console.log('Processing bid:', bid.id, 'Vendor name:', vendorName);
+        
+        return {
+          ...bid,
+          vendor_name: vendorName,
+          vendor_rating: 4.5, // Mock rating for now
+          equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3'
+        };
+      }) || [];
       
       setProjectBids(bidsWithVendorInfo as Bid[]);
       
