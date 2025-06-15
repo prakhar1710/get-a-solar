@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,7 +13,7 @@ import { useVendorDashboard } from '@/hooks/useVendorDashboard';
 const VendorDashboard: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
-  
+
   const {
     submittedBids,
     availableProjects,
@@ -64,7 +65,7 @@ const VendorDashboard: React.FC = () => {
           <TabsContent value="mybids">
             <MyBids 
               bids={submittedBids}
-              projects={bidProjects} {/* Use ALL related projects */}
+              projects={bidProjects}
               onViewAvailableProjects={handleViewAvailableProjects}
             />
           </TabsContent>
