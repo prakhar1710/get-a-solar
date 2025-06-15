@@ -1,8 +1,9 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import ProfileSetupDialog from './ProfileSetupDialog';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
   const initialCheckDone = useRef(false);
   const toastShown = useRef(false);
   const profileRefreshAttempted = useRef(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
 
   useEffect(() => {
     // If we have a user but no profile data, try to refresh it once
@@ -24,6 +26,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
       refreshProfile();
     }
   }, [user, profile, isLoading, refreshProfile]);
+
+  useEffect(() => {
+    // Show profile setup dialog if user_type is null after a short delay
+    if (user && profile && profile.user_type === null && !showProfileSetup) {
+      const timer = setTimeout(() => {
+        setShowProfileSetup(true);
+      }, 2000); // Wait 2 seconds before showing the dialog
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, profile, showProfileSetup]);
 
   useEffect(() => {
     // Only show toast messages after initial authentication check is complete
@@ -49,6 +62,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
       initialCheckDone.current = true;
     }
   }, [user, profile, userType, toast, isLoading]);
+
+  const handleProfileUpdated = () => {
+    setShowProfileSetup(false);
+    // Refresh the page or trigger a re-render
+    window.location.reload();
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -79,15 +98,21 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     );
   }
 
-  // If user_type is null, allow access but show a setup message
+  // If user_type is null, show the profile setup dialog
   if (profile.user_type === null) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen gap-4">
-        <div>Setting up your profile...</div>
-        <div className="text-sm text-muted-foreground">
-          Please refresh the page if this doesn't complete automatically
+      <>
+        <div className="flex flex-col justify-center items-center h-screen gap-4">
+          <div>Setting up your profile...</div>
+          <div className="text-sm text-muted-foreground">
+            Complete your profile setup to continue
+          </div>
         </div>
-      </div>
+        <ProfileSetupDialog 
+          open={showProfileSetup} 
+          onProfileUpdated={handleProfileUpdated}
+        />
+      </>
     );
   }
 
