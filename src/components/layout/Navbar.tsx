@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ const Navbar = () => {
   // Memoize navigation links to prevent unnecessary re-calculations
   const navLinks = useMemo(() => [
     { name: 'Home', path: '/' },
+    { name: 'Solar Calculator', path: '/solar-calculator' },
     ...(user && profile?.user_type === 'customer' ? [{ name: 'Customer Dashboard', path: '/customer' }] : []),
     ...(user && profile?.user_type === 'vendor' ? [{ name: 'Vendor Dashboard', path: '/vendor' }] : []),
     { name: 'Blog', path: '/blog' }
