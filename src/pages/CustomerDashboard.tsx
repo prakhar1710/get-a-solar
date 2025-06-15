@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -5,9 +6,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import ProjectTabs from '@/components/customer-dashboard/ProjectTabs';
 import BidsDialog from '@/components/customer-dashboard/BidsDialog';
 import NewProjectDialog from '@/components/customer-dashboard/NewProjectDialog';
+import CustomerDashboardTabs from '@/components/customer-dashboard/CustomerDashboardTabs';
 import { useCustomerProjects } from '@/hooks/useCustomerProjects';
 
 const CustomerDashboard: React.FC = () => {
@@ -134,7 +135,7 @@ const CustomerDashboard: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold">Customer Dashboard</h1>
             <p className="text-muted-foreground mt-2">
-              Post solar project requirements and receive competitive vendor bids
+              Calculate your solar needs and manage your project requirements
             </p>
           </div>
           <Button 
@@ -146,7 +147,7 @@ const CustomerDashboard: React.FC = () => {
         </div>
 
         <div className="dashboard-section">
-          <ProjectTabs
+          <CustomerDashboardTabs
             projects={projects}
             isLoading={isLoading}
             onViewDetails={handleViewDetails}
