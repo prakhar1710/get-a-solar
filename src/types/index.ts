@@ -113,3 +113,17 @@ export const STATE_SUBSIDIES: Record<string, number> = {
   'Tamil Nadu': 25,
   'Rajasthan': 45
 };
+
+export interface SolarCalculationResult {
+  systemSize: number;
+  estimatedCost: number;
+  centralSubsidy: number;
+  stateSubsidy: number;
+  totalSubsidy: number;
+  finalCost: number;
+  monthlySavings: number;
+  paybackPeriod: number;
+  rooftopArea: number;
+  systemType: string;
+  panels: number;
+}
