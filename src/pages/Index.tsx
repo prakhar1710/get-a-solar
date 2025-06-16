@@ -76,7 +76,7 @@ const Index = () => {
                 Get Solar Quotes Now
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-200 text-slate-50">
+              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-200 text-green-500">
                 Join as Vendor
               </Button>
             </div>
