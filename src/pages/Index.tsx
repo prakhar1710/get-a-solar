@@ -235,7 +235,7 @@ const Index = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 md:py-24 bg-[#fcfbf8]">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container px-4 text-center bg-white/0">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">Join the Solar Revolution</h2>
