@@ -57,6 +57,18 @@ export const useCustomerProjects = () => {
     try {
       console.log('Fetching bids for project:', projectId);
       
+      // Get the project details first for ranking context
+      const { data: projectData, error: projectError } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', projectId)
+        .single();
+
+      if (projectError) {
+        console.error('Error fetching project:', projectError);
+        throw projectError;
+      }
+
       // Fetch bids with vendor profile information
       const { data: bidsData, error: bidsError } = await supabase
         .from('bids')
@@ -91,8 +103,8 @@ export const useCustomerProjects = () => {
         };
       });
 
-      // Rank the bids
-      const rankedBids = rankBids(bids);
+      // Rank the bids with project context
+      const rankedBids = rankBids(bids, projectData as Project);
       console.log('Ranked bids:', rankedBids);
       
       return rankedBids;
