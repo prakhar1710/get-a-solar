@@ -11,6 +11,9 @@ export const useCustomerProjects = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [projectBids, setProjectBids] = useState<Bid[]>([]);
+  const [showBidsDialog, setShowBidsDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -104,6 +107,13 @@ export const useCustomerProjects = () => {
     }
   };
 
+  const handleViewDetails = async (project: Project) => {
+    setSelectedProject(project);
+    const bids = await fetchBidsForProject(project.id);
+    setProjectBids(bids);
+    setShowBidsDialog(true);
+  };
+
   const createProject = async (projectData: any) => {
     if (!user) {
       toast({
@@ -157,6 +167,11 @@ export const useCustomerProjects = () => {
   return {
     projects,
     isLoading,
+    selectedProject,
+    projectBids,
+    showBidsDialog,
+    setShowBidsDialog,
+    handleViewDetails,
     createProject,
     fetchBidsForProject,
     refreshProjects: fetchProjects

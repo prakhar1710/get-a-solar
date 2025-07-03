@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,7 @@ const CustomerDashboard: React.FC = () => {
     setShowBidsDialog,
     handleViewDetails,
     refreshProjects
-  } = useCustomerProjects(user?.id);
+  } = useCustomerProjects();
 
   // Check profile status only once when component mounts
   useEffect(() => {
