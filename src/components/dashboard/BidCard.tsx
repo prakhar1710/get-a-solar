@@ -12,9 +12,17 @@ interface BidCardProps {
   onAcceptBid?: (bid: Bid) => void;
   projectStatus?: 'open' | 'closed' | 'awarded';
   acceptedBidId?: string | null;
+  projectSize?: number;
 }
 
-const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false, onAcceptBid, projectStatus, acceptedBidId }) => {
+const BidCard: React.FC<BidCardProps> = ({ 
+  bid, 
+  isHighestScore = false, 
+  onAcceptBid, 
+  projectStatus, 
+  acceptedBidId,
+  projectSize = 5
+}) => {
   const getEquipmentTierLabel = (tier: string) => {
     switch(tier) {
       case 'tier1': return 'Tier 1 (Premium)';
@@ -31,6 +39,9 @@ const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false, onAccept
   };
 
   const isAcceptedBid = projectStatus === 'awarded' && acceptedBidId === bid.id;
+  
+  // Calculate total project cost
+  const totalProjectCost = bid.price_per_watt * projectSize * 1000; // Converting kW to Watt
 
   return (
     <Card className={`overflow-hidden border ${isHighestScore && !isAcceptedBid ? 'border-sbs-purple' : 'border-border/40'} ${isAcceptedBid ? 'border-green-500 ring-2 ring-green-300' : ''} shadow-sm hover:shadow transition-shadow duration-300`}>
@@ -62,6 +73,19 @@ const BidCard: React.FC<BidCardProps> = ({ bid, isHighestScore = false, onAccept
             <div className="font-semibold flex items-center">
               <IndianRupee className="h-3 w-3 mr-1" />
               {bid.price_per_watt}
+            </div>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">Total Project Cost</div>
+            <div className="font-semibold flex items-center text-sbs-purple">
+              <IndianRupee className="h-3 w-3 mr-1" />
+              {totalProjectCost.toLocaleString('en-IN')}
+              {totalProjectCost >= 100000 && (
+                <span className="ml-1 text-xs">
+                  (₹{(totalProjectCost / 100000).toFixed(2)}L)
+                </span>
+              )}
             </div>
           </div>
           

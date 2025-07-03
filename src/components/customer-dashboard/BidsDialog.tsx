@@ -91,6 +91,7 @@ const BidsDialog: React.FC<BidsDialogProps> = ({
                     onAcceptBid={handleAcceptBid}
                     projectStatus={project.status}
                     acceptedBidId={project.accepted_bid_id}
+                    projectSize={project.system_size}
                   />
                 ))}
               </div>

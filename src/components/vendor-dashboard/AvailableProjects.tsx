@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { RefreshCw, AlertCircle } from 'lucide-react';
+import { FileText, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Project, Bid } from '@/types';
 import ProjectCardItem from './ProjectCardItem';
@@ -9,79 +9,64 @@ interface AvailableProjectsProps {
   projects: Project[];
   submittedBids: Bid[];
   onProjectSelect: (project: Project) => void;
+  onCustomBidSelect?: (project: Project) => void;
   isLoading: boolean;
   onRefresh: () => void;
 }
 
-const AvailableProjects: React.FC<AvailableProjectsProps> = ({
-  projects,
-  submittedBids,
-  onProjectSelect,
-  isLoading,
-  onRefresh
+const AvailableProjects: React.FC<AvailableProjectsProps> = ({ 
+  projects, 
+  submittedBids, 
+  onProjectSelect, 
+  onCustomBidSelect,
+  isLoading, 
+  onRefresh 
 }) => {
-  const hasSubmittedBid = (projectId: string) => {
+  // Helper function to check if vendor has already bid on a project
+  const hasBidOnProject = (projectId: string) => {
     return submittedBids.some(bid => bid.project_id === projectId);
   };
-
-  if (isLoading) {
-    return (
-      <div className="dashboard-section">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sbs-orange mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading available projects...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="dashboard-section">
       <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-xl font-semibold">Available Projects</h2>
-          <p className="text-muted-foreground text-sm">
-            {projects.length} project{projects.length !== 1 ? 's' : ''} available for bidding
-          </p>
-        </div>
+        <h2 className="text-xl font-semibold">Available Projects</h2>
         <Button 
-          onClick={onRefresh}
+          onClick={onRefresh} 
           variant="outline" 
           size="sm"
           disabled={isLoading}
-          className="flex items-center gap-2"
         >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </div>
 
-      {projects.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-pulse text-muted-foreground">Loading projects...</div>
+        </div>
+      ) : projects.length === 0 ? (
         <div className="text-center py-12">
-          <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-2" />
+          <FileText className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-2" />
           <h3 className="text-lg font-medium mb-2">No projects available</h3>
           <p className="text-muted-foreground mb-4">
-            There are currently no open projects for bidding.
+            Check back later for new solar installation projects
           </p>
-          <Button 
-            onClick={onRefresh}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Check for new projects
+          <Button onClick={onRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh Projects
           </Button>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <ProjectCardItem
               key={project.id}
               project={project}
-              onSelectProject={() => onProjectSelect(project)}
-              hasBidOnProject={hasSubmittedBid(project.id)}
+              onQuickBid={() => onProjectSelect(project)}
+              onCustomBid={onCustomBidSelect ? () => onCustomBidSelect(project) : undefined}
+              hasSubmittedBid={hasBidOnProject(project.id)}
             />
           ))}
         </div>

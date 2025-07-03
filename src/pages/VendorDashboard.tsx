@@ -8,11 +8,13 @@ import AvailableProjects from '@/components/vendor-dashboard/AvailableProjects';
 import MyBids from '@/components/vendor-dashboard/MyBids';
 import VendorDashboardHeader from '@/components/vendor-dashboard/VendorDashboardHeader';
 import BidSubmissionDialog from '@/components/vendor-dashboard/BidSubmissionDialog';
+import CustomBidDialog from '@/components/vendor-dashboard/CustomBidDialog';
 import { useVendorDashboard } from '@/hooks/useVendorDashboard';
 
 const VendorDashboard: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
+  const [showCustomBidForm, setShowCustomBidForm] = useState(false);
 
   const {
     submittedBids,
@@ -26,6 +28,11 @@ const VendorDashboard: React.FC = () => {
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     setShowBidForm(true);
+  };
+
+  const handleCustomBidSelect = (project: Project) => {
+    setSelectedProject(project);
+    setShowCustomBidForm(true);
   };
 
   const handleViewAvailableProjects = () => {  
@@ -57,6 +64,7 @@ const VendorDashboard: React.FC = () => {
               projects={availableProjects}
               submittedBids={submittedBids}
               onProjectSelect={handleProjectSelect}
+              onCustomBidSelect={handleCustomBidSelect}
               isLoading={isLoading}
               onRefresh={refreshProjects}
             />
@@ -76,6 +84,14 @@ const VendorDashboard: React.FC = () => {
       <BidSubmissionDialog
         open={showBidForm}
         onOpenChange={setShowBidForm}
+        selectedProject={selectedProject}
+        onSubmit={handleBidSubmitWrapper}
+      />
+
+      {/* Custom Bid Dialog */}
+      <CustomBidDialog
+        open={showCustomBidForm}
+        onOpenChange={setShowCustomBidForm}
         selectedProject={selectedProject}
         onSubmit={handleBidSubmitWrapper}
       />
