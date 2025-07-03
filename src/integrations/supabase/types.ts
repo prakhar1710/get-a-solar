@@ -61,6 +61,7 @@ export type Database = {
         Row: {
           created_at: string
           electricity_bill: number | null
+          email: string | null
           full_name: string | null
           id: string
           phone_number: string | null
@@ -71,6 +72,7 @@ export type Database = {
         Insert: {
           created_at?: string
           electricity_bill?: number | null
+          email?: string | null
           full_name?: string | null
           id: string
           phone_number?: string | null
@@ -81,6 +83,7 @@ export type Database = {
         Update: {
           created_at?: string
           electricity_bill?: number | null
+          email?: string | null
           full_name?: string | null
           id?: string
           phone_number?: string | null
