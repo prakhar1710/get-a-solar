@@ -41,7 +41,7 @@ const Navbar = () => {
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10">
-            <img src="/lovable-uploads/2c25f54e-a2e5-4e13-8264-60e95a237ac6.png" alt="Get A Solar Logo" className="max-h-16 max-w-16 max-w-16 " />
+            <img src="/lovable-uploads/2c25f54e-a2e5-4e13-8264-60e95a237ac6.png" alt="Get A Solar Logo" className="max-h-16 max-w-16 " />
           </div>
           <Link to="/" className="flex flex-col">
             <span className="text-2xl font-bold text-foreground leading-none">Get A Solar</span>
