@@ -5,6 +5,7 @@ import { SolarCalculationResult } from '@/types';
 import SubsidyInfoCard from '@/components/solar-calculator/SubsidyInfoCard';
 import CalculatorForm from '@/components/solar-calculator/CalculatorForm';
 import CalculatorResults from '@/components/solar-calculator/CalculatorResults';
+import EnhancedAnalysis from '@/components/solar-calculator/EnhancedAnalysis';
 
 interface SolarCalculatorProps {
   onCalculationComplete?: (result: SolarCalculationResult) => void;
@@ -52,6 +53,16 @@ const SolarCalculator: React.FC<SolarCalculatorProps> = ({ onCalculationComplete
       />
 
       {result && <CalculatorResults result={result} />}
+      
+      {result && (
+        <EnhancedAnalysis 
+          result={result}
+          location={location}
+          monthlyBill={monthlyBill}
+          rooftopArea={rooftopArea}
+          shadingLevel={shadingLevel[0]}
+        />
+      )}
     </div>
   );
 };
