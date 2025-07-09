@@ -78,10 +78,10 @@ const EnhancedAnalysis: React.FC<EnhancedAnalysisProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-5 w-5 text-purple-500" />
-          AI-Powered Enhanced Analysis
+          Recommendation
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Get deeper insights about your solar installation powered by Gemini AI
+          Get personalized solar recommendations with accurate subsidy information
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -160,6 +160,16 @@ const EnhancedAnalysis: React.FC<EnhancedAnalysisProps> = ({
                 <h4 className="font-semibold text-orange-800">Important Considerations</h4>
               </div>
               <p className="text-orange-700 text-sm leading-relaxed">{analysis.considerations}</p>
+            </div>
+
+            {/* Get Quote Button */}
+            <div className="text-center pt-4">
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-8"
+              >
+                Get a Quote
+              </Button>
             </div>
           </div>
         )}

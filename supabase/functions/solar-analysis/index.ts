@@ -28,16 +28,18 @@ serve(async (req) => {
     }
 
     const prompt = `
-As a solar energy expert, provide enhanced analysis for this solar installation:
+As a solar energy expert, provide accurate solar installation recommendations for this customer:
 
 Location: ${location}
 Monthly Electricity Bill: ₹${monthlyBill}
 Available Rooftop Area: ${rooftopArea} sq ft
 Shading Level: ${shadingLevel}%
 
-Calculation Results:
+Current System Calculation:
 - System Size: ${calculationResult.systemSize} kW
 - Total Cost: ₹${calculationResult.estimatedCost.toLocaleString()}
+- Central Govt Subsidy: ₹${calculationResult.centralSubsidy.toLocaleString()}
+- State Subsidy: ₹${calculationResult.stateSubsidy.toLocaleString()}
 - Total Subsidy: ₹${calculationResult.totalSubsidy.toLocaleString()}
 - Final Cost: ₹${calculationResult.finalCost.toLocaleString()}
 - Monthly Savings: ₹${calculationResult.monthlySavings.toLocaleString()}
@@ -45,13 +47,13 @@ Calculation Results:
 - System Type: ${calculationResult.systemType}
 - Panels Required: ${calculationResult.panels}
 
-Please provide:
-1. Location-specific insights about solar potential in ${location}
-2. Simple explanation of how the calculations work
-3. Practical recommendations for this installation
-4. Important considerations specific to this setup
+Please provide accurate recommendations based on latest government subsidy schemes:
+1. Location-specific solar potential and benefits for ${location}
+2. Clear explanation of the cost calculation and subsidy breakdown
+3. Specific actionable recommendations for this installation size and budget
+4. Important next steps and considerations for implementation
 
-Keep the response informative but easy to understand for a homeowner. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
+Focus on practical advice and accurate subsidy information. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
 `;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
