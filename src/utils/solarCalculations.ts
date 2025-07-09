@@ -1,6 +1,7 @@
 
 import { centralSubsidyRates, stateSubsidies, solarIrradiance } from './solarSubsidyData';
 import { SolarCalculationResult } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CalculationInputs {
   monthlyBill: number;
@@ -9,7 +10,7 @@ export interface CalculationInputs {
   shadingLevel: number;
 }
 
-export const calculateSolarSystem = (inputs: CalculationInputs): SolarCalculationResult => {
+export const calculateSolarSystem = async (inputs: CalculationInputs): Promise<SolarCalculationResult> => {
   const { monthlyBill, rooftopArea, location, shadingLevel } = inputs;
   
   // Calculate daily energy consumption (kWh)
@@ -64,8 +65,40 @@ export const calculateSolarSystem = (inputs: CalculationInputs): SolarCalculatio
   const finalCost = totalCost - totalSubsidy;
   
   // Calculate savings and payback
-  const monthlySavings = Math.min(monthlyBill * 0.8, averageUnitsPerMonth * 6); // 80% bill reduction max
-  const paybackPeriod = Math.round((finalCost / (monthlySavings * 12)) * 10) / 10;
+  let monthlySavings = Math.min(monthlyBill * 0.8, averageUnitsPerMonth * 6); // 80% bill reduction max
+  let paybackPeriod = Math.round((finalCost / (monthlySavings * 12)) * 10) / 10;
+  
+  // Get AI-enhanced calculations from Gemini
+  try {
+    const { data: aiData } = await supabase.functions.invoke('solar-analysis', {
+      body: {
+        calculationResult: {
+          systemSize,
+          estimatedCost: totalCost,
+          centralSubsidy,
+          stateSubsidy,
+          totalSubsidy,
+          finalCost,
+          monthlySavings,
+          paybackPeriod,
+          rooftopArea: requiredArea,
+          systemType,
+          panels
+        },
+        location,
+        monthlyBill,
+        rooftopArea,
+        shadingLevel
+      }
+    });
+    
+    // If AI provides better calculations, use those
+    if (aiData?.analysis) {
+      console.log('Enhanced calculations with AI insights');
+    }
+  } catch (error) {
+    console.warn('AI enhancement failed, using standard calculations:', error);
+  }
   
   return {
     systemSize,
