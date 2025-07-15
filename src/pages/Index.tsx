@@ -58,15 +58,15 @@ const Index = () => {
             <div className="flex flex-wrap gap-6 text-white/80 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
-                <span>1200+ Projects Completed</span>
+                <span>1000+ Projects Completed</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
-                <span>450+ Verified Vendors</span>
+                <span>250+ Verified Vendors</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
-                <span>₹2.5Cr+ Savings Generated</span>
+                <span>₹1.5Cr+ Savings Generated</span>
               </div>
             </div>
             
