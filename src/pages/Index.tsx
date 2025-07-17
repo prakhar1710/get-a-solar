@@ -155,7 +155,7 @@ const Index = () => {
               <div className="mt-2 text-sm text-muted-foreground">Completed Projects</div>
             </div>
             <div className="p-6 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm">
-              <div className="text-4xl font-bold text-sbs-purple">450+</div>
+              <div className="text-4xl font-bold text-sbs-purple">250+</div>
               <div className="mt-2 text-sm text-muted-foreground">Verified Vendors</div>
             </div>
             <div className="p-6 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm">
