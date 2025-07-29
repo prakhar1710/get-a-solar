@@ -14,57 +14,61 @@ const SolarSubsidiesPage = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            🌞 Solar Subsidies in India – 2025 Guide
+            🌞 Solar Subsidies in India – 2025
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            <strong>Looking to reduce your electricity bills?</strong> Going solar is now easier and more affordable than ever, 
-            thanks to government subsidies on solar panels in India.
+            Get up to <strong>₹78,000 government subsidy</strong> on solar panels. 
+            Reduce your electricity bills by 90% with the PM Surya Ghar scheme.
           </p>
         </div>
 
-        {/* What is Solar Subsidy */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              ✅ What is a Solar Subsidy?
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              A <strong>solar subsidy</strong> is a financial incentive provided by the government to promote 
-              the installation of solar energy systems across India. These incentives significantly reduce 
-              the initial investment required for rooftop solar systems, making it easier for residents to 
-              switch to clean, green, and renewable energy.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Quick Benefits */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-3xl font-bold text-primary mb-2">₹78,000</div>
+              <p className="text-sm text-muted-foreground">Maximum Subsidy</p>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-3xl font-bold text-primary mb-2">300 Units</div>
+              <p className="text-sm text-muted-foreground">Free Electricity/Month</p>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="pt-6">
+              <div className="text-3xl font-bold text-primary mb-2">90%</div>
+              <p className="text-sm text-muted-foreground">Bill Reduction</p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* PM Surya Ghar Scheme */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>🏡 PM Surya Ghar Muft Bijli Yojana (2024–2025)</CardTitle>
+            <CardTitle>🏡 PM Surya Ghar Scheme - Key Benefits</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div>
-                <p className="mb-4">
-                  The <strong>PM Surya Ghar: Muft Bijli Yojana</strong> is a flagship rooftop solar subsidy 
-                  scheme launched by MNRE. It aims to equip over 1 crore households with rooftop solar systems.
+                <p className="mb-4 text-lg">
+                  Get <strong>free electricity up to 300 units/month</strong> and substantial subsidies 
+                  under India's flagship solar program.
                 </p>
                 
-                <h4 className="font-semibold mb-3">🎯 Key Features:</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Up to <strong>₹78,000 subsidy</strong> for a 3 kW residential rooftop solar system</span>
+                    <span><strong>Up to ₹78,000 subsidy</strong> for residential systems</span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Free electricity for households consuming up to 300 units/month</span>
+                    <span><strong>300 free units</strong> of electricity every month</span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span>Online application via National Rooftop Solar Portal</span>
+                    <span><strong>Easy online application</strong> process</span>
                   </li>
                 </ul>
               </div>
@@ -130,77 +134,96 @@ const SolarSubsidiesPage = () => {
         {/* State-wise Subsidies */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>🏢 State-Wise Solar Subsidies (Additional Benefits)</CardTitle>
+            <CardTitle>🏢 Additional State Benefits</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="mb-4">
-              In addition to central subsidies, many Indian states offer extra solar incentives. 
-              These may include additional capital subsidies, interest-free loans, or favorable net metering policies.
+              Many states offer <strong>extra incentives</strong> on top of central subsidies:
             </p>
             
-            <h4 className="font-semibold mb-3">📍 State-wise Examples:</h4>
-            <ul className="space-y-2">
-              <li><strong>Gujarat:</strong> Additional support through GEDA for individual homes and societies</li>
-              <li><strong>Delhi:</strong> DISCOMs offer solar loans with zero upfront cost</li>
-              <li><strong>Maharashtra:</strong> Extra subsidy for housing societies via MEDA</li>
-            </ul>
-            
-            <p className="text-sm text-muted-foreground mt-4">
-              💡 Always confirm with your local DISCOM or solar installation partner about the availability of state solar subsidies in 2025.
-            </p>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold text-primary">Gujarat</h4>
+                <p className="text-sm text-muted-foreground">GEDA support for homes & societies</p>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold text-primary">Delhi</h4>
+                <p className="text-sm text-muted-foreground">Zero upfront cost solar loans</p>
+              </div>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold text-primary">Maharashtra</h4>
+                <p className="text-sm text-muted-foreground">MEDA subsidies for societies</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Eligibility */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>⚙️ Who Can Apply for a Solar Subsidy in India?</CardTitle>
+            <CardTitle>⚙️ Who Can Apply?</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4">The following are eligible to apply for rooftop solar subsidies in India:</p>
-            <ul className="space-y-2">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Individual residential homeowners</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Housing societies and RWAs (Resident Welfare Associations)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Cooperative Group Housing Societies (CGHS)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Non-commercial institutions and trusts</span>
-              </li>
-            </ul>
-            <p className="text-sm text-muted-foreground mt-4">
-              <strong>Note:</strong> Commercial and industrial users are not eligible for this rooftop subsidy scheme, 
-              but may benefit through other solar policies and net metering.
-            </p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold mb-3 text-green-600">✅ Eligible</h4>
+                <ul className="space-y-2">
+                  <li>• Individual homeowners</li>
+                  <li>• Housing societies & RWAs</li>
+                  <li>• Cooperative housing societies</li>
+                  <li>• Non-commercial institutions</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3 text-red-600">❌ Not Eligible</h4>
+                <ul className="space-y-2">
+                  <li>• Commercial establishments</li>
+                  <li>• Industrial units</li>
+                  <li>• Government buildings</li>
+                </ul>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Application Process */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>🌐 How to Apply for Solar Subsidy Online – Step-by-Step</CardTitle>
+            <CardTitle>🌐 Simple 7-Step Application Process</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div>
-                <p className="mb-4">Here's how to apply for the PM Surya Ghar rooftop solar subsidy in 2025:</p>
-                <ol className="space-y-3 list-decimal list-inside">
-                  <li>Visit the official portal: solarrooftop.gov.in</li>
-                  <li>Register under your electricity DISCOM</li>
-                  <li>Choose a registered solar vendor from the listed options</li>
-                  <li>Get technical feasibility approval from DISCOM</li>
-                  <li>Install the rooftop solar system</li>
-                  <li>Request DISCOM inspection and net-metering installation</li>
-                  <li>Receive commissioning certificate and subsidy via Direct Benefit Transfer (DBT)</li>
-                </ol>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                    <span>Visit solarrooftop.gov.in</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                    <span>Register with your DISCOM</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                    <span>Choose registered vendor</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">4</div>
+                    <span>Get technical approval</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">5</div>
+                    <span>Install solar system</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">6</div>
+                    <span>DISCOM inspection</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">7</div>
+                    <span>Receive subsidy via DBT</span>
+                  </div>
+                </div>
               </div>
               <div>
                 <img 
@@ -216,56 +239,61 @@ const SolarSubsidiesPage = () => {
         {/* Benefits */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>💡 Why You Should Go Solar in 2025</CardTitle>
+            <CardTitle>💡 Why Go Solar in 2025?</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Slash your electricity bills by up to 90%</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Get up to ₹78,000 in government subsidy support</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Increase the value of your property</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Contribute to a sustainable and greener India</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Net-metering allows you to earn credits by exporting excess power to the grid</span>
-              </li>
-            </ul>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>90% bill reduction</strong></span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>₹78,000 subsidy</strong></span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>Increase property value</strong></span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>Eco-friendly energy</strong></span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>Earn from excess power</strong></span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span><strong>25-year warranty</strong></span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* CTA Section */}
         <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-          <CardHeader>
-            <CardTitle>📞 Need Help with Solar Subsidy Application?</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              We simplify the entire process for you — from subsidy eligibility check and vendor comparison 
-              to installation and post-installation support. Our expert team ensures you get the best rooftop 
-              solar solution at the lowest price, with full subsidy benefits.
+          <CardContent className="p-8 text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to Apply for Solar Subsidy?</h2>
+            <p className="text-lg mb-6 max-w-2xl mx-auto">
+              Start your solar journey today! Calculate your savings, check eligibility, 
+              and apply for up to ₹78,000 government subsidy.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild className="text-lg px-8">
                 <Link to="/solar-calculator">
-                  <Calculator className="mr-2 h-4 w-4" />
-                  Check Your Eligibility Now
+                  <Calculator className="mr-2 h-5 w-5" />
+                  Calculate Savings & Apply Now
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" size="lg" asChild className="text-lg px-8">
                 <a href="https://solarrooftop.gov.in" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Visit Official Portal
+                  <ExternalLink className="mr-2 h-5 w-5" />
+                  Official Government Portal
                 </a>
               </Button>
             </div>
