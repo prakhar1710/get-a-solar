@@ -39,7 +39,7 @@ const Footer = () => {
             <h3 className="text-sm font-medium">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/subsidies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/solar-subsidies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Solar Subsidies
                 </Link>
               </li>

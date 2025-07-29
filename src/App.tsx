@@ -11,6 +11,7 @@ import VendorDashboard from "./pages/VendorDashboard";
 import LoginPage from "./pages/LoginPage";
 import BlogPage from "./pages/BlogPage";
 import SolarCalculatorPage from "./pages/SolarCalculatorPage";
+import SolarSubsidiesPage from "./pages/SolarSubsidiesPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
@@ -36,6 +37,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/solar-calculator" element={<SolarCalculatorPage />} />
+              <Route path="/solar-subsidies" element={<SolarSubsidiesPage />} />
               <Route path="/customer" element={
                 <ProtectedRoute userType="customer">
                   <CustomerDashboard />
