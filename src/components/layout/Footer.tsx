@@ -39,40 +39,30 @@ const Footer = () => {
             <h3 className="text-sm font-medium">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/subsidies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Solar Subsidies
+                <Link to="/solar-calculator" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Solar Calculator
                 </Link>
               </li>
               <li>
-                <Link to="/equipment" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Equipment Tiers
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  FAQ
+                <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Blog
                 </Link>
               </li>
             </ul>
           </div>
           
           <div className="space-y-3">
-            <h3 className="text-sm font-medium">Legal</h3>
+            <h3 className="text-sm font-medium">Support</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
-                </Link>
+                <span className="text-sm text-muted-foreground">
+                  Contact: support@getasolar.com
+                </span>
               </li>
               <li>
-                <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/dpdp" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  DPDP Compliance
-                </Link>
+                <span className="text-sm text-muted-foreground">
+                  Phone: +91 9876543210
+                </span>
               </li>
             </ul>
           </div>
