@@ -72,11 +72,11 @@ const Index = () => {
             
             {/* Enhanced action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button onClick={() => navigate('/customer')} className="bg-sbs-purple hover:bg-sbs-purple-dark px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2 text-[#e1782c] bg-slate-50">
+              <Button onClick={() => navigate('/customer')} className="bg-background text-sbs-orange hover:bg-background/90 px-8 py-6 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2">
                 Get Solar Quotes Now
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-200 text-green-500">
+              <Button variant="outline" onClick={() => navigate('/vendor')} className="border-2 border-white/60 hover:bg-white/10 hover:border-white px-8 py-6 text-lg font-semibold backdrop-blur-sm transition-all duration-200 text-white">
                 Join as Vendor
               </Button>
             </div>
@@ -139,7 +139,7 @@ const Index = () => {
             <Button variant="secondary" className="bg-white text-sbs-purple hover:bg-gray-100 px-8 py-6 text-lg" onClick={() => navigate('/customer')}>
               I Need Solar Installation
             </Button>
-            <Button variant="outline" onClick={() => navigate('/vendor')} className="border-white hover:bg-white/10 px-8 py-6 text-lg text-slate-500">
+            <Button variant="outline" onClick={() => navigate('/vendor')} className="border-white hover:bg-white/10 px-8 py-6 text-lg text-white">
               I'm a Solar Vendor
             </Button>
           </div>

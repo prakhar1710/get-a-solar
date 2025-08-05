@@ -21,15 +21,15 @@ export default {
 		extend: {
 			colors: {
 				// Solar Bid Sahayak theme colors
-				'sbs-orange': '#F97316',
-				'sbs-orange-light': '#FEC6A1',
-				'sbs-purple': '#9b87f5',
-				'sbs-purple-dark': '#6E59A5',
-				'sbs-purple-light': '#D6BCFA', 
-				'sbs-blue': '#33C3F0',
-				'sbs-red': '#ea384c',
-				'sbs-neutral': '#8E9196',
-				'sbs-dark': '#1A1F2C',
+				'sbs-orange': 'hsl(var(--sbs-orange))',
+				'sbs-orange-light': 'hsl(var(--sbs-orange-light))',
+				'sbs-purple': 'hsl(var(--sbs-purple))',
+				'sbs-purple-dark': 'hsl(var(--sbs-purple-dark))',
+				'sbs-purple-light': 'hsl(var(--sbs-purple-light))', 
+				'sbs-blue': 'hsl(var(--sbs-blue))',
+				'sbs-red': 'hsl(var(--sbs-red))',
+				'sbs-neutral': 'hsl(var(--sbs-neutral))',
+				'sbs-dark': 'hsl(var(--sbs-dark))',
 				
 				// Default shadcn colors
 				border: 'hsl(var(--border))',

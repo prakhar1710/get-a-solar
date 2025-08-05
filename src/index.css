@@ -35,6 +35,17 @@
 
     --radius: 0.5rem;
 
+    /* Solar theme colors */
+    --sbs-orange: 25 95% 53%;
+    --sbs-orange-light: 25 85% 75%;
+    --sbs-purple: 253 91% 76%;
+    --sbs-purple-dark: 251 57% 52%;
+    --sbs-purple-light: 251 91% 87%;
+    --sbs-blue: 198 93% 60%;
+    --sbs-red: 353 90% 59%;
+    --sbs-neutral: 221 11% 56%;
+    --sbs-dark: 215 28% 17%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
