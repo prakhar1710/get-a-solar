@@ -201,11 +201,21 @@ const LoginPage = () => {
       }
     } catch (error: any) {
       console.error("Signup error:", error);
-      toast({
-        title: "Sign up failed",
-        description: error.message || "An error occurred during sign up. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Handle specific error cases
+      if (error.message?.includes("User already registered") || error.message?.includes("already been registered")) {
+        toast({
+          title: "Account already exists",
+          description: "An account with this email already exists. Please try logging in instead.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Sign up failed",
+          description: error.message || "An error occurred during sign up. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
