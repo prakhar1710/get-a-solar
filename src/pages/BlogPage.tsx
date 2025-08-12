@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, MessageSquare, BookOpen } from 'lucide-react';
+import SubscribeDialog from '@/components/blog/SubscribeDialog';
 
 // Mock blog data
 const blogPosts = [
@@ -61,6 +62,8 @@ const blogPosts = [
 ];
 
 const BlogPage = () => {
+  const [isSubscribeDialogOpen, setIsSubscribeDialogOpen] = useState(false);
+
   return (
     <MainLayout>
       <div className="container py-8">
@@ -69,7 +72,10 @@ const BlogPage = () => {
             <h1 className="text-3xl font-bold">Solar Blog</h1>
             <p className="text-muted-foreground mt-1">Stay updated with the latest in solar technology and industry news</p>
           </div>
-          <Button className="bg-sbs-purple hover:bg-sbs-purple-dark text-white">
+          <Button 
+            className="bg-sbs-purple hover:bg-sbs-purple-dark text-white"
+            onClick={() => setIsSubscribeDialogOpen(true)}
+          >
             <BookOpen className="mr-2 h-4 w-4" />
             Subscribe
           </Button>
@@ -110,6 +116,11 @@ const BlogPage = () => {
           <Button variant="outline">Next</Button>
         </div>
       </div>
+
+      <SubscribeDialog
+        open={isSubscribeDialogOpen}
+        onOpenChange={setIsSubscribeDialogOpen}
+      />
     </MainLayout>
   );
 };
