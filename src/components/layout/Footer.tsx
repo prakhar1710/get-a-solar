@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-8">
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           <div className="space-y-3">
             <h3 className="text-lg font-medium">Get A Solar</h3>
             <p className="text-sm text-muted-foreground">
@@ -75,6 +75,22 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
+          </div>
+          
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium">Contact Us</h3>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Email: info@getasolar.in
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Phone: +91 98765 43210
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Address: 123 Green Energy Street,<br />
+                Solar City, Mumbai 400001
+              </p>
+            </div>
           </div>
         </div>
         
