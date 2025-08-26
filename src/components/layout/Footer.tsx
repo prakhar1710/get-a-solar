@@ -87,8 +87,8 @@ const Footer = () => {
                 Phone: +91 94621 87082
               </p>
               <p className="text-sm text-muted-foreground">
-                Address: 123 Green Energy Street,<br />
-                Solar City, Mumbai 400001
+                Address: 1-N-14, Talwandi, Kota,<br />
+                Rajasthan 324005
               </p>
             </div>
           </div>
