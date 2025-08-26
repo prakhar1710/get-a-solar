@@ -84,7 +84,7 @@ const Footer = () => {
                 Email: info@getasolar.in
               </p>
               <p className="text-sm text-muted-foreground">
-                Phone: +91 98765 43210
+                Phone: +91 94621 87082
               </p>
               <p className="text-sm text-muted-foreground">
                 Address: 123 Green Energy Street,<br />
