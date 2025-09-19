@@ -121,7 +121,7 @@ const DPDPCompliancePage = () => {
             <div className="bg-muted p-6 rounded-lg">
               <h3 className="text-xl font-medium text-primary mb-4">Get A Solar (Data Fiduciary)</h3>
               <ul className="list-none space-y-2 text-foreground">
-                <li><strong>Data Protection Officer:</strong> [DPO Name]</li>
+                <li><strong>Data Protection Officer:</strong> Anita Malav</li>
                 <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
                 <li><strong>Grievance Officer:</strong> [Officer Name]</li>
                 <li><strong>Grievance Email:</strong> <a href="mailto:grievance@getasolar.com" className="text-primary hover:underline">grievance@getasolar.com</a></li>
@@ -230,7 +230,7 @@ const DPDPCompliancePage = () => {
             <h2 className="text-2xl font-semibold text-primary mb-4">Contact Our Data Protection Officer</h2>
             <p className="text-foreground mb-4">For DPDP-related queries:</p>
             <ul className="list-none space-y-2 text-foreground">
-              <li><strong>Data Protection Officer:</strong> [Name]</li>
+              <li><strong>Data Protection Officer:</strong> Anita Malav</li>
               <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
               <li><strong>Phone:</strong> [DPO Phone Number]</li>
               <li><strong>Office Hours:</strong> Monday-Friday, 9 AM - 6 PM IST</li>
