@@ -11,6 +11,9 @@ import VendorDashboard from "./pages/VendorDashboard";
 import LoginPage from "./pages/LoginPage";
 import BlogPage from "./pages/BlogPage";
 import SolarCalculatorPage from "./pages/SolarCalculatorPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import DPDPCompliancePage from "./pages/DPDPCompliancePage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
@@ -48,6 +51,9 @@ const App = () => (
               } />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/blog" element={<BlogPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+              <Route path="/dpdp-compliance" element={<DPDPCompliancePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
