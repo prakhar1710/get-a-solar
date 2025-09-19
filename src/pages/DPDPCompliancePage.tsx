@@ -123,7 +123,7 @@ const DPDPCompliancePage = () => {
               <ul className="list-none space-y-2 text-foreground">
                 <li><strong>Data Protection Officer:</strong> Anita Malav</li>
                 <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
-                <li><strong>Grievance Officer:</strong> [Officer Name]</li>
+                <li><strong>Grievance Officer:</strong> Anita Malav</li>
                 <li><strong>Grievance Email:</strong> <a href="mailto:grievance@getasolar.com" className="text-primary hover:underline">grievance@getasolar.com</a></li>
               </ul>
             </div>
