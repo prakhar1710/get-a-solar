@@ -5,61 +5,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, MessageSquare, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SubscribeDialog from '@/components/blog/SubscribeDialog';
-
-// Mock blog data
-const blogPosts = [
-  {
-    id: '1',
-    title: 'Understanding Solar Panel Efficiency Ratings',
-    excerpt: 'Learn how to interpret efficiency ratings when choosing solar panels for your installation.',
-    author: 'Aditya Sharma',
-    date: '2025-04-15',
-    category: 'Education',
-    readTime: '5 min read',
-    comments: 8
-  },
-  {
-    id: '2',
-    title: 'Government Subsidies for Solar in 2025',
-    excerpt: 'A comprehensive guide to the latest government incentives available for residential and commercial solar installations.',
-    author: 'Priya Patel',
-    date: '2025-04-28',
-    category: 'Policy',
-    readTime: '8 min read',
-    comments: 12
-  },
-  {
-    id: '3',
-    title: 'Comparing Monocrystalline vs. Polycrystalline Panels',
-    excerpt: 'Which type of solar panel is best for your needs? We break down the pros and cons of each technology.',
-    author: 'Raj Malhotra',
-    date: '2025-04-22',
-    category: 'Technology',
-    readTime: '6 min read',
-    comments: 5
-  },
-  {
-    id: '4',
-    title: 'Best Practices for Solar Panel Maintenance',
-    excerpt: 'Keep your solar system running at peak efficiency with these maintenance tips and tricks.',
-    author: 'Meera Kapoor',
-    date: '2025-04-10',
-    category: 'Maintenance',
-    readTime: '4 min read',
-    comments: 3
-  },
-  {
-    id: '5',
-    title: 'Solar Battery Storage Solutions Compared',
-    excerpt: 'An in-depth look at the top battery storage options to pair with your solar installation.',
-    author: 'Vikram Singh',
-    date: '2025-04-05',
-    category: 'Technology',
-    readTime: '7 min read',
-    comments: 9
-  }
-];
+import { blogArticles } from '@/data/blogArticles';
 
 const BlogPage = () => {
   const [isSubscribeDialogOpen, setIsSubscribeDialogOpen] = useState(false);
@@ -82,7 +30,7 @@ const BlogPage = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post) => (
+          {blogArticles.map((post) => (
             <Card key={post.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
@@ -99,9 +47,11 @@ const BlogPage = () => {
                 <p className="text-sm text-muted-foreground">{post.readTime} • By {post.author}</p>
               </CardContent>
               <CardFooter className="flex justify-between pt-2">
-                <Button variant="outline" size="sm" className="text-sbs-purple hover:text-sbs-purple-dark hover:bg-sbs-purple/10">
-                  Read More
-                </Button>
+                <Link to={`/blog/${post.id}`}>
+                  <Button variant="outline" size="sm" className="text-sbs-purple hover:text-sbs-purple-dark hover:bg-sbs-purple/10">
+                    Read More
+                  </Button>
+                </Link>
                 <div className="flex items-center text-muted-foreground text-sm">
                   <MessageSquare className="h-4 w-4 mr-1" />
                   {post.comments}
