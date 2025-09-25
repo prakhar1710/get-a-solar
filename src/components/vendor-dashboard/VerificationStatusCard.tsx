@@ -17,12 +17,6 @@ const VerificationStatusCard = () => {
             <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
               <Check className="h-3 w-3 mr-1" /> GSTIN Verified
             </Badge>
-            <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
-              ALMM Certification Pending
-            </Badge>
-            <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
-              BIS Certification Pending
-            </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
             Complete your verification process to improve your visibility and bid ranking.
