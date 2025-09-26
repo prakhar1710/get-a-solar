@@ -9,12 +9,14 @@ import MyBids from '@/components/vendor-dashboard/MyBids';
 import VendorDashboardHeader from '@/components/vendor-dashboard/VendorDashboardHeader';
 import BidSubmissionDialog from '@/components/vendor-dashboard/BidSubmissionDialog';
 import CustomBidDialog from '@/components/vendor-dashboard/CustomBidDialog';
+import CertificationUploadDialog from '@/components/vendor-dashboard/CertificationUploadDialog';
 import { useVendorDashboard } from '@/hooks/useVendorDashboard';
 
 const VendorDashboard: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
   const [showCustomBidForm, setShowCustomBidForm] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
 
   const {
     submittedBids,
@@ -47,10 +49,10 @@ const VendorDashboard: React.FC = () => {
   return (
     <MainLayout>
       <div className="container py-8">
-        <VendorDashboardHeader />
+        <VendorDashboardHeader onUploadClick={() => setShowUploadDialog(true)} />
 
         {/* Verification Status Card */}
-        <VerificationStatusCard />
+        <VerificationStatusCard onUploadClick={() => setShowUploadDialog(true)} />
 
         {/* Main dashboard content */}
         <Tabs defaultValue="available" className="w-full">
@@ -79,6 +81,12 @@ const VendorDashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Certification Upload Dialog */}
+      <CertificationUploadDialog
+        open={showUploadDialog}
+        onOpenChange={setShowUploadDialog}
+      />
       
       {/* Bid Submission Dialog */}
       <BidSubmissionDialog
