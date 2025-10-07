@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { FileText, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { FileText, RefreshCw, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Project, Bid } from '@/types';
 import ProjectCardItem from './ProjectCardItem';
 
@@ -22,10 +23,24 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
   isLoading, 
   onRefresh 
 }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Helper function to check if vendor has already bid on a project
   const hasBidOnProject = (projectId: string) => {
     return submittedBids.some(bid => bid.project_id === projectId);
   };
+
+  // Filter projects based on search query
+  const filteredProjects = useMemo(() => {
+    if (!searchQuery.trim()) return projects;
+    
+    const query = searchQuery.toLowerCase();
+    return projects.filter(project => 
+      project.location.toLowerCase().includes(query) ||
+      project.state.toLowerCase().includes(query) ||
+      project.title.toLowerCase().includes(query)
+    );
+  }, [projects, searchQuery]);
 
   return (
     <div className="dashboard-section">
@@ -42,25 +57,55 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
         </Button>
       </div>
 
+      {/* Search Section */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search by location, state, or project title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        {searchQuery && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} matching "{searchQuery}"
+          </p>
+        )}
+      </div>
+
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <div className="animate-pulse text-muted-foreground">Loading projects...</div>
         </div>
-      ) : projects.length === 0 ? (
+      ) : filteredProjects.length === 0 ? (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-2" />
-          <h3 className="text-lg font-medium mb-2">No projects available</h3>
+          <h3 className="text-lg font-medium mb-2">
+            {searchQuery ? 'No projects found' : 'No projects available'}
+          </h3>
           <p className="text-muted-foreground mb-4">
-            Check back later for new solar installation projects
+            {searchQuery 
+              ? `No projects match "${searchQuery}". Try a different search term.`
+              : 'Check back later for new solar installation projects'
+            }
           </p>
-          <Button onClick={onRefresh} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Projects
-          </Button>
+          {searchQuery ? (
+            <Button onClick={() => setSearchQuery('')} variant="outline">
+              Clear Search
+            </Button>
+          ) : (
+            <Button onClick={onRefresh} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Projects
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
+          {filteredProjects.map((project) => (
             <ProjectCardItem
               key={project.id}
               project={project}
