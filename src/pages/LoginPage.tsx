@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -223,6 +224,11 @@ const LoginPage = () => {
 
   return (
     <MainLayout>
+      <SEOHead 
+        title="Login or Sign Up"
+        description="Join Get A Solar to connect with verified solar vendors, get competitive quotes, and start your solar energy journey. Create your customer or vendor account today."
+        keywords="solar login, solar signup, solar platform, solar vendor registration, solar customer registration"
+      />
       <div className="container py-8 flex justify-center">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold text-center mb-8">Welcome to <span className="text-sbs-purple">Get A Solar</span></h1>

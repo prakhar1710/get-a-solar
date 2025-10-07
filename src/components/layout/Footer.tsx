@@ -39,18 +39,13 @@ const Footer = () => {
             <h3 className="text-sm font-medium">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/subsidies" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Solar Subsidies
+                <Link to="/solar-calculator" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Solar Calculator
                 </Link>
               </li>
               <li>
-                <Link to="/equipment" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Equipment Tiers
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  FAQ
+                <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Blog & Guides
                 </Link>
               </li>
             </ul>

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,11 @@ const BlogPage = () => {
 
   return (
     <MainLayout>
+      <SEOHead 
+        title="Solar Energy Blog & News"
+        description="Stay updated with the latest solar technology trends, government policies, subsidies, and installation guides. Expert insights on solar energy in India."
+        keywords="solar blog, solar news, solar technology, solar subsidies, solar installation guide, renewable energy news"
+      />
       <div className="container py-8">
         <div className="flex justify-between items-center mb-8">
           <div>

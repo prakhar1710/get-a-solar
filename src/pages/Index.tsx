@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Sun, Zap, Users, BadgeIndianRupee, Star, ArrowRight, Shield } from 'lucide-react';
 const Index = () => {
   const navigate = useNavigate();
@@ -23,6 +24,11 @@ const Index = () => {
     description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
   }];
   return <MainLayout>
+      <SEOHead 
+        title="India's #1 Solar Bidding Platform"
+        description="Connect with 250+ verified solar vendors across India. Get competitive bids, compare prices, and find the perfect solar installation partner. Save up to 18% on your solar project with government subsidies."
+        keywords="solar panels India, solar installation, solar bidding platform, solar vendors, solar subsidy, renewable energy, solar quotes, solar calculator"
+      />
       {/* Enhanced Hero Section */}
       <section className="relative h-screen overflow-hidden">
         {/* Background Image with better positioning */}
