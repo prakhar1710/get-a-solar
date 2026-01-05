@@ -18,6 +18,7 @@ import TermsOfServicePage from "./pages/TermsOfServicePage";
 import DPDPCompliancePage from "./pages/DPDPCompliancePage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 
 const queryClient = new QueryClient({
@@ -51,7 +52,11 @@ const App = () => (
                   <VendorDashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={
+                <AdminProtectedRoute>
+                  <AdminDashboard />
+                </AdminProtectedRoute>
+              } />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
