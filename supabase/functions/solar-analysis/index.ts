@@ -14,6 +14,16 @@ interface SolarAnalysisRequest {
   shadingLevel: number;
 }
 
+// Sanitize string input to prevent prompt injection
+const sanitizeString = (str: string): string => {
+  return str.replace(/[^a-zA-Z0-9\s,.\-()]/g, '').trim();
+};
+
+// Validate numeric input within bounds
+const validateNumber = (value: unknown, min: number, max: number): boolean => {
+  return typeof value === 'number' && !isNaN(value) && value >= min && value <= max;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -50,7 +60,67 @@ serve(async (req) => {
 
     console.log('Authenticated user:', user.id);
 
-    const { calculationResult, location, monthlyBill, rooftopArea, shadingLevel }: SolarAnalysisRequest = await req.json();
+    // Parse and validate request body
+    let requestBody: SolarAnalysisRequest;
+    try {
+      requestBody = await req.json();
+    } catch {
+      console.error('Invalid JSON in request body');
+      return new Response(
+        JSON.stringify({ error: 'Invalid request: malformed JSON' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { calculationResult, location, monthlyBill, rooftopArea, shadingLevel } = requestBody;
+
+    // Validate location (required, max 100 chars, safe characters only)
+    if (!location || typeof location !== 'string' || location.length > 100) {
+      console.error('Invalid location:', { location: location?.substring?.(0, 20) });
+      return new Response(
+        JSON.stringify({ error: 'Invalid location: must be a string with max 100 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate monthlyBill (0-1,000,000 range for reasonable electricity bills)
+    if (!validateNumber(monthlyBill, 0, 1000000)) {
+      console.error('Invalid monthlyBill:', monthlyBill);
+      return new Response(
+        JSON.stringify({ error: 'Invalid monthlyBill: must be a number between 0 and 1,000,000' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate rooftopArea (0-100,000 sq ft range)
+    if (!validateNumber(rooftopArea, 0, 100000)) {
+      console.error('Invalid rooftopArea:', rooftopArea);
+      return new Response(
+        JSON.stringify({ error: 'Invalid rooftopArea: must be a number between 0 and 100,000' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate shadingLevel (0-100 percentage)
+    if (!validateNumber(shadingLevel, 0, 100)) {
+      console.error('Invalid shadingLevel:', shadingLevel);
+      return new Response(
+        JSON.stringify({ error: 'Invalid shadingLevel: must be a number between 0 and 100' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate calculationResult structure
+    if (!calculationResult || typeof calculationResult !== 'object') {
+      console.error('Invalid calculationResult');
+      return new Response(
+        JSON.stringify({ error: 'Invalid calculationResult: must be an object' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize location for use in prompt
+    const sanitizedLocation = sanitizeString(location);
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -58,28 +128,43 @@ serve(async (req) => {
       throw new Error('GEMINI_API_KEY not found');
     }
 
+    // Safe numeric values for prompt (use Math.round to prevent injection via decimals)
+    const safeMonthlyBill = Math.round(monthlyBill);
+    const safeRooftopArea = Math.round(rooftopArea);
+    const safeShadingLevel = Math.round(shadingLevel);
+    const safeSystemSize = Number(calculationResult.systemSize) || 0;
+    const safeEstimatedCost = Number(calculationResult.estimatedCost) || 0;
+    const safeCentralSubsidy = Number(calculationResult.centralSubsidy) || 0;
+    const safeStateSubsidy = Number(calculationResult.stateSubsidy) || 0;
+    const safeTotalSubsidy = Number(calculationResult.totalSubsidy) || 0;
+    const safeFinalCost = Number(calculationResult.finalCost) || 0;
+    const safeMonthlySavings = Number(calculationResult.monthlySavings) || 0;
+    const safePaybackPeriod = Number(calculationResult.paybackPeriod) || 0;
+    const safePanels = Number(calculationResult.panels) || 0;
+    const safeSystemType = sanitizeString(String(calculationResult.systemType || 'Grid-tied'));
+
     const prompt = `
 As a solar energy expert, provide accurate solar installation recommendations for this customer:
 
-Location: ${location}
-Monthly Electricity Bill: ₹${monthlyBill}
-Available Rooftop Area: ${rooftopArea} sq ft
-Shading Level: ${shadingLevel}%
+Location: ${sanitizedLocation}
+Monthly Electricity Bill: ₹${safeMonthlyBill}
+Available Rooftop Area: ${safeRooftopArea} sq ft
+Shading Level: ${safeShadingLevel}%
 
 Current System Calculation:
-- System Size: ${calculationResult.systemSize} kW
-- Total Cost: ₹${calculationResult.estimatedCost.toLocaleString()}
-- Central Govt Subsidy: ₹${calculationResult.centralSubsidy.toLocaleString()}
-- State Subsidy: ₹${calculationResult.stateSubsidy.toLocaleString()}
-- Total Subsidy: ₹${calculationResult.totalSubsidy.toLocaleString()}
-- Final Cost: ₹${calculationResult.finalCost.toLocaleString()}
-- Monthly Savings: ₹${calculationResult.monthlySavings.toLocaleString()}
-- Payback Period: ${calculationResult.paybackPeriod} years
-- System Type: ${calculationResult.systemType}
-- Panels Required: ${calculationResult.panels}
+- System Size: ${safeSystemSize} kW
+- Total Cost: ₹${safeEstimatedCost.toLocaleString()}
+- Central Govt Subsidy: ₹${safeCentralSubsidy.toLocaleString()}
+- State Subsidy: ₹${safeStateSubsidy.toLocaleString()}
+- Total Subsidy: ₹${safeTotalSubsidy.toLocaleString()}
+- Final Cost: ₹${safeFinalCost.toLocaleString()}
+- Monthly Savings: ₹${safeMonthlySavings.toLocaleString()}
+- Payback Period: ${safePaybackPeriod} years
+- System Type: ${safeSystemType}
+- Panels Required: ${safePanels}
 
 Please provide accurate recommendations based on latest government subsidy schemes:
-1. Location-specific solar potential and benefits for ${location}
+1. Location-specific solar potential and benefits for ${sanitizedLocation}
 2. Clear explanation of the cost calculation and subsidy breakdown
 3. Specific actionable recommendations for this installation size and budget
 4. Important next steps and considerations for implementation
@@ -87,7 +172,7 @@ Please provide accurate recommendations based on latest government subsidy schem
 Focus on practical advice and accurate subsidy information. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
 `;
 
-    console.log('Calling Gemini API for user:', user.id);
+    console.log('Calling Gemini API for user:', user.id, 'location:', sanitizedLocation.substring(0, 30));
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -145,7 +230,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
 
   } catch (error) {
     console.error('Error in solar-analysis function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: 'An error occurred processing your request' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
