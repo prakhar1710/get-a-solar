@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,10 +21,40 @@ serve(async (req) => {
   }
 
   try {
+    // Verify JWT authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('Missing authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Missing authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create Supabase client with auth context
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Verify the user's JWT token
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      console.error('Auth error:', authError?.message || 'No user found');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Authenticated user:', user.id);
+
     const { calculationResult, location, monthlyBill, rooftopArea, shadingLevel }: SolarAnalysisRequest = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
+      console.error('GEMINI_API_KEY not configured');
       throw new Error('GEMINI_API_KEY not found');
     }
 
@@ -56,6 +87,8 @@ Please provide accurate recommendations based on latest government subsidy schem
 Focus on practical advice and accurate subsidy information. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
 `;
 
+    console.log('Calling Gemini API for user:', user.id);
+
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
@@ -82,7 +115,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
     }
 
     const data = await response.json();
-    console.log('Gemini response:', data);
+    console.log('Gemini response received for user:', user.id);
     
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
@@ -103,6 +136,8 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
         considerations: "Important factors to consider for your solar installation"
       };
     }
+
+    console.log('Successfully processed solar analysis for user:', user.id);
 
     return new Response(JSON.stringify({ analysis }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
