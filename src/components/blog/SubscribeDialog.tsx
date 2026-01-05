@@ -17,13 +17,31 @@ const SubscribeDialog = ({ open, onOpenChange }: SubscribeDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // RFC 5322 compliant email validation regex
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !email.includes('@')) {
+    const trimmedEmail = email.trim();
+    
+    if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
       toast({
         title: "Invalid Email",
-        description: "Please enter a valid email address.",
+        description: "Please enter a valid email address (e.g., name@example.com).",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Check for reasonable email length
+    if (trimmedEmail.length > 254) {
+      toast({
+        title: "Invalid Email",
+        description: "Email address is too long.",
         variant: "destructive",
       });
       return;
