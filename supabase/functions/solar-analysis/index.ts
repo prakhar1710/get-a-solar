@@ -33,7 +33,7 @@ serve(async (req) => {
   try {
     // Verify JWT authentication
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    if (!authHeader?.startsWith('Bearer ')) {
       console.error('Missing authorization header');
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Missing authorization header' }),
@@ -48,17 +48,19 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    // Verify the user's JWT token
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    if (authError || !user) {
-      console.error('Auth error:', authError?.message || 'No user found');
+    // Verify the user's JWT token using getClaims
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
+    if (authError || !claimsData?.claims) {
+      console.error('Auth error:', authError?.message || 'No claims found');
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Authenticated user:', user.id);
+    const userId = claimsData.claims.sub;
+    console.log('Authenticated user:', userId);
 
     // Parse and validate request body
     let requestBody: SolarAnalysisRequest;
