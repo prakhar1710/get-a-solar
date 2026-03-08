@@ -202,7 +202,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
     }
 
     const data = await response.json();
-    console.log('Gemini response received for user:', user.id);
+    console.log('Gemini response received for user:', userId);
     
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
