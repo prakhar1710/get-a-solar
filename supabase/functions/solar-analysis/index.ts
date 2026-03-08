@@ -33,7 +33,7 @@ serve(async (req) => {
   try {
     // Verify JWT authentication
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    if (!authHeader?.startsWith('Bearer ')) {
       console.error('Missing authorization header');
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Missing authorization header' }),
@@ -48,17 +48,19 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    // Verify the user's JWT token
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    if (authError || !user) {
-      console.error('Auth error:', authError?.message || 'No user found');
+    // Verify the user's JWT token using getClaims
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
+    if (authError || !claimsData?.claims) {
+      console.error('Auth error:', authError?.message || 'No claims found');
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Authenticated user:', user.id);
+    const userId = claimsData.claims.sub;
+    console.log('Authenticated user:', userId);
 
     // Parse and validate request body
     let requestBody: SolarAnalysisRequest;
@@ -172,7 +174,7 @@ Please provide accurate recommendations based on latest government subsidy schem
 Focus on practical advice and accurate subsidy information. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
 `;
 
-    console.log('Calling Gemini API for user:', user.id, 'location:', sanitizedLocation.substring(0, 30));
+    console.log('Calling Gemini API for user:', userId, 'location:', sanitizedLocation.substring(0, 30));
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -200,7 +202,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
     }
 
     const data = await response.json();
-    console.log('Gemini response received for user:', user.id);
+    console.log('Gemini response received for user:', userId);
     
     const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     
@@ -222,7 +224,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
       };
     }
 
-    console.log('Successfully processed solar analysis for user:', user.id);
+    console.log('Successfully processed solar analysis for user:', userId);
 
     return new Response(JSON.stringify({ analysis }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

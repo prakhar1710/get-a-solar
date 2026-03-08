@@ -1,4 +1,4 @@
 project_id = "vlkbfkfbpsawgusyabzt"
 
 [functions.solar-analysis]
-verify_jwt = true
+verify_jwt = false
