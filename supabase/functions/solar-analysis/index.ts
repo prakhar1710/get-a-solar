@@ -174,7 +174,7 @@ Please provide accurate recommendations based on latest government subsidy schem
 Focus on practical advice and accurate subsidy information. Format as JSON with sections: locationInsights, calculationExplanation, recommendations, considerations.
 `;
 
-    console.log('Calling Gemini API for user:', user.id, 'location:', sanitizedLocation.substring(0, 30));
+    console.log('Calling Gemini API for user:', userId, 'location:', sanitizedLocation.substring(0, 30));
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
