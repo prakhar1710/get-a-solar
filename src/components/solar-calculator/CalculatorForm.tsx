@@ -20,6 +20,10 @@ interface CalculatorFormProps {
   setRooftopType: (value: string) => void;
   shadingLevel: number[];
   setShadingLevel: (value: number[]) => void;
+  electricityRate: number;
+  setElectricityRate: (value: number) => void;
+  dailyPowerCuts: string;
+  setDailyPowerCuts: (value: string) => void;
   onCalculate: () => void;
 }
 
@@ -34,13 +38,17 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   setRooftopType,
   shadingLevel,
   setShadingLevel,
+  electricityRate,
+  setElectricityRate,
+  dailyPowerCuts,
+  setDailyPowerCuts,
   onCalculate
 }) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-sbs-orange" />
+          <Calculator className="h-5 w-5 text-primary" />
           Solar System Calculator
         </CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -61,6 +69,22 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
             />
             <p className="text-xs text-muted-foreground">
               Your average monthly electricity bill in rupees
+            </p>
+          </div>
+
+          {/* Electricity Rate */}
+          <div className="space-y-2">
+            <Label htmlFor="electricity-rate">Electricity Rate (₹/unit)</Label>
+            <Input
+              id="electricity-rate"
+              type="number"
+              step="0.5"
+              value={electricityRate}
+              onChange={(e) => setElectricityRate(Number(e.target.value))}
+              placeholder="5.5"
+            />
+            <p className="text-xs text-muted-foreground">
+              Auto-filled from state average; edit for your actual rate
             </p>
           </div>
 
@@ -105,11 +129,30 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="concrete">Concrete/RCC</SelectItem>
-                <SelectItem value="metal">Metal Sheet</SelectItem>
-                <SelectItem value="tile">Tile Roof</SelectItem>
-                <SelectItem value="asbestos">Asbestos Sheet</SelectItem>
+                <SelectItem value="metal">Metal Sheet (+5% cost)</SelectItem>
+                <SelectItem value="tile">Tile Roof (+15% cost)</SelectItem>
+                <SelectItem value="asbestos">Asbestos Sheet (+10% cost)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Daily Power Cuts */}
+          <div className="space-y-2">
+            <Label>Average Daily Power Cuts</Label>
+            <Select value={dailyPowerCuts} onValueChange={setDailyPowerCuts}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select power cut frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">None / Rare</SelectItem>
+                <SelectItem value="1-2">1–2 hours</SelectItem>
+                <SelectItem value="3-4">3–4 hours</SelectItem>
+                <SelectItem value="5+">5+ hours</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Helps determine if battery backup is recommended
+            </p>
           </div>
         </div>
 
@@ -133,7 +176,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
         <Button 
           onClick={onCalculate}
-          className="w-full bg-sbs-orange hover:bg-sbs-orange-dark text-white"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           disabled={!location || monthlyBill <= 0 || rooftopArea <= 0}
         >
           <Zap className="h-4 w-4 mr-2" />

@@ -1,5 +1,5 @@
 
-import { centralSubsidyRates, stateSubsidies, solarIrradiance } from './solarSubsidyData';
+import { centralSubsidyRates, stateSubsidies, solarIrradiance, stateTariffs, rooftopCostMultiplier, panelAreaByRoofType } from './solarSubsidyData';
 import { SolarCalculationResult } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -8,98 +8,139 @@ export interface CalculationInputs {
   rooftopArea: number;
   location: string;
   shadingLevel: number;
+  electricityRate: number;
+  rooftopType: string;
+  dailyPowerCuts: string;
 }
 
+const PANEL_WATTAGE = 0.4; // 400W panels in kW
+const SYSTEM_EFFICIENCY = 0.85;
+const DEGRADATION_RATE = 0.005; // 0.5% per year
+const ESCALATION_RATE = 0.05; // 5% electricity price increase per year
+const CO2_FACTOR = 0.82; // kg CO2 per kWh displaced
+const SYSTEM_LIFETIME = 25;
+
 export const calculateSolarSystem = async (inputs: CalculationInputs): Promise<SolarCalculationResult> => {
-  const { monthlyBill, rooftopArea, location, shadingLevel } = inputs;
-  
-  // Calculate daily energy consumption (kWh)
-  const averageUnitsPerMonth = monthlyBill / 6; // Assuming ₹6 per unit
-  const dailyConsumption = averageUnitsPerMonth / 30;
-  
-  // Get solar irradiance for the location
-  const irradiance = solarIrradiance[location as keyof typeof solarIrradiance] || 5.2;
-  
-  // Account for shading and efficiency losses
+  const { monthlyBill, rooftopArea, location, shadingLevel, electricityRate, rooftopType, dailyPowerCuts } = inputs;
+
+  // Use user-provided electricity rate (or state default)
+  const tariff = electricityRate || stateTariffs[location] || 5.5;
+
+  // Monthly consumption in kWh
+  const monthlyConsumption = monthlyBill / tariff;
+  const dailyConsumption = monthlyConsumption / 30;
+
+  // Solar irradiance for location
+  const irradiance = solarIrradiance[location] || 5.2;
+
+  // Shading & efficiency
   const shadingFactor = (100 - shadingLevel) / 100;
-  const systemEfficiency = 0.85; // 85% system efficiency
-  
-  // Calculate required system size (kW)
-  const systemSize = Math.round((dailyConsumption / (irradiance * shadingFactor * systemEfficiency)) * 100) / 100;
-  
-  // Calculate number of panels (assuming 400W panels)
-  const panelWattage = 0.4; // 400W panels
-  const panels = Math.ceil(systemSize / panelWattage);
-  
-  // Calculate required rooftop area (assuming 20 sq ft per panel)
-  const requiredArea = panels * 20;
-  
-  // Determine system type based on rooftop area availability
-  let systemType = 'Grid-tied';
-  if (requiredArea > rooftopArea * 0.8) {
-    systemType = 'Grid-tied with Battery Backup';
+
+  // Required system size (kW)
+  let systemSize = Math.round((dailyConsumption / (irradiance * shadingFactor * SYSTEM_EFFICIENCY)) * 100) / 100;
+
+  // Cap system size by available rooftop area
+  const sqFtPerPanel = panelAreaByRoofType[rooftopType] || 20;
+  const maxPanels = Math.floor(rooftopArea / sqFtPerPanel);
+  const maxSystemSize = maxPanels * PANEL_WATTAGE;
+
+  const wasCapped = systemSize > maxSystemSize;
+  if (wasCapped) {
+    systemSize = Math.round(maxSystemSize * 100) / 100;
   }
-  
-  // Cost calculation (₹50-70 per watt depending on system type)
-  const costPerWatt = systemType.includes('Battery') ? 70 : 55;
-  const totalCost = systemSize * 1000 * costPerWatt;
-  
-  // Calculate Central Government Subsidy (MNRE)
+
+  // Panels
+  const panels = Math.ceil(systemSize / PANEL_WATTAGE);
+  const requiredArea = panels * sqFtPerPanel;
+
+  // Capacity utilization (% of roof used)
+  const capacityUtilization = Math.round((requiredArea / rooftopArea) * 100);
+
+  // System type based on power cuts, not roof area
+  let systemType = 'Grid-tied';
+  if (dailyPowerCuts === '3-4' || dailyPowerCuts === '5+') {
+    systemType = 'Grid-tied with Battery Backup';
+  } else if (dailyPowerCuts === '1-2') {
+    systemType = 'Grid-tied (Battery Optional)';
+  }
+
+  // Cost calculation with rooftop type multiplier
+  const baseCostPerWatt = systemType.includes('Battery Backup') ? 70 : 55;
+  const costMultiplier = rooftopCostMultiplier[rooftopType] || 1.0;
+  const totalCost = Math.round(systemSize * 1000 * baseCostPerWatt * costMultiplier);
+
+  // Central Government Subsidy (MNRE)
   let centralSubsidy = 0;
   if (systemSize <= 3) {
     centralSubsidy = systemSize * centralSubsidyRates.upTo3kW;
   } else {
     centralSubsidy = (3 * centralSubsidyRates.upTo3kW) + ((systemSize - 3) * centralSubsidyRates.above3kW);
   }
-  // Cap central subsidy at ₹78,000 for residential systems
-  centralSubsidy = Math.min(centralSubsidy, 78000);
-  
-  // Calculate State Subsidy
+  centralSubsidy = Math.min(Math.round(centralSubsidy), 78000);
+
+  // State Subsidy
   const stateSubsidyInfo = stateSubsidies[location as keyof typeof stateSubsidies] || stateSubsidies['Other'];
   let stateSubsidy = 0;
   if (stateSubsidyInfo.rate > 0) {
-    stateSubsidy = Math.min(totalCost * stateSubsidyInfo.rate, stateSubsidyInfo.maxAmount);
+    stateSubsidy = Math.min(Math.round(totalCost * stateSubsidyInfo.rate), stateSubsidyInfo.maxAmount);
   }
-  
+
   const totalSubsidy = centralSubsidy + stateSubsidy;
   const finalCost = totalCost - totalSubsidy;
-  
-  // Calculate savings and payback
-  let monthlySavings = Math.min(monthlyBill * 0.8, averageUnitsPerMonth * 6); // 80% bill reduction max
-  let paybackPeriod = Math.round((finalCost / (monthlySavings * 12)) * 10) / 10;
-  
-  // Get AI-enhanced calculations from Gemini
+
+  // Annual energy generation (kWh) — year 1
+  const annualGeneration = Math.round(systemSize * irradiance * 365 * shadingFactor * SYSTEM_EFFICIENCY);
+
+  // Year-1 monthly savings
+  const monthlySavings = Math.round(Math.min(monthlyBill * 0.85, (annualGeneration / 12) * tariff));
+
+  // 25-year lifetime savings with degradation & tariff escalation
+  let lifetimeSavings = 0;
+  let cumulativeSavings = 0;
+  let paybackYear = SYSTEM_LIFETIME; // default if never pays back
+
+  for (let year = 1; year <= SYSTEM_LIFETIME; year++) {
+    const degradationFactor = Math.pow(1 - DEGRADATION_RATE, year - 1);
+    const yearGeneration = annualGeneration * degradationFactor;
+    const yearTariff = tariff * Math.pow(1 + ESCALATION_RATE, year - 1);
+    const yearSavings = yearGeneration * yearTariff;
+    lifetimeSavings += yearSavings;
+    cumulativeSavings += yearSavings;
+
+    if (cumulativeSavings >= finalCost && paybackYear === SYSTEM_LIFETIME) {
+      // Interpolate for fractional year
+      const prevCumulative = cumulativeSavings - yearSavings;
+      const remaining = finalCost - prevCumulative;
+      paybackYear = Math.round(((year - 1) + remaining / yearSavings) * 10) / 10;
+    }
+  }
+
+  const lifetimeSavings25yr = Math.round(lifetimeSavings);
+  const paybackPeriod = paybackYear;
+
+  // CO2 offset (tonnes per year, year 1)
+  const co2OffsetPerYear = Math.round((annualGeneration * CO2_FACTOR) / 1000 * 10) / 10;
+
+  // Optional AI enhancement
   try {
     const { data: aiData } = await supabase.functions.invoke('solar-analysis', {
       body: {
         calculationResult: {
-          systemSize,
-          estimatedCost: totalCost,
-          centralSubsidy,
-          stateSubsidy,
-          totalSubsidy,
-          finalCost,
-          monthlySavings,
-          paybackPeriod,
-          rooftopArea: requiredArea,
-          systemType,
-          panels
+          systemSize, estimatedCost: totalCost, centralSubsidy, stateSubsidy,
+          totalSubsidy, finalCost, monthlySavings, paybackPeriod,
+          rooftopArea: requiredArea, systemType, panels,
+          annualGeneration, lifetimeSavings25yr, co2OffsetPerYear, capacityUtilization
         },
-        location,
-        monthlyBill,
-        rooftopArea,
-        shadingLevel
+        location, monthlyBill, rooftopArea, shadingLevel
       }
     });
-    
-    // If AI provides better calculations, use those
     if (aiData?.analysis) {
       console.log('Enhanced calculations with AI insights');
     }
   } catch (error) {
     console.warn('AI enhancement failed, using standard calculations:', error);
   }
-  
+
   return {
     systemSize,
     estimatedCost: totalCost,
@@ -111,6 +152,10 @@ export const calculateSolarSystem = async (inputs: CalculationInputs): Promise<S
     paybackPeriod,
     rooftopArea: requiredArea,
     systemType,
-    panels
+    panels,
+    annualGeneration,
+    lifetimeSavings25yr,
+    co2OffsetPerYear,
+    capacityUtilization
   };
 };
