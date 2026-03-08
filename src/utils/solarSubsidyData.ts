@@ -31,7 +31,7 @@ export const stateSubsidies = {
   'Other': { rate: 0.00, maxAmount: 0, description: 'No additional state subsidy' }
 };
 
-export const solarIrradiance = {
+export const solarIrradiance: Record<string, number> = {
   'Andhra Pradesh': 5.7,
   'Assam': 4.5,
   'Bihar': 5.0,
@@ -54,4 +54,46 @@ export const solarIrradiance = {
   'Uttarakhand': 5.3,
   'West Bengal': 4.8,
   'Other': 5.2
+};
+
+// Average electricity tariff per unit (₹/kWh) by state
+export const stateTariffs: Record<string, number> = {
+  'Andhra Pradesh': 5.5,
+  'Assam': 5.8,
+  'Bihar': 5.0,
+  'Chhattisgarh': 4.5,
+  'Delhi': 5.0,
+  'Gujarat': 4.5,
+  'Haryana': 6.0,
+  'Himachal Pradesh': 4.0,
+  'Jharkhand': 5.5,
+  'Karnataka': 6.5,
+  'Kerala': 5.5,
+  'Madhya Pradesh': 6.0,
+  'Maharashtra': 8.0,
+  'Odisha': 5.0,
+  'Punjab': 5.5,
+  'Rajasthan': 7.0,
+  'Tamil Nadu': 4.5,
+  'Telangana': 6.0,
+  'Uttar Pradesh': 5.5,
+  'Uttarakhand': 4.5,
+  'West Bengal': 6.5,
+  'Other': 5.5
+};
+
+// Rooftop type cost multiplier (accounts for different mounting structures)
+export const rooftopCostMultiplier: Record<string, number> = {
+  'concrete': 1.0,
+  'metal': 1.05,
+  'tile': 1.15,
+  'asbestos': 1.10,
+};
+
+// Sq ft needed per panel by rooftop type (mounting differences)
+export const panelAreaByRoofType: Record<string, number> = {
+  'concrete': 18,   // flat surface, optimal tilt mounting
+  'metal': 20,      // slightly more spacing needed
+  'tile': 22,       // rail-based mounting requires more room
+  'asbestos': 22,   // similar to tile, extra clearance
 };

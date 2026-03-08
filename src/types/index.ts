@@ -126,4 +126,8 @@ export interface SolarCalculationResult {
   rooftopArea: number;
   systemType: string;
   panels: number;
+  annualGeneration: number;
+  lifetimeSavings25yr: number;
+  co2OffsetPerYear: number;
+  capacityUtilization: number;
 }
