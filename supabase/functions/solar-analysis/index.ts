@@ -224,7 +224,7 @@ Focus on practical advice and accurate subsidy information. Format as JSON with 
       };
     }
 
-    console.log('Successfully processed solar analysis for user:', user.id);
+    console.log('Successfully processed solar analysis for user:', userId);
 
     return new Response(JSON.stringify({ analysis }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
