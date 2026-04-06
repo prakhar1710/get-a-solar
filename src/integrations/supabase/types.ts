@@ -60,6 +60,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bids_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_directory"
+            referencedColumns: ["id"]
+          },
         ]
       }
       blog_subscribers: {
@@ -174,6 +181,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "projects_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_directory"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_roles: {
@@ -244,7 +258,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vendor_directory: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          user_type: string | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+          user_type?: string | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
