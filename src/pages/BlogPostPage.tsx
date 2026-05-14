@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,16 @@ const BlogPostPage = () => {
   const article = blogArticles.find(post => post.id === id);
 
   if (!article) {
+    const notFoundJsx = (
+      <SEOHead
+        title="Article Not Found"
+        description="The blog article you're looking for could not be found on Get A Solar."
+        canonicalUrl="/blog"
+      />
+    );
+    return (
+      <MainLayout>
+        {notFoundJsx}
     return (
       <MainLayout>
         <div className="container py-8">
