@@ -14,18 +14,13 @@ const BlogPostPage = () => {
   const article = blogArticles.find(post => post.id === id);
 
   if (!article) {
-    const notFoundJsx = (
-      <SEOHead
-        title="Article Not Found"
-        description="The blog article you're looking for could not be found on Get A Solar."
-        canonicalUrl="/blog"
-      />
-    );
     return (
       <MainLayout>
-        {notFoundJsx}
-    return (
-      <MainLayout>
+        <SEOHead
+          title="Article Not Found"
+          description="The blog article you're looking for could not be found on Get A Solar."
+          canonicalUrl="/blog"
+        />
         <div className="container py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
@@ -38,8 +33,34 @@ const BlogPostPage = () => {
     );
   }
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    author: { "@type": "Person", name: article.author },
+    datePublished: article.date,
+    articleSection: article.category,
+    publisher: {
+      "@type": "Organization",
+      name: "Get A Solar",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://get-a-solar.lovable.app/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png",
+      },
+    },
+    mainEntityOfPage: `https://get-a-solar.lovable.app/blog/${article.id}`,
+  };
+
   return (
     <MainLayout>
+      <SEOHead
+        title={article.title}
+        description={article.excerpt}
+        keywords={`${article.category}, solar, ${article.title}`}
+        canonicalUrl={`/blog/${article.id}`}
+        jsonLd={articleJsonLd}
+      />
       <div className="container py-8 max-w-4xl mx-auto">
         <Link to="/blog">
           <Button variant="ghost" className="mb-6">
