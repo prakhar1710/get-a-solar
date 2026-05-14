@@ -1,10 +1,16 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Separator } from '@/components/ui/separator';
 
 const TermsOfServicePage = () => {
   return (
     <MainLayout>
+      <SEOHead
+        title="Terms of Service"
+        description="The terms and conditions governing your use of the Get A Solar marketplace and services."
+        canonicalUrl="/terms-of-service"
+      />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="prose prose-lg max-w-none">
           <h1 className="text-4xl font-bold text-primary mb-2">Terms and Conditions</h1>

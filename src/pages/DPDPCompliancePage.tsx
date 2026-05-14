@@ -1,10 +1,16 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Separator } from '@/components/ui/separator';
 
 const DPDPCompliancePage = () => {
   return (
     <MainLayout>
+      <SEOHead
+        title="DPDP Act 2023 Compliance"
+        description="How Get A Solar complies with India's Digital Personal Data Protection Act, 2023."
+        canonicalUrl="/dpdp-compliance"
+      />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="prose prose-lg max-w-none">
           <h1 className="text-4xl font-bold text-primary mb-2">DPDP Compliance</h1>

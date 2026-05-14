@@ -1,10 +1,16 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Separator } from '@/components/ui/separator';
 
 const PrivacyPolicyPage = () => {
   return (
     <MainLayout>
+      <SEOHead
+        title="Privacy Policy"
+        description="How Get A Solar collects, uses, and protects your personal data when you connect with solar vendors in India."
+        canonicalUrl="/privacy-policy"
+      />
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="prose prose-lg max-w-none">
           <h1 className="text-4xl font-bold text-primary mb-2">Privacy Policy</h1>

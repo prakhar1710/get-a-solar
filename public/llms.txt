@@ -1,0 +1,16 @@
+# Get A Solar
+
+> India's solar bidding platform connecting homeowners with verified solar installation vendors. Compare competitive quotes, calculate subsidies, and choose the right partner for your rooftop solar project.
+
+## Pages
+
+- [Home](/): Overview of the Get A Solar platform, how it works, and customer testimonials.
+- [Solar Calculator](/solar-calculator): Estimate solar system size, installation cost, and applicable government subsidies.
+- [Blog](/blog): Articles about solar technology, policy, subsidies, and installation guidance in India.
+- [Login](/login): Sign in or sign up as a customer or vendor.
+
+## Optional
+
+- [Privacy Policy](/privacy-policy): How Get A Solar handles personal data.
+- [Terms of Service](/terms-of-service): Terms governing use of the platform.
+- [DPDP Compliance](/dpdp-compliance): Compliance with India's Digital Personal Data Protection Act 2023.
