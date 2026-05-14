@@ -7,10 +7,11 @@ import SolarCalculator from '@/components/customer-dashboard/SolarCalculator';
 const SolarCalculatorPage: React.FC = () => {
   return (
     <MainLayout>
-      <SEOHead 
+      <SEOHead
         title="Free Solar Calculator & Subsidy Estimator"
-        description="Calculate your solar system requirements, installation costs, and government subsidies. Get accurate estimates for solar panel installations across India with state-specific subsidy information."
+        description="Estimate your rooftop solar system size, installation cost, and state-specific government subsidy in seconds."
         keywords="solar calculator, solar cost calculator, solar subsidy calculator, rooftop solar cost, solar installation estimate"
+        canonicalUrl="/solar-calculator"
       />
       <div className="container py-8">
         <div className="mb-8">

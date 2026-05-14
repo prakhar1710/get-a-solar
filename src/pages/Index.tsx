@@ -24,10 +24,11 @@ const Index = () => {
     description: "Our algorithm ranks bids based on price, quality, vendor rating, and other key parameters."
   }];
   return <MainLayout>
-      <SEOHead 
+      <SEOHead
         title="India's #1 Solar Bidding Platform"
-        description="Connect with 250+ verified solar vendors across India. Get competitive bids, compare prices, and find the perfect solar installation partner. Save up to 18% on your solar project with government subsidies."
+        description="Connect with 250+ verified solar vendors across India. Compare bids and save up to 18% on your rooftop solar project with government subsidies."
         keywords="solar panels India, solar installation, solar bidding platform, solar vendors, solar subsidy, renewable energy, solar quotes, solar calculator"
+        canonicalUrl="/"
       />
       {/* Enhanced Hero Section */}
       <section className="relative h-screen overflow-hidden">
