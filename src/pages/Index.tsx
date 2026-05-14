@@ -56,13 +56,13 @@ const Index = () => {
             </h1>
             
             {/* Enhanced description */}
-            <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-white max-w-2xl leading-relaxed">
               Connect with India's most trusted solar vendors. Get competitive bids, 
               compare prices, and find the perfect installation partner for your solar journey.
             </p>
             
             {/* Enhanced stats row */}
-            <div className="flex flex-wrap gap-6 text-white/80 text-sm">
+            <div className="flex flex-wrap gap-6 text-white text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-sbs-orange rounded-full"></div>
                 <span>1000+ Projects Completed</span>
@@ -89,7 +89,7 @@ const Index = () => {
             </div>
             
             {/* Trust indicators */}
-            <div className="flex items-center gap-6 pt-4 text-white/70 text-sm">
+            <div className="flex items-center gap-6 pt-4 text-white text-sm">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span>4.9/5 Customer Rating</span>
@@ -103,11 +103,11 @@ const Index = () => {
         </div>
         
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm">Scroll to explore</span>
-            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-white/60 rounded-full mt-2"></div>
+            <div className="w-6 h-10 border-2 border-white/70 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white rounded-full mt-2"></div>
             </div>
           </div>
         </div>
