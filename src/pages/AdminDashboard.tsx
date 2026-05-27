@@ -40,6 +40,44 @@ const AdminDashboard: React.FC = () => {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isApproving, setIsApproving] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [backupSheetId, setBackupSheetId] = useState('');
+  const [lastBackupUrl, setLastBackupUrl] = useState<string | null>(null);
+
+  const extractSpreadsheetId = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return undefined;
+    const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    return match ? match[1] : trimmed;
+  };
+
+  const handleBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('backup-to-sheets', {
+        body: {
+          spreadsheetId: extractSpreadsheetId(backupSheetId),
+          title: 'Get A Solar Data',
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      setLastBackupUrl((data as any).spreadsheetUrl);
+      toast({
+        title: 'Backup complete',
+        description: 'All tables have been written to Google Sheets.',
+      });
+    } catch (err: any) {
+      console.error('Backup failed:', err);
+      toast({
+        title: 'Backup failed',
+        description: err.message || 'Could not back up data to Google Sheets.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
 
   useEffect(() => {
     fetchCertifications();
