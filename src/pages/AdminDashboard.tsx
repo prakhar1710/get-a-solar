@@ -8,7 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { CheckCircle, XCircle, Eye, Download } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -39,6 +40,44 @@ const AdminDashboard: React.FC = () => {
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isApproving, setIsApproving] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [backupSheetId, setBackupSheetId] = useState('');
+  const [lastBackupUrl, setLastBackupUrl] = useState<string | null>(null);
+
+  const extractSpreadsheetId = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return undefined;
+    const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    return match ? match[1] : trimmed;
+  };
+
+  const handleBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('backup-to-sheets', {
+        body: {
+          spreadsheetId: extractSpreadsheetId(backupSheetId),
+          title: 'Get A Solar Data',
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      setLastBackupUrl((data as any).spreadsheetUrl);
+      toast({
+        title: 'Backup complete',
+        description: 'All tables have been written to Google Sheets.',
+      });
+    } catch (err: any) {
+      console.error('Backup failed:', err);
+      toast({
+        title: 'Backup failed',
+        description: err.message || 'Could not back up data to Google Sheets.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
 
   useEffect(() => {
     fetchCertifications();
@@ -207,6 +246,56 @@ const AdminDashboard: React.FC = () => {
             Review and approve vendor certifications
           </p>
         </div>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="h-5 w-5" />
+              Backup Data to Google Sheets
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Exports all tables (profiles, projects, bids, vendor certifications, user roles,
+              subscribers) to a Google Sheet. Leave blank to create a new spreadsheet, or paste an
+              existing Google Sheets URL/ID to update it.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                placeholder="Existing spreadsheet URL or ID (optional)"
+                value={backupSheetId}
+                onChange={(e) => setBackupSheetId(e.target.value)}
+                disabled={isBackingUp}
+              />
+              <Button onClick={handleBackup} disabled={isBackingUp}>
+                {isBackingUp ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Backing up…
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Back up now
+                  </>
+                )}
+              </Button>
+            </div>
+            {lastBackupUrl && (
+              <p className="text-sm">
+                Latest backup:{' '}
+                <a
+                  href={lastBackupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  Open in Google Sheets
+                </a>
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
         <Tabs defaultValue="pending" className="w-full">
           <TabsList>
