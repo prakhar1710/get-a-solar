@@ -247,6 +247,56 @@ const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="h-5 w-5" />
+              Backup Data to Google Sheets
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Exports all tables (profiles, projects, bids, vendor certifications, user roles,
+              subscribers) to a Google Sheet. Leave blank to create a new spreadsheet, or paste an
+              existing Google Sheets URL/ID to update it.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                placeholder="Existing spreadsheet URL or ID (optional)"
+                value={backupSheetId}
+                onChange={(e) => setBackupSheetId(e.target.value)}
+                disabled={isBackingUp}
+              />
+              <Button onClick={handleBackup} disabled={isBackingUp}>
+                {isBackingUp ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Backing up…
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Back up now
+                  </>
+                )}
+              </Button>
+            </div>
+            {lastBackupUrl && (
+              <p className="text-sm">
+                Latest backup:{' '}
+                <a
+                  href={lastBackupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  Open in Google Sheets
+                </a>
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue="pending" className="w-full">
           <TabsList>
             <TabsTrigger value="pending">
