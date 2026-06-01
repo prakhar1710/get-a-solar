@@ -103,9 +103,9 @@ const Index = () => {
         </div>
         
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+        <div className="absolute bottom-8 inset-x-0 flex justify-center text-white animate-bounce pointer-events-none">
           <div className="flex flex-col items-center gap-2">
-            <span className="text-sm">Scroll to explore</span>
+            <span className="text-sm whitespace-nowrap">Scroll to explore</span>
             <div className="w-6 h-10 border-2 border-white/70 rounded-full flex justify-center">
               <div className="w-1 h-3 bg-white rounded-full mt-2"></div>
             </div>
