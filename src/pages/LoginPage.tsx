@@ -20,6 +20,10 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailVerificationDialog, setShowEmailVerificationDialog] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
+  const [showForgotDialog, setShowForgotDialog] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
