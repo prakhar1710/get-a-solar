@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Mail, CheckCircle } from 'lucide-react';
 
 const LoginPage = () => {
@@ -19,6 +20,10 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailVerificationDialog, setShowEmailVerificationDialog] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
+  const [showForgotDialog, setShowForgotDialog] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -84,6 +89,27 @@ const LoginPage = () => {
 
     handleEmailVerification();
   }, [navigate, toast]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setForgotSent(true);
+    } catch (error: any) {
+      toast({
+        title: 'Could not send reset email',
+        description: error.message || 'Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -263,9 +289,13 @@ const LoginPage = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="password">Password</Label>
-                        <a href="#" className="text-xs text-sbs-purple hover:underline">
+                        <button
+                          type="button"
+                          onClick={() => { setForgotEmail(loginEmail); setForgotSent(false); setShowForgotDialog(true); }}
+                          className="text-xs text-sbs-purple hover:underline"
+                        >
                           Forgot password?
-                        </a>
+                        </button>
                       </div>
                       <Input 
                         id="password" 
@@ -438,6 +468,51 @@ const LoginPage = () => {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset your password</DialogTitle>
+            <DialogDescription>
+              {forgotSent
+                ? `We've sent a password reset link to ${forgotEmail}. Click the link in the email to set a new password.`
+                : 'Enter your account email and we\'ll send you a link to reset your password.'}
+            </DialogDescription>
+          </DialogHeader>
+          {forgotSent ? (
+            <DialogFooter>
+              <Button className="w-full" onClick={() => setShowForgotDialog(false)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Got it
+              </Button>
+            </DialogFooter>
+          ) : (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="forgot-email">Email</Label>
+                <Input
+                  id="forgot-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  className="w-full bg-sbs-purple hover:bg-sbs-purple-dark"
+                  disabled={forgotLoading}
+                >
+                  {forgotLoading ? 'Sending...' : 'Send reset link'}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };
