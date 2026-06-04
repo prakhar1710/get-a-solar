@@ -468,6 +468,51 @@ const LoginPage = () => {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset your password</DialogTitle>
+            <DialogDescription>
+              {forgotSent
+                ? `We've sent a password reset link to ${forgotEmail}. Click the link in the email to set a new password.`
+                : 'Enter your account email and we\'ll send you a link to reset your password.'}
+            </DialogDescription>
+          </DialogHeader>
+          {forgotSent ? (
+            <DialogFooter>
+              <Button className="w-full" onClick={() => setShowForgotDialog(false)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Got it
+              </Button>
+            </DialogFooter>
+          ) : (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="forgot-email">Email</Label>
+                <Input
+                  id="forgot-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  className="w-full bg-sbs-purple hover:bg-sbs-purple-dark"
+                  disabled={forgotLoading}
+                >
+                  {forgotLoading ? 'Sending...' : 'Send reset link'}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };
