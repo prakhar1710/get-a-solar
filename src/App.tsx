@@ -59,6 +59,7 @@ const App = () => (
                 </AdminProtectedRoute>
               } />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogPostPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
