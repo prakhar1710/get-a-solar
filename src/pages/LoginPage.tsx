@@ -268,9 +268,13 @@ const LoginPage = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="password">Password</Label>
-                        <a href="#" className="text-xs text-sbs-purple hover:underline">
+                        <button
+                          type="button"
+                          onClick={() => { setForgotEmail(loginEmail); setForgotSent(false); setShowForgotDialog(true); }}
+                          className="text-xs text-sbs-purple hover:underline"
+                        >
                           Forgot password?
-                        </a>
+                        </button>
                       </div>
                       <Input 
                         id="password" 
