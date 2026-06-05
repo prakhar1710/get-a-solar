@@ -46,6 +46,25 @@ const LoginPage = () => {
   const [pincode, setPincode] = useState('');
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
   const [electricityBill, setElectricityBill] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/login` },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: 'Google sign-in failed',
+        description: error.message || 'Please try again.',
+        variant: 'destructive',
+      });
+      setGoogleLoading(false);
+    }
+  };
 
   // Handle email verification on page load
   useEffect(() => {
