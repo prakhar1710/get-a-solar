@@ -14,6 +14,15 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHea
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Mail, CheckCircle } from 'lucide-react';
 
+const GoogleIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.6l6.2 5.2C41 35.5 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/>
+  </svg>
+);
+
 const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -37,6 +46,25 @@ const LoginPage = () => {
   const [pincode, setPincode] = useState('');
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
   const [electricityBill, setElectricityBill] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/login` },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: 'Google sign-in failed',
+        description: error.message || 'Please try again.',
+        variant: 'destructive',
+      });
+      setGoogleLoading(false);
+    }
+  };
 
   // Handle email verification on page load
   useEffect(() => {
@@ -88,6 +116,30 @@ const LoginPage = () => {
     };
 
     handleEmailVerification();
+
+    // Handle OAuth redirect (Google) — session is auto-set from URL hash by supabase-js
+    const redirectToDashboard = async (userId: string) => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', userId)
+        .single();
+      navigate(profile?.user_type === 'vendor' ? '/vendor' : '/customer');
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && window.location.hash.includes('access_token')) {
+        toast({ title: 'Signed in successfully', description: 'Welcome to Get A Solar!' });
+        redirectToDashboard(session.user.id);
+      }
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user && window.location.pathname === '/login') {
+        redirectToDashboard(session.user.id);
+      }
+    });
+    return () => sub.subscription.unsubscribe();
   }, [navigate, toast]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -272,6 +324,27 @@ const LoginPage = () => {
                   <TabsTrigger value="login">Login</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
                 </TabsList>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGoogleSignIn}
+                  disabled={googleLoading}
+                  className="w-full h-11 mb-4 bg-background hover:bg-accent border-input font-medium"
+                >
+                  <GoogleIcon />
+                  {googleLoading ? 'Redirecting...' : 'Continue with Google'}
+                </Button>
+
+                <div className="relative mb-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+                  </div>
+                </div>
+
                 
                 <TabsContent value="login">
                   <form onSubmit={handleLogin} className="space-y-4">
