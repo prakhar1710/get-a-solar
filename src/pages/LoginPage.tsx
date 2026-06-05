@@ -116,6 +116,30 @@ const LoginPage = () => {
     };
 
     handleEmailVerification();
+
+    // Handle OAuth redirect (Google) — session is auto-set from URL hash by supabase-js
+    const redirectToDashboard = async (userId: string) => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', userId)
+        .single();
+      navigate(profile?.user_type === 'vendor' ? '/vendor' : '/customer');
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && window.location.hash.includes('access_token')) {
+        toast({ title: 'Signed in successfully', description: 'Welcome to Get A Solar!' });
+        redirectToDashboard(session.user.id);
+      }
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user && window.location.pathname === '/login') {
+        redirectToDashboard(session.user.id);
+      }
+    });
+    return () => sub.subscription.unsubscribe();
   }, [navigate, toast]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
