@@ -324,6 +324,27 @@ const LoginPage = () => {
                   <TabsTrigger value="login">Login</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
                 </TabsList>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGoogleSignIn}
+                  disabled={googleLoading}
+                  className="w-full h-11 mb-4 bg-background hover:bg-accent border-input font-medium"
+                >
+                  <GoogleIcon />
+                  {googleLoading ? 'Redirecting...' : 'Continue with Google'}
+                </Button>
+
+                <div className="relative mb-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+                  </div>
+                </div>
+
                 
                 <TabsContent value="login">
                   <form onSubmit={handleLogin} className="space-y-4">
