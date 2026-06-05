@@ -1,30 +1,24 @@
-## Problem
+# Add Google Analytics
 
-On `LoginPage.tsx`, the "Forgot password?" link is just `<a href="#">` — it doesn't do anything. There's also no `/reset-password` route, so even if we triggered Supabase's reset email, the user would have nowhere to land and set a new password.
+Embed the GA4 tracking snippet (measurement ID `G-SHJB0BPY25`) so pageviews flow into your Google Analytics property.
 
-## Plan
+## Change
 
-1. **Add a "Forgot Password" dialog** triggered from the login form
-   - Replace the `href="#"` link with a button that opens a dialog
-   - Dialog contains an email input + "Send reset link" button
-   - Calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: \`${window.location.origin}/reset-password\` })`
-   - Shows confirmation toast / "check your email" state
+**`index.html`** — Add the two `<script>` tags inside `<head>`, placed just before the closing `</head>` so they load on every page without blocking the hero image preload:
 
-2. **Create `/reset-password` page** (`src/pages/ResetPasswordPage.tsx`)
-   - Public route (no auth guard)
-   - On mount, Supabase auto-creates a recovery session from the URL hash (`type=recovery`)
-   - Form with new password + confirm password fields
-   - Calls `supabase.auth.updateUser({ password })`
-   - On success: toast + redirect to `/login`
-   - Handles invalid/expired link errors
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SHJB0BPY25"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SHJB0BPY25');
+</script>
+```
 
-3. **Register the route** in `src/App.tsx` as a public route
+That's it — since the app is a SPA (React Router), GA will automatically log the initial pageview. If you later want route-change pageviews tracked too, we can add a small `useEffect` hook that calls `gtag('event', 'page_view', ...)` on navigation; let me know if you want that included.
 
-4. **Supabase redirect URLs** — tell the user to add `https://<their-domain>/reset-password` (preview, published, and any custom domain) to Supabase Auth → URL Configuration → Redirect URLs, otherwise the reset link will bounce back to the site URL.
+## Verification
 
-### Technical notes
-
-- Use existing `Dialog` shadcn component for the forgot-password modal
-- Use existing `MainLayout` + `SEOHead` for the reset-password page for consistency
-- No DB / RLS / edge function changes needed
-- Default Supabase recovery email template is sufficient; no need to scaffold custom auth email templates unless you also want branded emails (separate task)
+After deploy, open the site and check **Google Analytics → Reports → Realtime** — your session should appear within ~30 seconds.
