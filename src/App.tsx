@@ -41,6 +41,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <OAuthRedirectHandler />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/solar-calculator" element={<SolarCalculatorPage />} />
