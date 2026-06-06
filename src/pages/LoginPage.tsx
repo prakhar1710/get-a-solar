@@ -53,7 +53,7 @@ const LoginPage = () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/login` },
+        options: { redirectTo: 'https://getasolar.in/login' },
       });
       if (error) throw error;
     } catch (error: any) {
