@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import OAuthRedirectHandler from "./components/auth/OAuthRedirectHandler";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
