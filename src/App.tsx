@@ -21,6 +21,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminProtectedRoute from "./components/auth/AdminProtectedRoute";
 import ErrorBoundary from "./components/common/ErrorBoundary";
+import OAuthRedirectHandler from "./components/auth/OAuthRedirectHandler";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <OAuthRedirectHandler />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/solar-calculator" element={<SolarCalculatorPage />} />
