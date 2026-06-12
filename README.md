@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# Get A Solar
 
-## Project info
+India's solar bidding platform connecting homeowners with verified solar installation vendors. Customers post their rooftop solar requirements, vendors compete with transparent quotes, and a built-in calculator estimates system size, central + state subsidies, payback period, and lifetime savings.
 
-**URL**: https://lovable.dev/projects/68bf9543-f6ca-4884-b5fa-86e5de9f4fe3
+**Production:** https://www.getasolar.in/
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Customer dashboard to post projects and review competing bids
+- Vendor dashboard to discover open projects and submit bids
+- Solar calculator with India-specific tariffs, subsidies, and CO₂ offset
+- Vendor verification with private certification uploads
+- Role-based access control (customer / vendor / admin)
+- Supabase auth (email + Google OAuth) with RLS-protected data
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/68bf9543-f6ca-4884-b5fa-86e5de9f4fe3) and start prompting.
+- **Frontend:** React 18, Vite 5, TypeScript 5
+- **UI:** Tailwind CSS, shadcn/ui, Radix UI
+- **Backend:** Supabase (Postgres, Auth, Storage, Edge Functions)
+- **Routing/State:** React Router, TanStack Query
+- **Analytics:** Vercel Speed Insights, Google Analytics
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Prerequisites: Node.js 18+ and npm (install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# 1. Clone the repository
 git clone <YOUR_GIT_URL>
+cd get-a-solar
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Start the dev server (http://localhost:8080)
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Available Scripts
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `npm run dev` — start the local development server with hot reload
+- `npm run build` — produce a production build in `dist/`
+- `npm run preview` — preview the production build locally
+- `npm run lint` — run ESLint
 
-**Use GitHub Codespaces**
+## Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+src/
+  components/   Reusable UI and feature components
+  pages/        Route-level pages
+  hooks/        Custom React hooks
+  contexts/     React context providers (auth, etc.)
+  integrations/ Supabase client and generated types
+  utils/        Domain logic (solar calc, bid ranking)
+supabase/       Edge functions and SQL migrations
+public/         Static assets (favicon, hero banner, sitemap)
+```
 
-## What technologies are used for this project?
+## Deployment
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/68bf9543-f6ca-4884-b5fa-86e5de9f4fe3) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The app is deployed via [Lovable](https://lovable.dev/projects/68bf9543-f6ca-4884-b5fa-86e5de9f4fe3). Open the project and click **Share → Publish**. A custom domain can be connected from **Project → Settings → Domains**.
