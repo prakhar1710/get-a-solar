@@ -30,11 +30,15 @@ const VerificationStatusCard: React.FC<VerificationStatusCardProps> = ({ onUploa
   }, [user]);
 
   const fetchCertifications = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
     try {
       const { data, error } = await supabase
         .from('vendor_certifications')
         .select('id, certification_type, status, rejection_reason')
-        .eq('vendor_id', user?.id)
+        .eq('vendor_id', user.id)
         .order('uploaded_at', { ascending: false });
 
       if (error) throw error;

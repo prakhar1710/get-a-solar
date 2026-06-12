@@ -22,8 +22,8 @@ interface VendorCertification {
   file_path: string;
   status: string;
   uploaded_at: string;
-  reviewed_at?: string;
-  rejection_reason?: string;
+  reviewed_at?: string | null;
+  rejection_reason?: string | null;
   profiles?: {
     full_name: string;
     email: string;
