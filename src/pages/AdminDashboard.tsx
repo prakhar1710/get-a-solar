@@ -25,9 +25,9 @@ interface VendorCertification {
   reviewed_at?: string | null;
   rejection_reason?: string | null;
   profiles?: {
-    full_name: string;
-    email: string;
-    phone_number: string;
+    full_name: string | null;
+    email: string | null;
+    phone_number: string | null;
   } | null;
 }
 
