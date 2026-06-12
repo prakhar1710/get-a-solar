@@ -34,7 +34,7 @@ const Index = () => {
       <section className="relative h-screen overflow-hidden">
         {/* Background Image with better positioning */}
         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-700" style={{
-        backgroundImage: `url('/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png')`
+        backgroundImage: `url('/hero-banner.png')`
       }}>
           {/* Enhanced gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>

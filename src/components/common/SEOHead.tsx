@@ -22,7 +22,7 @@ export const SEOHead = ({
   title,
   description,
   keywords = "solar panels, solar installation, solar bidding, solar vendors, solar subsidy, renewable energy, India",
-  ogImage = "/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png",
+  ogImage = "/hero-banner.png",
   ogUrl,
   canonicalUrl,
   jsonLd,

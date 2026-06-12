@@ -46,7 +46,7 @@ const BlogPostPage = () => {
       name: "Get A Solar",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.getasolar.in/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png",
+        url: "https://www.getasolar.in/hero-banner.png",
       },
     },
     mainEntityOfPage: `https://www.getasolar.in/blog/${article.id}`,
