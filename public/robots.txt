@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://get-a-solar.lovable.app/sitemap.xml
+Sitemap: https://www.getasolar.in/sitemap.xml

@@ -46,10 +46,10 @@ const BlogPostPage = () => {
       name: "Get A Solar",
       logo: {
         "@type": "ImageObject",
-        url: "https://get-a-solar.lovable.app/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png",
+        url: "https://www.getasolar.in/lovable-uploads/80a6e134-e78b-48ea-987c-98347cc06daa.png",
       },
     },
-    mainEntityOfPage: `https://get-a-solar.lovable.app/blog/${article.id}`,
+    mainEntityOfPage: `https://www.getasolar.in/blog/${article.id}`,
   };
 
   return (
