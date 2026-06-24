@@ -6,6 +6,7 @@ import { Project } from '@/types';
 import VerificationStatusCard from '@/components/vendor-dashboard/VerificationStatusCard';
 import AvailableProjects from '@/components/vendor-dashboard/AvailableProjects';
 import MyBids from '@/components/vendor-dashboard/MyBids';
+import AcceptedBids from '@/components/vendor-dashboard/AcceptedBids';
 import VendorDashboardHeader from '@/components/vendor-dashboard/VendorDashboardHeader';
 import BidSubmissionDialog from '@/components/vendor-dashboard/BidSubmissionDialog';
 import CustomBidDialog from '@/components/vendor-dashboard/CustomBidDialog';
@@ -59,6 +60,7 @@ const VendorDashboard: React.FC = () => {
           <TabsList>
             <TabsTrigger value="available">Available Projects</TabsTrigger>
             <TabsTrigger value="mybids">My Bids</TabsTrigger>
+            <TabsTrigger value="accepted">Accepted Bids</TabsTrigger>
           </TabsList>
           
           <TabsContent value="available">
@@ -77,6 +79,13 @@ const VendorDashboard: React.FC = () => {
               bids={submittedBids}
               projects={bidProjects}
               onViewAvailableProjects={handleViewAvailableProjects}
+            />
+          </TabsContent>
+
+          <TabsContent value="accepted">
+            <AcceptedBids
+              bids={submittedBids}
+              projects={bidProjects}
             />
           </TabsContent>
         </Tabs>
