@@ -130,10 +130,14 @@ export const useVendorDashboard = () => {
       if (createdBid && createdBid.length > 0) {
         const typedBid = {
           ...createdBid[0],
-          equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3'
+          equipment_tier: createdBid[0].equipment_tier as 'tier1' | 'tier2' | 'tier3',
+          project: selectedProject,
         } as Bid;
 
-        setSubmittedBids([typedBid, ...submittedBids]);
+        setSubmittedBids((prev) => [typedBid, ...prev]);
+        setBidProjects((prev) =>
+          prev.some((p) => p.id === selectedProject.id) ? prev : [selectedProject, ...prev]
+        );
 
         toast({
           title: "Bid submitted successfully",
