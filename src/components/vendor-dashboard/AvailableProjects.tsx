@@ -51,7 +51,7 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
   return (
     <div className="dashboard-section">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Available Projects</h2>
+        <h2 className="text-xl font-semibold">Available Leads</h2>
         <Button 
           onClick={onRefresh} 
           variant="outline" 
