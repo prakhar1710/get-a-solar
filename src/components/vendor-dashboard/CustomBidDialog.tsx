@@ -161,7 +161,14 @@ const CustomBidDialog: React.FC<CustomBidDialogProps> = ({
               disabled={isSubmitting}
               className="flex-1 bg-sbs-orange hover:bg-sbs-orange/90 text-white"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Custom Bid'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Custom Bid'
+              )}
             </Button>
           </div>
         </form>
