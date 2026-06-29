@@ -139,8 +139,19 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
           )}
         />
 
-        <Button type="submit" className="w-full bg-sbs-orange hover:bg-sbs-orange-light text-white">
-          Submit Bid
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-sbs-orange hover:bg-sbs-orange-light text-white"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            'Submit Bid'
+          )}
         </Button>
       </form>
     </Form>
