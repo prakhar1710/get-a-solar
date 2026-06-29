@@ -30,17 +30,23 @@ const AvailableProjects: React.FC<AvailableProjectsProps> = ({
     return submittedBids.some(bid => bid.project_id === projectId);
   };
 
+  // Only show projects the vendor has NOT bid on
+  const unbidProjects = useMemo(
+    () => projects.filter((p) => !submittedBids.some((b) => b.project_id === p.id)),
+    [projects, submittedBids]
+  );
+
   // Filter projects based on search query
   const filteredProjects = useMemo(() => {
-    if (!searchQuery.trim()) return projects;
-    
+    if (!searchQuery.trim()) return unbidProjects;
+
     const query = searchQuery.toLowerCase();
-    return projects.filter(project => 
+    return unbidProjects.filter(project =>
       project.location.toLowerCase().includes(query) ||
       project.state.toLowerCase().includes(query) ||
       project.title.toLowerCase().includes(query)
     );
-  }, [projects, searchQuery]);
+  }, [unbidProjects, searchQuery]);
 
   return (
     <div className="dashboard-section">
