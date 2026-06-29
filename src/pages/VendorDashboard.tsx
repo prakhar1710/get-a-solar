@@ -57,8 +57,8 @@ const VendorDashboard: React.FC = () => {
         {/* Main dashboard content */}
         <Tabs defaultValue="available" className="w-full">
           <TabsList>
-            <TabsTrigger value="available">Available Projects</TabsTrigger>
-            <TabsTrigger value="mybids">My Bids</TabsTrigger>
+            <TabsTrigger value="available">Available Leads</TabsTrigger>
+            <TabsTrigger value="mybids">My Active Bids</TabsTrigger>
           </TabsList>
           
           <TabsContent value="available">

@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 interface CustomBidDialogProps {
@@ -161,7 +162,14 @@ const CustomBidDialog: React.FC<CustomBidDialogProps> = ({
               disabled={isSubmitting}
               className="flex-1 bg-sbs-orange hover:bg-sbs-orange/90 text-white"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Custom Bid'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Custom Bid'
+              )}
             </Button>
           </div>
         </form>

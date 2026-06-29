@@ -24,18 +24,24 @@ const MyBids: React.FC<MyBidsProps> = ({ bids, projects, onViewAvailableProjects
 
   return (
     <div className="dashboard-section">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">My Active Bids</h2>
+        <span className="text-sm text-muted-foreground">
+          {bids.length} bid{bids.length === 1 ? '' : 's'} submitted
+        </span>
+      </div>
       {bids.length === 0 ? (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 mx-auto text-muted-foreground opacity-20 mb-2" />
-          <h3 className="text-lg font-medium mb-2">No bids submitted yet</h3>
+          <h3 className="text-lg font-medium mb-2">No active bids yet</h3>
           <p className="text-muted-foreground mb-4">
-            Browse available projects and submit your first bid
+            Browse available leads and submit your first bid to start tracking it here.
           </p>
-          <Button 
+          <Button
             onClick={onViewAvailableProjects}
             className="bg-sbs-orange hover:bg-sbs-orange/90 text-white"
           >
-            View Available Projects
+            View Available Leads
           </Button>
         </div>
       ) : (

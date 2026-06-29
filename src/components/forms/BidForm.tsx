@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -25,6 +26,7 @@ interface BidFormProps {
 }
 
 const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
     defaultValues: initialData || {
@@ -38,9 +40,18 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   const pricePerWatt = form.watch('price_per_watt');
   const totalProjectCost = pricePerWatt * projectSize * 1000; // Converting kW to Watt
 
+  const handleSubmit = async (data: BidFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="price_per_watt"
@@ -128,8 +139,19 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
           )}
         />
 
-        <Button type="submit" className="w-full bg-sbs-orange hover:bg-sbs-orange-light text-white">
-          Submit Bid
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-sbs-orange hover:bg-sbs-orange-light text-white"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            'Submit Bid'
+          )}
         </Button>
       </form>
     </Form>
