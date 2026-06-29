@@ -26,6 +26,7 @@ interface BidFormProps {
 }
 
 const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
     defaultValues: initialData || {
@@ -39,9 +40,18 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   const pricePerWatt = form.watch('price_per_watt');
   const totalProjectCost = pricePerWatt * projectSize * 1000; // Converting kW to Watt
 
+  const handleSubmit = async (data: BidFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit(data);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="price_per_watt"
