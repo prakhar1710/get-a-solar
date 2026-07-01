@@ -15,6 +15,7 @@ import { useVendorDashboard } from '@/hooks/useVendorDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 
 const VendorDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showBidForm, setShowBidForm] = useState(false);
   const [showCustomBidForm, setShowCustomBidForm] = useState(false);
@@ -82,7 +83,14 @@ const VendorDashboard: React.FC = () => {
             />
           </TabsContent>
         </Tabs>
+
+        {user && (
+          <div className="mt-8">
+            <VendorReviewsPanel vendorId={user.id} />
+          </div>
+        )}
       </div>
+
       
       {/* Certification Upload Dialog */}
       <CertificationUploadDialog
