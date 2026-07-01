@@ -10,7 +10,9 @@ import VendorDashboardHeader from '@/components/vendor-dashboard/VendorDashboard
 import BidSubmissionDialog from '@/components/vendor-dashboard/BidSubmissionDialog';
 import CustomBidDialog from '@/components/vendor-dashboard/CustomBidDialog';
 import CertificationUploadDialog from '@/components/vendor-dashboard/CertificationUploadDialog';
+import VendorReviewsPanel from '@/components/reviews/VendorReviewsPanel';
 import { useVendorDashboard } from '@/hooks/useVendorDashboard';
+import { useAuth } from '@/contexts/AuthContext';
 
 const VendorDashboard: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
