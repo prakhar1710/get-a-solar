@@ -29,8 +29,23 @@ export interface Project {
   state: string;
   subsidy_applied: boolean;
   created_at: string;
-  status: 'open' | 'closed' | 'awarded';
+  status: 'open' | 'closed' | 'awarded' | 'completed';
   accepted_bid_id?: string | null;
+}
+
+export interface Review {
+  id: string;
+  project_id: string;
+  customer_id: string;
+  vendor_id: string;
+  installation_quality: number;
+  timeline_promptness: number;
+  subsidy_paperwork: number;
+  communication_professionalism: number;
+  average_rating: number;
+  comment: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Bid {

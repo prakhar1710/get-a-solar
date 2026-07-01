@@ -190,6 +190,59 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          average_rating: number
+          comment: string | null
+          communication_professionalism: number
+          created_at: string
+          customer_id: string
+          id: string
+          installation_quality: number
+          project_id: string
+          subsidy_paperwork: number
+          timeline_promptness: number
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          average_rating: number
+          comment?: string | null
+          communication_professionalism: number
+          created_at?: string
+          customer_id: string
+          id?: string
+          installation_quality: number
+          project_id: string
+          subsidy_paperwork: number
+          timeline_promptness: number
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          average_rating?: number
+          comment?: string | null
+          communication_professionalism?: number
+          created_at?: string
+          customer_id?: string
+          id?: string
+          installation_quality?: number
+          project_id?: string
+          subsidy_paperwork?: number
+          timeline_promptness?: number
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
