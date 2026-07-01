@@ -5,6 +5,7 @@ import { Calculator, FolderOpen } from 'lucide-react';
 import ProjectTabs from './ProjectTabs';
 import SolarCalculator from './SolarCalculator';
 import { Project } from '@/types';
+import type { AcceptedBidInfo } from '@/hooks/useCustomerProjects';
 
 interface CustomerDashboardTabsProps {
   projects: Project[];
@@ -12,20 +13,13 @@ interface CustomerDashboardTabsProps {
   onViewDetails: (project: Project) => void;
   refreshProjects: () => void;
   onNewProject: () => void;
+  reviewedProjectIds?: Set<string>;
+  acceptedBidsByProject?: Record<string, AcceptedBidInfo>;
+  onMarkCompleted?: (project: Project) => void;
+  onRateVendor?: (project: Project) => void;
 }
 
-const CustomerDashboardTabs: React.FC<CustomerDashboardTabsProps> = ({
-  projects,
-  isLoading,
-  onViewDetails,
-  refreshProjects,
-  onNewProject
-}) => {
-  const handleCalculationComplete = (result: any) => {
-    // You can use this to pre-fill project creation form if needed
-    console.log('Solar calculation completed:', result);
-  };
-
+const CustomerDashboardTabs: React.FC<CustomerDashboardTabsProps> = (props) => {
   return (
     <Tabs defaultValue="projects" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
@@ -38,19 +32,13 @@ const CustomerDashboardTabs: React.FC<CustomerDashboardTabsProps> = ({
           Solar Calculator
         </TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="projects" className="mt-6">
-        <ProjectTabs
-          projects={projects}
-          isLoading={isLoading}
-          onViewDetails={onViewDetails}
-          refreshProjects={refreshProjects}
-          onNewProject={onNewProject}
-        />
+        <ProjectTabs {...props} />
       </TabsContent>
-      
+
       <TabsContent value="calculator" className="mt-6">
-        <SolarCalculator onCalculationComplete={handleCalculationComplete} />
+        <SolarCalculator onCalculationComplete={(r) => console.log('calc:', r)} />
       </TabsContent>
     </Tabs>
   );
