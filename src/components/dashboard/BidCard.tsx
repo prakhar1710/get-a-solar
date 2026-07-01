@@ -10,7 +10,7 @@ interface BidCardProps {
   bid: Bid;
   isHighestScore?: boolean;
   onAcceptBid?: (bid: Bid) => void;
-  projectStatus?: 'open' | 'closed' | 'awarded';
+  projectStatus?: 'open' | 'closed' | 'awarded' | 'completed';
   acceptedBidId?: string | null;
   projectSize?: number;
 }

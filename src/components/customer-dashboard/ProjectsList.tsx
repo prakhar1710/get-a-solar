@@ -1,9 +1,9 @@
 
 import React from 'react';
 import ProjectCard from '@/components/dashboard/ProjectCard';
-import { RefreshCw, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Project } from '@/types';
+import type { AcceptedBidInfo } from '@/hooks/useCustomerProjects';
 
 interface ProjectsListProps {
   projects: Project[];
@@ -11,23 +11,29 @@ interface ProjectsListProps {
   onViewDetails: (project: Project) => void;
   onRefresh: () => void;
   filter: 'active' | 'closed' | 'all';
+  reviewedProjectIds?: Set<string>;
+  acceptedBidsByProject?: Record<string, AcceptedBidInfo>;
+  onMarkCompleted?: (project: Project) => void;
+  onRateVendor?: (project: Project) => void;
 }
 
 const ProjectsList: React.FC<ProjectsListProps> = ({
-  projects, 
-  isLoading, 
-  onViewDetails, 
+  projects,
+  isLoading,
+  onViewDetails,
   onRefresh,
-  filter
+  filter,
+  reviewedProjectIds,
+  acceptedBidsByProject,
+  onMarkCompleted,
+  onRateVendor,
 }) => {
-  // Filter projects based on the active tab
-  const filteredProjects = projects.filter(project => {
-    if (filter === 'active') return project.status !== 'closed';
-    if (filter === 'closed') return project.status === 'closed';
-    return true; // 'all' filter
+  const filteredProjects = projects.filter((project) => {
+    if (filter === 'active') return project.status !== 'closed' && project.status !== 'completed';
+    if (filter === 'closed') return project.status === 'closed' || project.status === 'completed';
+    return true;
   });
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="text-center py-12">
@@ -36,30 +42,18 @@ const ProjectsList: React.FC<ProjectsListProps> = ({
     );
   }
 
-  // Empty state
   if (filteredProjects.length === 0) {
     return (
       <div className="text-center py-12">
-        {filter === 'all' ? (
+        {filter === 'all' || filter === 'active' ? (
           <>
-            <h3 className="text-xl font-medium mb-2">No projects yet</h3>
+            <h3 className="text-xl font-medium mb-2">
+              {filter === 'all' ? 'No projects yet' : 'No active projects'}
+            </h3>
             <p className="text-muted-foreground mb-4">
               Create your first project to start receiving bids from verified solar vendors
             </p>
-            <Button 
-              onClick={onRefresh}
-              className="bg-sbs-purple hover:bg-sbs-purple-dark text-white"
-            >
-              Create New Project
-            </Button>
-          </>
-        ) : filter === 'active' ? (
-          <>
-            <h3 className="text-xl font-medium mb-2">No active projects</h3>
-            <p className="text-muted-foreground mb-4">
-              Create your first project to start receiving bids from verified solar vendors
-            </p>
-            <Button 
+            <Button
               onClick={onRefresh}
               className="bg-sbs-purple hover:bg-sbs-purple-dark text-white"
             >
@@ -67,24 +61,30 @@ const ProjectsList: React.FC<ProjectsListProps> = ({
             </Button>
           </>
         ) : (
-          <p className="text-muted-foreground">
-            No closed projects yet
-          </p>
+          <p className="text-muted-foreground">No completed or closed projects yet</p>
         )}
       </div>
     );
   }
 
-  // Project list
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {filteredProjects.map((project) => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-          onViewDetails={onViewDetails}
-        />
-      ))}
+      {filteredProjects.map((project) => {
+        const hasReview = reviewedProjectIds?.has(project.id) ?? false;
+        const hasAcceptedBid = !!acceptedBidsByProject?.[project.id];
+        const canRate = project.status === 'completed' && hasAcceptedBid;
+        return (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            onViewDetails={onViewDetails}
+            onMarkCompleted={onMarkCompleted}
+            onRateVendor={onRateVendor}
+            hasReview={hasReview}
+            canRate={canRate}
+          />
+        );
+      })}
     </div>
   );
 };
