@@ -109,6 +109,7 @@ export const useVendorDashboard = () => {
       const newBid = {
         project_id: selectedProject.id,
         vendor_id: user.id,
+        vendor_name: profile?.full_name?.trim() || 'Vendor',
         price_per_watt: data.price_per_watt,
         equipment_tier: data.equipment_tier,
         timeline_days: data.timeline_days,
