@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export const useVendorDashboard = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [submittedBids, setSubmittedBids] = useState<Bid[]>([]);
   const [availableProjects, setAvailableProjects] = useState<Project[]>([]);
   const [bidProjects, setBidProjects] = useState<Project[]>([]);
@@ -109,6 +109,7 @@ export const useVendorDashboard = () => {
       const newBid = {
         project_id: selectedProject.id,
         vendor_id: user.id,
+        vendor_name: profile?.full_name?.trim() || 'Vendor',
         price_per_watt: data.price_per_watt,
         equipment_tier: data.equipment_tier,
         timeline_days: data.timeline_days,

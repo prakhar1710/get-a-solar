@@ -24,6 +24,7 @@ export type Database = {
           project_id: string
           timeline_days: number
           vendor_id: string
+          vendor_name: string | null
         }
         Insert: {
           amc_included?: boolean
@@ -34,6 +35,7 @@ export type Database = {
           project_id: string
           timeline_days: number
           vendor_id: string
+          vendor_name?: string | null
         }
         Update: {
           amc_included?: boolean
@@ -44,6 +46,7 @@ export type Database = {
           project_id?: string
           timeline_days?: number
           vendor_id?: string
+          vendor_name?: string | null
         }
         Relationships: [
           {

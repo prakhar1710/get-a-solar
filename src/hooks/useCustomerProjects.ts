@@ -54,14 +54,14 @@ export const useCustomerProjects = () => {
         if (acceptedBidIds.length > 0) {
           const { data: bidRows } = await supabase
             .from('bids')
-            .select('id, project_id, vendor_id, vendor_profile:profiles!bids_vendor_id_fkey(full_name)')
+            .select('id, project_id, vendor_id, vendor_name')
             .in('id', acceptedBidIds);
           const map: Record<string, AcceptedBidInfo> = {};
           (bidRows || []).forEach((b: any) => {
             map[b.project_id] = {
               bid_id: b.id,
               vendor_id: b.vendor_id,
-              vendor_name: b.vendor_profile?.full_name || null,
+              vendor_name: b.vendor_name || null,
             };
           });
           setAcceptedBidsByProject(map);
@@ -102,14 +102,7 @@ export const useCustomerProjects = () => {
 
       const { data: bidsData, error: bidsError } = await supabase
         .from('bids')
-        .select(`
-          *,
-          vendor_profile:profiles!bids_vendor_id_fkey (
-            id,
-            full_name,
-            phone_number
-          )
-        `)
+        .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
 
@@ -117,7 +110,7 @@ export const useCustomerProjects = () => {
 
       const bids: Bid[] = (bidsData || []).map((bid: any) => ({
         ...bid,
-        vendor_name: bid.vendor_profile?.full_name || 'Vendor',
+        vendor_name: bid.vendor_name?.trim() || 'Vendor',
         vendor_rating: 4.0,
         equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3',
       }));
