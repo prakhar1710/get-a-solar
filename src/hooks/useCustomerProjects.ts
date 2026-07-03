@@ -54,14 +54,14 @@ export const useCustomerProjects = () => {
         if (acceptedBidIds.length > 0) {
           const { data: bidRows } = await supabase
             .from('bids')
-            .select('id, project_id, vendor_id, vendor_profile:profiles!bids_vendor_id_fkey(full_name)')
+            .select('id, project_id, vendor_id, vendor_name')
             .in('id', acceptedBidIds);
           const map: Record<string, AcceptedBidInfo> = {};
           (bidRows || []).forEach((b: any) => {
             map[b.project_id] = {
               bid_id: b.id,
               vendor_id: b.vendor_id,
-              vendor_name: b.vendor_profile?.full_name || null,
+              vendor_name: b.vendor_name || null,
             };
           });
           setAcceptedBidsByProject(map);
