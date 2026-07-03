@@ -102,14 +102,7 @@ export const useCustomerProjects = () => {
 
       const { data: bidsData, error: bidsError } = await supabase
         .from('bids')
-        .select(`
-          *,
-          vendor_profile:profiles!bids_vendor_id_fkey (
-            id,
-            full_name,
-            phone_number
-          )
-        `)
+        .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
 
@@ -117,7 +110,7 @@ export const useCustomerProjects = () => {
 
       const bids: Bid[] = (bidsData || []).map((bid: any) => ({
         ...bid,
-        vendor_name: bid.vendor_profile?.full_name || 'Vendor',
+        vendor_name: bid.vendor_name?.trim() || 'Vendor',
         vendor_rating: 4.0,
         equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3',
       }));
