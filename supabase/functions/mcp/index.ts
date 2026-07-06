@@ -8,12 +8,79 @@ import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 // src/lib/mcp/tools/estimate-solar-system.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
 import { z } from "npm:zod@^3.23.8";
-import {
-  centralSubsidyRates,
-  solarIrradiance,
-  stateSubsidies,
-  stateTariffs
-} from "npm:@/utils/solarSubsidyData";
+var centralSubsidyRates = { upTo3kW: 14588, above3kW: 7294 };
+var stateSubsidies = {
+  "Andhra Pradesh": { rate: 0.3, maxAmount: 2e4 },
+  "Assam": { rate: 0.3, maxAmount: 3e4 },
+  "Bihar": { rate: 0.5, maxAmount: 75e3 },
+  "Chhattisgarh": { rate: 0.2, maxAmount: 2e4 },
+  "Delhi": { rate: 0.2, maxAmount: 3e4 },
+  "Gujarat": { rate: 0.5, maxAmount: 2e4 },
+  "Haryana": { rate: 0.4, maxAmount: 4e4 },
+  "Himachal Pradesh": { rate: 0.3, maxAmount: 1e4 },
+  "Jharkhand": { rate: 0.5, maxAmount: 75e3 },
+  "Karnataka": { rate: 0.2, maxAmount: 2e4 },
+  "Kerala": { rate: 0.3, maxAmount: 15e3 },
+  "Madhya Pradesh": { rate: 0.3, maxAmount: 3e4 },
+  "Maharashtra": { rate: 0.25, maxAmount: 25e3 },
+  "Odisha": { rate: 0.3, maxAmount: 3e4 },
+  "Punjab": { rate: 0.3, maxAmount: 3e4 },
+  "Rajasthan": { rate: 0.3, maxAmount: 3e4 },
+  "Tamil Nadu": { rate: 0.25, maxAmount: 2e4 },
+  "Telangana": { rate: 0.2, maxAmount: 2e4 },
+  "Uttar Pradesh": { rate: 0.15, maxAmount: 3e4 },
+  "Uttarakhand": { rate: 0.4, maxAmount: 4e4 },
+  "West Bengal": { rate: 0.3, maxAmount: 3e4 },
+  "Other": { rate: 0, maxAmount: 0 }
+};
+var solarIrradiance = {
+  "Andhra Pradesh": 5.7,
+  "Assam": 4.5,
+  "Bihar": 5,
+  "Chhattisgarh": 5.5,
+  "Delhi": 5.2,
+  "Gujarat": 6,
+  "Haryana": 5.4,
+  "Himachal Pradesh": 4.8,
+  "Jharkhand": 5.2,
+  "Karnataka": 5.8,
+  "Kerala": 5,
+  "Madhya Pradesh": 5.6,
+  "Maharashtra": 5.5,
+  "Odisha": 5.3,
+  "Punjab": 5.1,
+  "Rajasthan": 6.5,
+  "Tamil Nadu": 5.5,
+  "Telangana": 5.6,
+  "Uttar Pradesh": 5,
+  "Uttarakhand": 5.3,
+  "West Bengal": 4.8,
+  "Other": 5.2
+};
+var stateTariffs = {
+  "Andhra Pradesh": 5.5,
+  "Assam": 5.8,
+  "Bihar": 5,
+  "Chhattisgarh": 4.5,
+  "Delhi": 5,
+  "Gujarat": 4.5,
+  "Haryana": 6,
+  "Himachal Pradesh": 4,
+  "Jharkhand": 5.5,
+  "Karnataka": 6.5,
+  "Kerala": 5.5,
+  "Madhya Pradesh": 6,
+  "Maharashtra": 8,
+  "Odisha": 5,
+  "Punjab": 5.5,
+  "Rajasthan": 7,
+  "Tamil Nadu": 4.5,
+  "Telangana": 6,
+  "Uttar Pradesh": 5.5,
+  "Uttarakhand": 4.5,
+  "West Bengal": 6.5,
+  "Other": 5.5
+};
 var PANEL_WATTAGE = 0.4;
 var SYSTEM_EFFICIENCY = 0.85;
 var estimate_solar_system_default = defineTool({
@@ -34,8 +101,7 @@ var estimate_solar_system_default = defineTool({
     const dailyConsumption = monthlyConsumption / 30;
     const systemSize = Math.round(dailyConsumption / (irradiance * shadingFactor * SYSTEM_EFFICIENCY) * 100) / 100;
     const panels = Math.ceil(systemSize / PANEL_WATTAGE);
-    const baseCostPerWatt = 55;
-    const totalCost = Math.round(systemSize * 1e3 * baseCostPerWatt);
+    const totalCost = Math.round(systemSize * 1e3 * 55);
     let centralSubsidy = systemSize <= 3 ? systemSize * centralSubsidyRates.upTo3kW : 3 * centralSubsidyRates.upTo3kW + (systemSize - 3) * centralSubsidyRates.above3kW;
     centralSubsidy = Math.min(Math.round(centralSubsidy), 78e3);
     const stateInfo = stateSubsidies[state] ?? stateSubsidies["Other"];
@@ -68,7 +134,29 @@ var estimate_solar_system_default = defineTool({
 // src/lib/mcp/tools/list-state-subsidies.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
 import { z as z2 } from "npm:zod@^3.23.8";
-import { stateSubsidies as stateSubsidies2 } from "npm:@/utils/solarSubsidyData";
+var stateSubsidies2 = {
+  "Andhra Pradesh": { rate: 0.3, maxAmount: 2e4, description: "30% up to \u20B920,000" },
+  "Assam": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
+  "Bihar": { rate: 0.5, maxAmount: 75e3, description: "50% up to \u20B975,000" },
+  "Chhattisgarh": { rate: 0.2, maxAmount: 2e4, description: "20% up to \u20B920,000" },
+  "Delhi": { rate: 0.2, maxAmount: 3e4, description: "\u20B92,000 per kW up to \u20B930,000" },
+  "Gujarat": { rate: 0.5, maxAmount: 2e4, description: "\u20B910,000 per kW up to 2kW" },
+  "Haryana": { rate: 0.4, maxAmount: 4e4, description: "40% up to \u20B940,000" },
+  "Himachal Pradesh": { rate: 0.3, maxAmount: 1e4, description: "30% up to \u20B910,000" },
+  "Jharkhand": { rate: 0.5, maxAmount: 75e3, description: "50% up to \u20B975,000" },
+  "Karnataka": { rate: 0.2, maxAmount: 2e4, description: "20% up to \u20B920,000" },
+  "Kerala": { rate: 0.3, maxAmount: 15e3, description: "30% up to \u20B915,000" },
+  "Madhya Pradesh": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
+  "Maharashtra": { rate: 0.25, maxAmount: 25e3, description: "\u20B910,000 per kW up to 2.5kW" },
+  "Odisha": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
+  "Punjab": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
+  "Rajasthan": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
+  "Tamil Nadu": { rate: 0.25, maxAmount: 2e4, description: "25% up to \u20B920,000" },
+  "Telangana": { rate: 0.2, maxAmount: 2e4, description: "20% up to \u20B920,000" },
+  "Uttar Pradesh": { rate: 0.15, maxAmount: 3e4, description: "\u20B915,000 per kW up to 2kW" },
+  "Uttarakhand": { rate: 0.4, maxAmount: 4e4, description: "40% up to \u20B940,000" },
+  "West Bengal": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" }
+};
 var list_state_subsidies_default = defineTool2({
   name: "list_state_subsidies",
   title: "List Indian state solar subsidies",
