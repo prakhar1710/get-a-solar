@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "get-a-solar-mcp",
+      "version": "0.1.0",
+      "title": "Get A Solar"
+    },
+    "tools": [
+      {
+        "name": "list_state_subsidies",
+        "title": "List Indian state solar subsidies",
+        "description": "List rooftop-solar subsidy rates and caps for Indian states supported by Get A Solar. Optionally filter to one state.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "description": "Optional Indian state name (e.g. 'Karnataka'). Omit for all states."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "estimate_solar_system",
+        "title": "Estimate rooftop solar system",
+        "description": "Quick estimate of solar system size (kW), cost, central + state subsidy, and year-1 monthly savings for a household in India.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "monthly_bill_inr": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Average monthly electricity bill in INR."
+            },
+            "state": {
+              "type": "string",
+              "description": "Indian state (e.g. 'Karnataka'). Use 'Other' if unknown."
+            },
+            "shading_percent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 10,
+              "description": "Estimated rooftop shading percentage (0-100)."
+            }
+          },
+          "required": [
+            "monthly_bill_inr",
+            "state"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
