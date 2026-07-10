@@ -43,14 +43,14 @@ const ProjectTabs: React.FC<ProjectTabsProps> = ({
 
   return (
     <Tabs defaultValue="active" className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <TabsList>
-          <TabsTrigger value="active">Active Projects</TabsTrigger>
-          <TabsTrigger value="closed">Completed & Closed</TabsTrigger>
-          <TabsTrigger value="all">All Projects</TabsTrigger>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+        <TabsList className="w-full sm:w-auto h-auto flex-wrap">
+          <TabsTrigger value="active" className="flex-1 sm:flex-none">Active Projects</TabsTrigger>
+          <TabsTrigger value="closed" className="flex-1 sm:flex-none">Completed & Closed</TabsTrigger>
+          <TabsTrigger value="all" className="flex-1 sm:flex-none">All Projects</TabsTrigger>
         </TabsList>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <Button variant="outline" size="sm" className="flex items-center gap-1">
             <SlidersHorizontal className="h-4 w-4" /> Filter
           </Button>
