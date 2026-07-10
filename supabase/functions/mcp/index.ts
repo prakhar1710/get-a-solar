@@ -3,10 +3,10 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.1";
 
 // src/lib/mcp/tools/estimate-solar-system.ts
-import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.1";
 import { z } from "npm:zod@^3.23.8";
 var centralSubsidyRates = { upTo3kW: 14588, above3kW: 7294 };
 var stateSubsidies = {
@@ -132,7 +132,7 @@ var estimate_solar_system_default = defineTool({
 });
 
 // src/lib/mcp/tools/list-state-subsidies.ts
-import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.1";
 import { z as z2 } from "npm:zod@^3.23.8";
 var stateSubsidies2 = {
   "Andhra Pradesh": { rate: 0.3, maxAmount: 2e4, description: "30% up to \u20B920,000" },
@@ -196,5 +196,5 @@ var mcp_default = defineMcp({
 });
 
 // lovable-mcp-supabase-entry.ts
-import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.0/stacks/supabase";
+import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.1/stacks/supabase";
 Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
