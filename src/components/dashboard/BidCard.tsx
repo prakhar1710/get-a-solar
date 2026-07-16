@@ -60,10 +60,18 @@ const BidCard: React.FC<BidCardProps> = ({
           <CardTitle className="text-base font-medium">
             {bid.vendor_name || 'Vendor'}
           </CardTitle>
-          <div className="flex items-center">
-            <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-            <span className="ml-1 text-sm font-medium">{bid.vendor_rating?.toFixed(1) || '4.0'}</span>
-          </div>
+          {typeof bid.vendor_rating === 'number' && bid.vendor_rating > 0 ? (
+            <div className="flex items-center" title={`${bid.vendor_review_count ?? 0} review${bid.vendor_review_count === 1 ? '' : 's'}`}>
+              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              <span className="ml-1 text-sm font-medium">{bid.vendor_rating.toFixed(1)}</span>
+              {bid.vendor_review_count ? (
+                <span className="ml-1 text-xs text-muted-foreground">({bid.vendor_review_count})</span>
+              ) : null}
+            </div>
+          ) : (
+            <span className="text-xs text-muted-foreground">No ratings yet</span>
+          )}
+
         </div>
       </CardHeader>
       <CardContent className="pb-2">

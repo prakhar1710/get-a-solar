@@ -60,6 +60,8 @@ export interface Bid {
   score?: number;
   vendor_name?: string;
   vendor_rating?: number;
+  vendor_review_count?: number;
+
   profiles?: any;
   project?: Project;
 }
