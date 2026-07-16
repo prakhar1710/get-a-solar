@@ -108,12 +108,33 @@ export const useCustomerProjects = () => {
 
       if (bidsError) throw bidsError;
 
-      const bids: Bid[] = (bidsData || []).map((bid: any) => ({
+      const bidsRaw = bidsData || [];
+      const vendorIds = Array.from(new Set(bidsRaw.map((b: any) => b.vendor_id)));
+
+      const ratingsByVendor: Record<string, { avg: number; count: number }> = {};
+      if (vendorIds.length > 0) {
+        const { data: reviewRows } = await supabase
+          .from('reviews')
+          .select('vendor_id, average_rating')
+          .in('vendor_id', vendorIds);
+        (reviewRows || []).forEach((r: any) => {
+          const cur = ratingsByVendor[r.vendor_id] || { avg: 0, count: 0 };
+          const nextCount = cur.count + 1;
+          ratingsByVendor[r.vendor_id] = {
+            avg: (cur.avg * cur.count + Number(r.average_rating)) / nextCount,
+            count: nextCount,
+          };
+        });
+      }
+
+      const bids: Bid[] = bidsRaw.map((bid: any) => ({
         ...bid,
         vendor_name: bid.vendor_name?.trim() || 'Vendor',
-        vendor_rating: 4.0,
+        vendor_rating: ratingsByVendor[bid.vendor_id]?.avg,
+        vendor_review_count: ratingsByVendor[bid.vendor_id]?.count || 0,
         equipment_tier: bid.equipment_tier as 'tier1' | 'tier2' | 'tier3',
       }));
+
 
       return rankBids(bids, projectData as Project);
     } catch (error: any) {
