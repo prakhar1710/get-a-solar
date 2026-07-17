@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Bid, Project } from '@/types';
 import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import { getBrandByValue } from '@/lib/equipmentBrands';
+
 
 interface BidItemProps {
   bid: Bid;
