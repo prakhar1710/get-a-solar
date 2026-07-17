@@ -97,14 +97,25 @@ const BidCard: React.FC<BidCardProps> = ({
             </div>
           </div>
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-start gap-2">
             <div className="text-sm text-muted-foreground">Equipment</div>
-            <div>
+            <div className="text-right">
               <Badge variant="outline" className={`${tierColorMap[bid.equipment_tier as keyof typeof tierColorMap]}`}>
-                {getEquipmentTierLabel(bid.equipment_tier)}
+                {(() => {
+                  const brand = bid.equipment_brand ? getBrandByValue(bid.equipment_brand) : undefined;
+                  if (brand) return brand.label;
+                  if (bid.equipment_brand === 'other') return 'Custom equipment';
+                  return getEquipmentTierLabel(bid.equipment_tier);
+                })()}
               </Badge>
+              {bid.equipment_brand === 'other' && bid.equipment_details && (
+                <div className="mt-1 text-xs text-muted-foreground whitespace-pre-wrap max-w-[220px]">
+                  {bid.equipment_details}
+                </div>
+              )}
             </div>
           </div>
+
           
           <div className="flex justify-between items-center">
             <div className="text-sm text-muted-foreground">Timeline</div>
