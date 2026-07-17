@@ -112,9 +112,12 @@ export const useVendorDashboard = () => {
         vendor_name: profile?.full_name?.trim() || 'Vendor',
         price_per_watt: data.price_per_watt,
         equipment_tier: data.equipment_tier,
+        equipment_brand: data.equipment_brand ?? null,
+        equipment_details: data.equipment_details?.trim() ? data.equipment_details.trim() : null,
         timeline_days: data.timeline_days,
         amc_included: data.amc_included
       };
+
 
       const { error, data: createdBid } = await supabase
         .from('bids')

@@ -54,6 +54,8 @@ export interface Bid {
   vendor_id: string;
   price_per_watt: number; // in INR
   equipment_tier: 'tier1' | 'tier2' | 'tier3';
+  equipment_brand?: string | null;
+  equipment_details?: string | null;
   timeline_days: number;
   amc_included: boolean;
   created_at: string;
@@ -61,6 +63,8 @@ export interface Bid {
   vendor_name?: string;
   vendor_rating?: number;
   vendor_review_count?: number;
+
+
 
   profiles?: any;
   project?: Project;

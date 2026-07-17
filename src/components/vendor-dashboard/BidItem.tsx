@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Bid, Project } from '@/types';
 import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import { getBrandByValue } from '@/lib/equipmentBrands';
+
 
 interface BidItemProps {
   bid: Bid;
@@ -71,8 +73,19 @@ const BidItem: React.FC<BidItemProps> = ({ bid, project }) => {
           </div>
           <div>
             <p className="text-muted-foreground">Equipment</p>
-            <p className="font-medium capitalize">{bid.equipment_tier.replace('tier', 'Tier ')}</p>
+            <p className="font-medium">
+              {(() => {
+                const brand = bid.equipment_brand ? getBrandByValue(bid.equipment_brand) : undefined;
+                if (brand) return brand.label;
+                if (bid.equipment_brand === 'other') return 'Custom';
+                return bid.equipment_tier.replace('tier', 'Tier ');
+              })()}
+            </p>
+            {bid.equipment_brand === 'other' && bid.equipment_details && (
+              <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{bid.equipment_details}</p>
+            )}
           </div>
+
           <div>
             <p className="text-muted-foreground">Timeline</p>
             <p className="font-medium">{bid.timeline_days} days</p>

@@ -18,6 +18,8 @@ export type Database = {
         Row: {
           amc_included: boolean
           created_at: string
+          equipment_brand: string | null
+          equipment_details: string | null
           equipment_tier: string
           id: string
           price_per_watt: number
@@ -29,6 +31,8 @@ export type Database = {
         Insert: {
           amc_included?: boolean
           created_at?: string
+          equipment_brand?: string | null
+          equipment_details?: string | null
           equipment_tier: string
           id?: string
           price_per_watt: number
@@ -40,6 +44,8 @@ export type Database = {
         Update: {
           amc_included?: boolean
           created_at?: string
+          equipment_brand?: string | null
+          equipment_details?: string | null
           equipment_tier?: string
           id?: string
           price_per_watt?: number
