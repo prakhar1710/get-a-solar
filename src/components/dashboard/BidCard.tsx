@@ -5,6 +5,8 @@ import { Star, Check, X, IndianRupee, Clock, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Bid } from '@/types';
 import { Button } from '@/components/ui/button';
+import { getBrandByValue } from '@/lib/equipmentBrands';
+
 
 interface BidCardProps {
   bid: Bid;
