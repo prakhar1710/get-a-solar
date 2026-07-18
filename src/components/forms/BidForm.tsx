@@ -75,10 +75,12 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
     },
   });
 
-  const pricePerWatt = form.watch('price_per_watt');
+  const pricePerWatt = form.watch('price_per_watt') ?? 0;
+  const totalBidAmount = form.watch('total_bid_amount') ?? 0;
   const equipmentBrand = form.watch('equipment_brand');
   const equipmentDetails = form.watch('equipment_details');
-  const totalProjectCost = pricePerWatt * projectSize * 1000;
+  const totalProjectCost = (pricePerWatt || 0) * projectSize * 1000;
+  const derivedPerWatt = projectSize > 0 && totalBidAmount ? totalBidAmount / (projectSize * 1000) : 0;
   const isOther = equipmentBrand === OTHER_BRAND_VALUE;
 
   const handleBrandChange = (value: string) => {
