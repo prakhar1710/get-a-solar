@@ -25,34 +25,42 @@ import {
   tierFromBrand,
 } from '@/lib/equipmentBrands';
 
-const bidSchema = z
-  .object({
-    price_per_watt: z.coerce.number().min(10, { message: 'Price must be at least ₹10 per Watt' }).max(200, { message: 'Price cannot exceed ₹200 per Watt' }),
-    equipment_brand: z.string().min(1, { message: 'Please select an equipment brand' }),
-    equipment_tier: z.enum(['tier1', 'tier2', 'tier3']),
-    equipment_details: z.string().optional(),
-    timeline_days: z.coerce.number().min(7, { message: 'Timeline must be at least 7 days' }).max(180, { message: 'Timeline cannot exceed 180 days' }),
-    amc_included: z.boolean().default(false),
-  })
-  .refine(
-    (data) =>
-      data.equipment_brand !== OTHER_BRAND_VALUE ||
-      (data.equipment_details && data.equipment_details.trim().length >= 3),
-    { message: 'Please describe your equipment', path: ['equipment_details'] },
-  );
+const makeBidSchema = (mode: 'per_watt' | 'total') =>
+  z
+    .object({
+      price_per_watt: mode === 'per_watt'
+        ? z.coerce.number().min(10, { message: 'Price must be at least ₹10 per Watt' }).max(200, { message: 'Price cannot exceed ₹200 per Watt' })
+        : z.coerce.number().min(0).optional(),
+      total_bid_amount: mode === 'total'
+        ? z.coerce.number().min(1000, { message: 'Bid amount must be at least ₹1,000' })
+        : z.coerce.number().optional(),
+      equipment_brand: z.string().min(1, { message: 'Please select an equipment brand' }),
+      equipment_tier: z.enum(['tier1', 'tier2', 'tier3']),
+      equipment_details: z.string().optional(),
+      timeline_days: z.coerce.number().min(7, { message: 'Timeline must be at least 7 days' }).max(180, { message: 'Timeline cannot exceed 180 days' }),
+      amc_included: z.boolean().default(false),
+    })
+    .refine(
+      (data) =>
+        data.equipment_brand !== OTHER_BRAND_VALUE ||
+        (data.equipment_details && data.equipment_details.trim().length >= 3),
+      { message: 'Please describe your equipment', path: ['equipment_details'] },
+    );
 
-type BidFormValues = z.infer<typeof bidSchema>;
+type BidFormValues = z.infer<ReturnType<typeof makeBidSchema>>;
 
 interface BidFormProps {
   onSubmit: (data: BidFormValues) => void;
   initialData?: Partial<BidFormValues>;
   projectSize?: number;
+  mode?: 'per_watt' | 'total';
 }
 
-const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5 }) => {
+const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5, mode = 'per_watt' }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [otherDraft, setOtherDraft] = useState('');
+  const bidSchema = React.useMemo(() => makeBidSchema(mode), [mode]);
 
   const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
