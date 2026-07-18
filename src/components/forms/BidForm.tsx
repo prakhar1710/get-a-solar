@@ -25,39 +25,48 @@ import {
   tierFromBrand,
 } from '@/lib/equipmentBrands';
 
-const bidSchema = z
-  .object({
-    price_per_watt: z.coerce.number().min(10, { message: 'Price must be at least ₹10 per Watt' }).max(200, { message: 'Price cannot exceed ₹200 per Watt' }),
-    equipment_brand: z.string().min(1, { message: 'Please select an equipment brand' }),
-    equipment_tier: z.enum(['tier1', 'tier2', 'tier3']),
-    equipment_details: z.string().optional(),
-    timeline_days: z.coerce.number().min(7, { message: 'Timeline must be at least 7 days' }).max(180, { message: 'Timeline cannot exceed 180 days' }),
-    amc_included: z.boolean().default(false),
-  })
-  .refine(
-    (data) =>
-      data.equipment_brand !== OTHER_BRAND_VALUE ||
-      (data.equipment_details && data.equipment_details.trim().length >= 3),
-    { message: 'Please describe your equipment', path: ['equipment_details'] },
-  );
+const makeBidSchema = (mode: 'per_watt' | 'total') =>
+  z
+    .object({
+      price_per_watt: mode === 'per_watt'
+        ? z.coerce.number().min(10, { message: 'Price must be at least ₹10 per Watt' }).max(200, { message: 'Price cannot exceed ₹200 per Watt' })
+        : z.coerce.number().min(0).optional(),
+      total_bid_amount: mode === 'total'
+        ? z.coerce.number().min(1000, { message: 'Bid amount must be at least ₹1,000' })
+        : z.coerce.number().optional(),
+      equipment_brand: z.string().min(1, { message: 'Please select an equipment brand' }),
+      equipment_tier: z.enum(['tier1', 'tier2', 'tier3']),
+      equipment_details: z.string().optional(),
+      timeline_days: z.coerce.number().min(7, { message: 'Timeline must be at least 7 days' }).max(180, { message: 'Timeline cannot exceed 180 days' }),
+      amc_included: z.boolean().default(false),
+    })
+    .refine(
+      (data) =>
+        data.equipment_brand !== OTHER_BRAND_VALUE ||
+        (data.equipment_details && data.equipment_details.trim().length >= 3),
+      { message: 'Please describe your equipment', path: ['equipment_details'] },
+    );
 
-type BidFormValues = z.infer<typeof bidSchema>;
+type BidFormValues = z.infer<ReturnType<typeof makeBidSchema>>;
 
 interface BidFormProps {
   onSubmit: (data: BidFormValues) => void;
   initialData?: Partial<BidFormValues>;
   projectSize?: number;
+  mode?: 'per_watt' | 'total';
 }
 
-const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5 }) => {
+const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 5, mode = 'per_watt' }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [otherDraft, setOtherDraft] = useState('');
+  const bidSchema = React.useMemo(() => makeBidSchema(mode), [mode]);
 
   const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
     defaultValues: {
-      price_per_watt: 45,
+      price_per_watt: mode === 'per_watt' ? 45 : undefined,
+      total_bid_amount: mode === 'total' ? undefined : undefined,
       equipment_brand: '',
       equipment_tier: 'tier2',
       equipment_details: '',
@@ -67,10 +76,12 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
     },
   });
 
-  const pricePerWatt = form.watch('price_per_watt');
+  const pricePerWatt = form.watch('price_per_watt') ?? 0;
+  const totalBidAmount = form.watch('total_bid_amount') ?? 0;
   const equipmentBrand = form.watch('equipment_brand');
   const equipmentDetails = form.watch('equipment_details');
-  const totalProjectCost = pricePerWatt * projectSize * 1000;
+  const totalProjectCost = (pricePerWatt || 0) * projectSize * 1000;
+  const derivedPerWatt = projectSize > 0 && totalBidAmount ? totalBidAmount / (projectSize * 1000) : 0;
   const isOther = equipmentBrand === OTHER_BRAND_VALUE;
 
   const handleBrandChange = (value: string) => {
@@ -88,7 +99,17 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   const handleSubmit = async (data: BidFormValues) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      const payload =
+        mode === 'total'
+          ? {
+              ...data,
+              price_per_watt:
+                projectSize > 0 && data.total_bid_amount
+                  ? Number((data.total_bid_amount / (projectSize * 1000)).toFixed(4))
+                  : 0,
+            }
+          : data;
+      await onSubmit(payload);
     } finally {
       setIsSubmitting(false);
     }
@@ -97,28 +118,54 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="price_per_watt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price per Watt (₹)</FormLabel>
-              <FormControl>
-                <Input type="number" step="0.1" {...field} />
-              </FormControl>
-              <FormDescription>
-                Your bid price per Watt.
-                {pricePerWatt && projectSize && (
-                  <span className="block mt-1 font-medium text-sbs-purple">
-                    Total project cost: ₹{(totalProjectCost).toLocaleString('en-IN')}
-                    {totalProjectCost >= 100000 && ` (₹${(totalProjectCost / 100000).toFixed(2)}L)`}
-                  </span>
-                )}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {mode === 'per_watt' ? (
+          <FormField
+            control={form.control}
+            name="price_per_watt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price per Watt (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.1" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Your bid price per Watt.
+                  {pricePerWatt && projectSize && (
+                    <span className="block mt-1 font-medium text-sbs-purple">
+                      Total project cost: ₹{(totalProjectCost).toLocaleString('en-IN')}
+                      {totalProjectCost >= 100000 && ` (₹${(totalProjectCost / 100000).toFixed(2)}L)`}
+                    </span>
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            control={form.control}
+            name="total_bid_amount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Total bid amount (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g. 225000" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Enter your total bid amount based on your own calculations.
+                  {totalBidAmount > 0 && projectSize > 0 && (
+                    <span className="block mt-1 font-medium text-sbs-purple">
+                      ₹{Number(totalBidAmount).toLocaleString('en-IN')}
+                      {totalBidAmount >= 100000 && ` (₹${(totalBidAmount / 100000).toFixed(2)}L)`}
+                      {' · '}~₹{derivedPerWatt.toFixed(2)}/W for a {projectSize} kW system
+                    </span>
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

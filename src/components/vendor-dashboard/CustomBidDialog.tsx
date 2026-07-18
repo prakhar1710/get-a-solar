@@ -30,7 +30,7 @@ const CustomBidDialog: React.FC<CustomBidDialogProps> = ({
             {selectedProject?.title} - {selectedProject?.system_size} kW System
           </DialogDescription>
         </DialogHeader>
-        <BidForm onSubmit={handleSubmit} projectSize={selectedProject?.system_size} />
+        <BidForm onSubmit={handleSubmit} projectSize={selectedProject?.system_size} mode="total" />
       </DialogContent>
     </Dialog>
   );
