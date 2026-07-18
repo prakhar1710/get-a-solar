@@ -65,7 +65,8 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   const form = useForm<BidFormValues>({
     resolver: zodResolver(bidSchema),
     defaultValues: {
-      price_per_watt: 45,
+      price_per_watt: mode === 'per_watt' ? 45 : undefined,
+      total_bid_amount: mode === 'total' ? undefined : undefined,
       equipment_brand: '',
       equipment_tier: 'tier2',
       equipment_details: '',
