@@ -98,7 +98,17 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   const handleSubmit = async (data: BidFormValues) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      const payload =
+        mode === 'total'
+          ? {
+              ...data,
+              price_per_watt:
+                projectSize > 0 && data.total_bid_amount
+                  ? Number((data.total_bid_amount / (projectSize * 1000)).toFixed(4))
+                  : 0,
+            }
+          : data;
+      await onSubmit(payload);
     } finally {
       setIsSubmitting(false);
     }
@@ -107,28 +117,54 @@ const BidForm: React.FC<BidFormProps> = ({ onSubmit, initialData, projectSize = 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="price_per_watt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price per Watt (₹)</FormLabel>
-              <FormControl>
-                <Input type="number" step="0.1" {...field} />
-              </FormControl>
-              <FormDescription>
-                Your bid price per Watt.
-                {pricePerWatt && projectSize && (
-                  <span className="block mt-1 font-medium text-sbs-purple">
-                    Total project cost: ₹{(totalProjectCost).toLocaleString('en-IN')}
-                    {totalProjectCost >= 100000 && ` (₹${(totalProjectCost / 100000).toFixed(2)}L)`}
-                  </span>
-                )}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {mode === 'per_watt' ? (
+          <FormField
+            control={form.control}
+            name="price_per_watt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price per Watt (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.1" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Your bid price per Watt.
+                  {pricePerWatt && projectSize && (
+                    <span className="block mt-1 font-medium text-sbs-purple">
+                      Total project cost: ₹{(totalProjectCost).toLocaleString('en-IN')}
+                      {totalProjectCost >= 100000 && ` (₹${(totalProjectCost / 100000).toFixed(2)}L)`}
+                    </span>
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            control={form.control}
+            name="total_bid_amount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Total bid amount (₹)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g. 225000" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Enter your total bid amount based on your own calculations.
+                  {totalBidAmount > 0 && projectSize > 0 && (
+                    <span className="block mt-1 font-medium text-sbs-purple">
+                      ₹{Number(totalBidAmount).toLocaleString('en-IN')}
+                      {totalBidAmount >= 100000 && ` (₹${(totalBidAmount / 100000).toFixed(2)}L)`}
+                      {' · '}~₹{derivedPerWatt.toFixed(2)}/W for a {projectSize} kW system
+                    </span>
+                  )}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
