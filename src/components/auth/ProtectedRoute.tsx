@@ -49,9 +49,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     );
   }
 
+  // No role chosen yet (e.g. Google sign-up): let the user pick customer or vendor
+  if (!profile.user_type) {
+    return (
+      <ProfileSetupDialog open onProfileUpdated={() => { void refreshProfile(user); }} />
+    );
+  }
+
   if (profile.user_type !== userType) {
     return <Navigate to={profile.user_type === 'customer' ? '/customer' : '/vendor'} replace />;
   }
+
 
   return <>{children}</>;
 };
