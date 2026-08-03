@@ -39,6 +39,15 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
     }
 
     // Validate required fields
+    if (fullName.trim().length < 2) {
+      toast({
+        title: "Invalid name",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
       toast({
         title: "Invalid phone number",
@@ -71,12 +80,15 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
     try {
       const profileData = {
         id: user.id,
+        full_name: fullName.trim().slice(0, 100),
+        email: user.email ?? null,
         user_type: userType,
         phone_number: phoneNumber,
         pincode: pincode,
         electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
         updated_at: new Date().toISOString(),
       };
+
 
       console.log('Updating profile with data:', profileData);
 
