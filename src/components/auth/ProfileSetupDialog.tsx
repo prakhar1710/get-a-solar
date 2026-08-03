@@ -19,6 +19,9 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
+  const [fullName, setFullName] = useState(
+    (user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || ''
+  );
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pincode, setPincode] = useState('');
   const [electricityBill, setElectricityBill] = useState('');
