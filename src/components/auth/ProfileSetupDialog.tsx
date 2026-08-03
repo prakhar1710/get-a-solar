@@ -138,6 +138,18 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="full-name">Full Name</Label>
+            <Input
+              id="full-name"
+              type="text"
+              placeholder="Your full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value.slice(0, 100))}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="phone-number">Phone Number</Label>
             <Input 
               id="phone-number" 
