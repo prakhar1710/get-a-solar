@@ -27,6 +27,7 @@ const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
   const [showEmailVerificationDialog, setShowEmailVerificationDialog] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
   const [showForgotDialog, setShowForgotDialog] = useState(false);
