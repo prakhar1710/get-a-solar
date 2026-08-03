@@ -259,7 +259,7 @@ const LoginPage = () => {
           description: "An account with this email already exists. Please log in instead, or use 'Forgot password'.",
           variant: "destructive",
         });
-        setActiveTab?.('login');
+        setActiveTab('login');
         return;
       }
 
