@@ -27,6 +27,7 @@ const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
   const [showEmailVerificationDialog, setShowEmailVerificationDialog] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
   const [showForgotDialog, setShowForgotDialog] = useState(false);
@@ -249,7 +250,19 @@ const LoginPage = () => {
       });
       
       if (signUpError) throw signUpError;
-      
+
+      // Supabase returns a 200 with an obfuscated user (no identities) when the
+      // email is already registered — surface that instead of a false success.
+      if (authData.user && (authData.user.identities?.length ?? 0) === 0) {
+        toast({
+          title: "Account already exists",
+          description: "An account with this email already exists. Please log in instead, or use 'Forgot password'.",
+          variant: "destructive",
+        });
+        setActiveTab('login');
+        return;
+      }
+
       // Check if email confirmation is required
       if (authData.user && !authData.session) {
         // Show email verification dialog
@@ -319,7 +332,7 @@ const LoginPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="login" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
                   <TabsTrigger value="login">Login</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
