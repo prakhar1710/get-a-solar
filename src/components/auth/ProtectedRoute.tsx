@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import ProfileSetupDialog from '@/components/auth/ProfileSetupDialog';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,12 +11,12 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) => {
-  const { user, profile, isLoading } = useAuth();
+  const { user, profile, isLoading, refreshProfile } = useAuth();
   const { toast } = useToast();
 
   // Use useEffect to handle side effects like showing toasts
   useEffect(() => {
-    if (!isLoading && user && profile && profile.user_type !== userType) {
+    if (!isLoading && user && profile && profile.user_type && profile.user_type !== userType) {
       toast({
         title: "Access denied",
         description: `This page is only accessible to ${userType}s.`,
@@ -23,6 +24,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
       });
     }
   }, [isLoading, user, profile, userType, toast]);
+
 
   if (isLoading) {
     return (
@@ -47,9 +49,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, userType }) =
     );
   }
 
+  // No role chosen yet (e.g. Google sign-up): let the user pick customer or vendor
+  if (!profile.user_type) {
+    return (
+      <ProfileSetupDialog open onProfileUpdated={() => { void refreshProfile(); }} />
+    );
+  }
+
   if (profile.user_type !== userType) {
     return <Navigate to={profile.user_type === 'customer' ? '/customer' : '/vendor'} replace />;
   }
+
 
   return <>{children}</>;
 };
