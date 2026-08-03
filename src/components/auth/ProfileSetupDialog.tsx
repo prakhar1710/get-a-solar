@@ -19,6 +19,9 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<'customer' | 'vendor'>('customer');
+  const [fullName, setFullName] = useState(
+    (user?.user_metadata?.full_name as string) || (user?.user_metadata?.name as string) || ''
+  );
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pincode, setPincode] = useState('');
   const [electricityBill, setElectricityBill] = useState('');
@@ -36,6 +39,15 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
     }
 
     // Validate required fields
+    if (fullName.trim().length < 2) {
+      toast({
+        title: "Invalid name",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
       toast({
         title: "Invalid phone number",
@@ -68,12 +80,15 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
     try {
       const profileData = {
         id: user.id,
+        full_name: fullName.trim().slice(0, 100),
+        email: user.email ?? null,
         user_type: userType,
         phone_number: phoneNumber,
         pincode: pincode,
         electricity_bill: userType === 'customer' ? Number(electricityBill) : null,
         updated_at: new Date().toISOString(),
       };
+
 
       console.log('Updating profile with data:', profileData);
 
@@ -122,6 +137,18 @@ const ProfileSetupDialog: React.FC<ProfileSetupDialogProps> = ({ open, onProfile
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="full-name">Full Name</Label>
+            <Input
+              id="full-name"
+              type="text"
+              placeholder="Your full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value.slice(0, 100))}
+              required
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="phone-number">Phone Number</Label>
             <Input 
