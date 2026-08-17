@@ -184,11 +184,11 @@ const TermsOfServicePage = () => {
             <ul className="list-none space-y-2 text-foreground">
               <li>
                 <strong>Email:</strong>{' '}
-                <a href="mailto:legal@getasolar.com" className="text-primary hover:underline">
-                  legal@getasolar.com
+                <a href="mailto:legal@getasolar.in" className="text-primary hover:underline">
+                  legal@getasolar.in
                 </a>
               </li>
-              <li><strong>Phone:</strong> +91 8114414256</li>
+              <li><strong>Phone:</strong> +91 94621 87082</li>
               <li><strong>Address:</strong> 1-N-14 Talwandi, Kota, Rajasthan, 324005</li>
             </ul>
           </section>

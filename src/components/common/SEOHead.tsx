@@ -8,6 +8,7 @@ interface SEOHeadProps {
   keywords?: string;
   ogImage?: string;
   ogUrl?: string;
+  ogType?: 'website' | 'article';
   canonicalUrl?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
@@ -24,6 +25,7 @@ export const SEOHead = ({
   keywords = "solar panels, solar installation, solar bidding, solar vendors, solar subsidy, renewable energy, India",
   ogImage = "/hero-banner.png",
   ogUrl,
+  ogType = 'website',
   canonicalUrl,
   jsonLd,
 }: SEOHeadProps) => {
@@ -41,7 +43,7 @@ export const SEOHead = ({
       <meta name="keywords" content={keywords} />
 
       {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={ogType} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />

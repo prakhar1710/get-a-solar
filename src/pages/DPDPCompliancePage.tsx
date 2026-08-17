@@ -111,7 +111,7 @@ const DPDPCompliancePage = () => {
             <h3 className="text-xl font-medium text-primary mb-3">Withdrawing Consent</h3>
             <p className="text-foreground mb-4">You can withdraw consent anytime:</p>
             <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground">
-              <li>Email: <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
+              <li>Email: <a href="mailto:dpo@getasolar.in" className="text-primary hover:underline">dpo@getasolar.in</a></li>
               <li>Call our support team</li>
               <li>Use the unsubscribe link in emails</li>
             </ul>
@@ -128,9 +128,9 @@ const DPDPCompliancePage = () => {
               <h3 className="text-xl font-medium text-primary mb-4">Get A Solar (Data Fiduciary)</h3>
               <ul className="list-none space-y-2 text-foreground">
                 <li><strong>Data Protection Officer:</strong> Anita Malav</li>
-                <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
+                <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.in" className="text-primary hover:underline">dpo@getasolar.in</a></li>
                 <li><strong>Grievance Officer:</strong> Anita Malav</li>
-                <li><strong>Grievance Email:</strong> <a href="mailto:grievance@getasolar.com" className="text-primary hover:underline">grievance@getasolar.com</a></li>
+                <li><strong>Grievance Email:</strong> <a href="mailto:grievance@getasolar.in" className="text-primary hover:underline">grievance@getasolar.in</a></li>
               </ul>
             </div>
           </section>
@@ -182,7 +182,7 @@ const DPDPCompliancePage = () => {
             
             <h3 className="text-xl font-medium text-primary mb-3">How to File a Grievance</h3>
             <ol className="list-decimal pl-6 mb-6 space-y-2 text-foreground">
-              <li>Email <a href="mailto:grievance@getasolar.com" className="text-primary hover:underline">grievance@getasolar.com</a> with your concern</li>
+              <li>Email <a href="mailto:grievance@getasolar.in" className="text-primary hover:underline">grievance@getasolar.in</a> with your concern</li>
               <li>Include your name, contact details, and issue description</li>
               <li>We'll acknowledge receipt within 24 hours</li>
               <li>Resolution provided within 7 working days</li>
@@ -237,8 +237,8 @@ const DPDPCompliancePage = () => {
             <p className="text-foreground mb-4">For DPDP-related queries:</p>
             <ul className="list-none space-y-2 text-foreground">
               <li><strong>Data Protection Officer:</strong> Anita Malav</li>
-              <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.com" className="text-primary hover:underline">dpo@getasolar.com</a></li>
-              <li><strong>Phone:</strong> +91 8114414256</li>
+              <li><strong>Email:</strong> <a href="mailto:dpo@getasolar.in" className="text-primary hover:underline">dpo@getasolar.in</a></li>
+              <li><strong>Phone:</strong> +91 94621 87082</li>
               <li><strong>Office Hours:</strong> Monday-Friday, 9 AM - 6 PM IST</li>
               <li><strong>Response Time:</strong> Within 48 hours</li>
             </ul>
