@@ -7,7 +7,7 @@ import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/estimate-solar-system.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z } from "npm:zod@^3.23.8";
+import { z } from "npm:zod@^3.25.76";
 var centralSubsidyRates = { upTo3kW: 14588, above3kW: 7294 };
 var stateSubsidies = {
   "Andhra Pradesh": { rate: 0.3, maxAmount: 2e4 },
@@ -133,7 +133,7 @@ var estimate_solar_system_default = defineTool({
 
 // src/lib/mcp/tools/list-state-subsidies.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z as z2 } from "npm:zod@^3.23.8";
+import { z as z2 } from "npm:zod@^3.25.76";
 var stateSubsidies2 = {
   "Andhra Pradesh": { rate: 0.3, maxAmount: 2e4, description: "30% up to \u20B920,000" },
   "Assam": { rate: 0.3, maxAmount: 3e4, description: "30% up to \u20B930,000" },
