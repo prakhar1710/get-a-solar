@@ -47,9 +47,11 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5 text-primary" />
-          Solar System Calculator
+        <CardTitle asChild>
+          <h2 className="flex items-center gap-2 text-2xl font-semibold">
+            <Calculator className="h-5 w-5 text-primary" />
+            Solar System Calculator
+          </h2>
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Get an estimate of the solar system size and cost for your property

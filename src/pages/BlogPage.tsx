@@ -53,9 +53,9 @@ const BlogPage = () => {
                 <p className="text-sm text-muted-foreground">{post.readTime} • By {post.author}</p>
               </CardContent>
               <CardFooter className="flex justify-between pt-2">
-                <Link to={`/blog/${post.id}`}>
+                <Link to={`/blog/${post.id}`} aria-label={`Read full article: ${post.title}`}>
                   <Button variant="outline" size="sm" className="text-sbs-purple hover:text-sbs-purple-dark hover:bg-sbs-purple/10">
-                    Read More
+                    Read full article
                   </Button>
                 </Link>
                 <div className="flex items-center text-muted-foreground text-sm">

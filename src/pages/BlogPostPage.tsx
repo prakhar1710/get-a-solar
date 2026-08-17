@@ -38,8 +38,10 @@ const BlogPostPage = () => {
     "@type": "Article",
     headline: article.title,
     description: article.excerpt,
+    image: ["https://www.getasolar.in/hero-banner.png"],
     author: { "@type": "Person", name: article.author },
     datePublished: article.date,
+    dateModified: article.date,
     articleSection: article.category,
     publisher: {
       "@type": "Organization",
@@ -59,6 +61,7 @@ const BlogPostPage = () => {
         description={article.excerpt}
         keywords={`${article.category}, solar, ${article.title}`}
         canonicalUrl={`/blog/${article.id}`}
+        ogType="article"
         jsonLd={articleJsonLd}
       />
       <div className="container py-8 max-w-4xl mx-auto">

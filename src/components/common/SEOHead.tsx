@@ -8,6 +8,7 @@ interface SEOHeadProps {
   keywords?: string;
   ogImage?: string;
   ogUrl?: string;
+  ogType?: 'website' | 'article';
   canonicalUrl?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
