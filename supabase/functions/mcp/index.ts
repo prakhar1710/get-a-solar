@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.1";
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.20.1";
 
 // src/lib/mcp/tools/estimate-solar-system.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.1";
@@ -187,11 +187,17 @@ var list_state_subsidies_default = defineTool2({
 });
 
 // src/lib/mcp/index.ts
+var SUPABASE_URL = "https://vlkbfkfbpsawgusyabzt.supabase.co";
 var mcp_default = defineMcp({
   name: "get-a-solar-mcp",
   title: "Get A Solar",
   version: "0.1.0",
   instructions: "Tools for Get A Solar, an Indian rooftop-solar bidding platform. Use `list_state_subsidies` to look up state-level solar subsidy rates and `estimate_solar_system` for a quick sizing/cost/savings estimate from a household's monthly electricity bill.",
+  auth: auth.oauth.issuer({
+    issuer: `${SUPABASE_URL}/auth/v1`,
+    acceptedAudiences: "authenticated",
+    jwksUri: `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`
+  }),
   tools: [list_state_subsidies_default, estimate_solar_system_default]
 });
 
