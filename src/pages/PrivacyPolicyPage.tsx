@@ -105,8 +105,8 @@ const PrivacyPolicyPage = () => {
             </ul>
             <p className="text-foreground">
               To exercise these rights, email us at{' '}
-              <a href="mailto:privacy@getasolar.com" className="text-primary hover:underline">
-                privacy@getasolar.com
+              <a href="mailto:privacy@getasolar.in" className="text-primary hover:underline">
+                privacy@getasolar.in
               </a>{' '}
               or call our support team.
             </p>
@@ -174,11 +174,11 @@ const PrivacyPolicyPage = () => {
             <ul className="list-none space-y-2 text-foreground">
               <li>
                 <strong>Email:</strong>{' '}
-                <a href="mailto:privacy@getasolar.com" className="text-primary hover:underline">
-                  privacy@getasolar.com
+                <a href="mailto:privacy@getasolar.in" className="text-primary hover:underline">
+                  privacy@getasolar.in
                 </a>
               </li>
-              <li><strong>Phone:</strong> +91 8114414256</li>
+              <li><strong>Phone:</strong> +91 94621 87082</li>
               <li><strong>Address:</strong> 1-N-14 Talwandi, Kota, Rajasthan, 324005</li>
             </ul>
           </section>
